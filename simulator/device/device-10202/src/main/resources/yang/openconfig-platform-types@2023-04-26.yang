@@ -1,0 +1,615 @@
+module "openconfig-platform-types" {
+  yang-version "1";
+  namespace "http://openconfig.net/yang/platform-types";
+  prefix "oc-platform-types";
+  import "openconfig-types" {
+    prefix "oc-types";
+  }
+
+  import "openconfig-extensions" {
+    prefix "oc-ext";
+  }
+
+  organization
+    "OpenConfig working group";
+  contact
+    "OpenConfig working group
+www.openconfig.net";
+  description
+    "This module defines data types (e.g., YANG identities)
+to support the OpenConfig component inventory model.";
+  revision "2023-04-26" {
+    description
+      "Initial release for MinOTN.";
+    reference
+      "1.0.1";
+  }
+
+  revision "2019-06-03" {
+    description
+      "Add OpenConfig component operating system patch type.";
+    reference
+      "1.0.0";
+  }
+
+  revision "2018-11-21" {
+    description
+      "Add OpenConfig module metadata extensions.";
+    reference
+      "0.10.1";
+  }
+
+  revision "2018-11-16" {
+    description
+      "Added FEC_MODE_TYPE and FEC_STATUS_TYPE";
+    reference
+      "0.10.0";
+  }
+
+  revision "2018-05-05" {
+    description
+      "Added min-max-time to
+avg-min-max-instant-stats-precision1-celsius,
+added new CONTROLLER_CARD identity";
+    reference
+      "0.9.0";
+  }
+
+  revision "2018-01-16" {
+    description
+      "Added new per-component common data; add temp alarm";
+    reference
+      "0.8.0";
+  }
+
+  revision "2017-12-14" {
+    description
+      "Added anchor containers for component data, added new
+component types";
+    reference
+      "0.7.0";
+  }
+
+  revision "2017-08-16" {
+    description
+      "Added power state enumerated type";
+    reference
+      "0.6.0";
+  }
+
+  revision "2016-12-22" {
+    description
+      "Added temperature state variable to component";
+    reference
+      "0.5.0";
+  }
+
+  grouping "avg-min-max-instant-stats-precision1-celsius" {
+    description
+      "Common grouping for recording temperature values in
+Celsius with 1 decimal precision. Values include the
+instantaneous, average, minimum, and maximum statistics";
+    leaf "instant" {
+      type "decimal64" {
+        fraction-digits "1";
+      }
+
+      units "celsius";
+      description
+        "The instantaneous value of the statistic.";
+    }
+
+    leaf "avg" {
+      type "decimal64" {
+        fraction-digits "1";
+      }
+
+      units "celsius";
+      description
+        "The arithmetic mean value of the statistic over the
+sampling period.";
+    }
+
+    leaf "min" {
+      type "decimal64" {
+        fraction-digits "1";
+      }
+
+      units "celsius";
+      description
+        "The minimum value of the statistic over the sampling
+period";
+    }
+
+    leaf "max" {
+      type "decimal64" {
+        fraction-digits "1";
+      }
+
+      units "celsius";
+      description
+        "The maximum value of the statistic over the sampling
+period";
+    }
+
+    uses "oc-types:stat-interval-state";
+    uses "oc-types:min-max-time";
+  }
+
+  identity "OPENCONFIG_COMPONENT" {
+    description
+      "Base identity for component type.";
+    reference
+      "IANA Entity MIB and RFC 6933";
+  }
+
+  identity "OPENCONFIG_HARDWARE_COMPONENT" {
+    base "OPENCONFIG_COMPONENT";
+    description
+      "Base identity for hardware related components in a managed
+device.  Derived identities are partially based on contents
+of the IANA Entity MIB.";
+    reference
+      "IANA Entity MIB and RFC 6933";
+  }
+
+  identity "OPENCONFIG_SOFTWARE_COMPONENT" {
+    base "OPENCONFIG_COMPONENT";
+    description
+      "Base identity for software-related components in a managed
+device";
+  }
+
+  identity "ME" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "ME component, typically with multiple management element";
+  }
+
+  identity "CHASSIS" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "Chassis component, typically with multiple slots / shelves";
+  }
+
+  identity "SLOT" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "Slot component";
+  }
+
+  identity "BACKPLANE" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "Backplane component for aggregating traffic, typically
+contained in a chassis component";
+  }
+
+  identity "FABRIC" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "Interconnect between ingress and egress ports on the
+device (e.g., a crossbar switch).";
+  }
+
+  identity "POWER_SUPPLY" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "Component that is supplying power to the device";
+  }
+
+  identity "FAN" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "Cooling fan, or could be some other heat-reduction component";
+  }
+
+  identity "SENSOR" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "Physical sensor, e.g., a temperature sensor in a chassis";
+  }
+
+  identity "FRU" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "Replaceable hardware component that does not have a more
+specific defined schema.";
+  }
+
+  identity "LINECARD" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "Linecard component, typically inserted into a chassis slot";
+  }
+
+  identity "CONTROLLER_CARD" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "A type of linecard whose primary role is management or control
+rather than data forwarding.";
+  }
+
+  identity "OCM_CARD" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "OCM CARD";
+  }
+
+  identity "OTDR_CARD" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "OTDR CARD";
+  }
+
+  identity "PORT" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "Physical port, e.g., for attaching pluggables and networking
+cables";
+  }
+
+  identity "TRANSCEIVER" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "Pluggable module present in a port";
+  }
+
+  identity "CPU" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "Processing unit, e.g., a management processor";
+  }
+
+  identity "STORAGE" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "A storage subsystem on the device (disk, SSD, etc.)";
+  }
+
+  identity "INTEGRATED_CIRCUIT" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "A special purpose processing unit, typically for traffic
+switching/forwarding (e.g., switching ASIC, NPU, forwarding
+chip, etc.)";
+  }
+
+  identity "OPERATING_SYSTEM" {
+    base "OPENCONFIG_SOFTWARE_COMPONENT";
+    description
+      "Operating system running on a component";
+  }
+
+  identity "OPERATING_SYSTEM_UPDATE" {
+    base "OPENCONFIG_SOFTWARE_COMPONENT";
+    description
+      "An operating system update - which should be a subcomponent
+of the `OPERATING_SYSTEM` running on a component. An update is
+defined to be a set of software changes that are atomically
+installed (and uninstalled) together. Multiple updates may be
+present for the Operating System. A system should not list all
+installed software packages using this type -- but rather
+updates that are bundled together as a single installable
+item";
+  }
+
+  identity "MUX" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "A passive optical component,such 100GHz AWG MUX, 150GHz AWG MUX";
+  }
+
+  identity "PTM" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "ptm compontent";
+  }
+
+  identity "PTMW" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "ptmw compontent";
+  }
+
+  identity "PTME" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "ptme compontent";
+  }
+
+  identity "TFF" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "tff compontent";
+  }
+
+  identity "WSS" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "wss compontent";
+  }
+
+  identity "FOADM" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "The FOADM card for OLS";
+  }
+
+  identity "OLP" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "The optical line protection card";
+  }
+
+  identity "OA" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "The OA card for P2P system";
+  }
+
+  identity "OLA" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "The OLA card for multi-span system";
+  }
+
+  identity "OCM" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "Optical channel monitor used for optical spectrum and power monitoring";
+  }
+
+  identity "EDFA" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "The EDFA module used for optical amplifier";
+  }
+
+  identity "OTDR" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "Optical time domain reflectometry(i.e. OTDR) used for optical fiber monitoring";
+  }
+
+  identity "APS" {
+    base "OPENCONFIG_HARDWARE_COMPONENT";
+    description
+      "The optical line protection module in OLP card ";
+  }
+
+  identity "COMPONENT_OPER_STATUS" {
+    description
+      "Current operational status of a platform component";
+  }
+
+  identity "ACTIVE" {
+    base "COMPONENT_OPER_STATUS";
+    description
+      "Component is enabled and active (i.e., up)";
+  }
+
+  identity "INACTIVE" {
+    base "COMPONENT_OPER_STATUS";
+    description
+      "Component is enabled but inactive (i.e., down)";
+  }
+
+  identity "DISABLED" {
+    base "COMPONENT_OPER_STATUS";
+    description
+      "Component is administratively disabled.";
+  }
+
+  identity "FEC_MODE_TYPE" {
+    description
+      "Base identity for FEC operational modes.";
+  }
+
+  identity "FEC_ENABLED" {
+    base "FEC_MODE_TYPE";
+    description
+      "FEC is administratively enabled.";
+  }
+
+  identity "FEC_DISABLED" {
+    base "FEC_MODE_TYPE";
+    description
+      "FEC is administratively disabled.";
+  }
+
+  identity "FEC_AUTO" {
+    base "FEC_MODE_TYPE";
+    description
+      "System will determine whether to enable or disable
+FEC on a transceiver.";
+  }
+
+  identity "FEC_STATUS_TYPE" {
+    description
+      "Base identity for FEC operational statuses.";
+  }
+
+  identity "FEC_STATUS_LOCKED" {
+    base "FEC_STATUS_TYPE";
+    description
+      "FEC is operationally locked.";
+  }
+
+  identity "FEC_STATUS_UNLOCKED" {
+    base "FEC_STATUS_TYPE";
+    description
+      "FEC is operationally unlocked.";
+  }
+
+  typedef "component-power-type" {
+    type "enumeration" {
+      enum "POWER_ENABLED" {
+        description
+          "Enable power on the component";
+      }
+
+      enum "POWER_DISABLED" {
+        description
+          "Disable power on the component";
+      }
+
+    }
+
+    description
+      "A generic type reflecting whether a hardware component
+is powered on or off";
+  }
+
+  typedef "component-chassis-type" {
+    type "enumeration" {
+      enum "E" {
+        description
+          "Electrical chassis";
+      }
+
+      enum "O" {
+        description
+          "Optical chassis";
+      }
+
+      enum "EO" {
+        description
+          "composite chassis with Electrical and Optical";
+      }
+
+    }
+
+    description
+      "A generic type reflecting chassis type";
+  }
+
+  typedef "psu-mode-type" {
+    type "enumeration" {
+      enum "AC" {
+        description
+          "Alternating current";
+      }
+
+      enum "DC" {
+        description
+          "Direct  current";
+      }
+
+      enum "HVDC" {
+        description
+          "High voltage direct current";
+      }
+
+    }
+
+    description
+      "PSU mode type";
+  }
+
+  typedef "fan-mode-type" {
+    type "enumeration" {
+      enum "AUTO" {
+        description
+          "Auto switch fan speed";
+      }
+
+      enum "MANUAL" {
+        description
+          "Manual switch fan speed";
+      }
+
+    }
+
+    description
+      "fan mode type";
+  }
+
+  typedef "fan-speed-type" {
+    type "enumeration" {
+      enum "HIGH" {
+        description
+          "High fan speed";
+      }
+
+      enum "MIDDLE" {
+        description
+          "Middle fan speed";
+      }
+
+      enum "LOW" {
+        description
+          "Low fan speed";
+      }
+
+    }
+
+    description
+      "fan speed type";
+  }
+
+  typedef "channel-interval-type" {
+    type "enumeration" {
+      enum "CHANNEL_50G" {
+        description
+          "50GHz";
+      }
+
+      enum "CHANNEL_75G" {
+        description
+          "75GHz";
+      }
+
+      enum "CHANNEL_100G" {
+        description
+          "100GHz";
+      }
+
+    }
+
+    description
+      "Mux interval type";
+  }
+
+  typedef "mux-type" {
+    type "enumeration" {
+      enum "AWG" {
+        description
+          "AWG";
+      }
+
+      enum "TFF" {
+        description
+          "TFF";
+      }
+
+      enum "WSS" {
+        description
+          "WSS";
+      }
+
+    }
+
+    description
+      "Mux type";
+  }
+
+  typedef "ptm-work-type" {
+    type "enumeration" {
+      enum "RELAY" {
+        description
+          "RELAY state";
+      }
+
+      enum "UpDown" {
+        description
+          "Up and down state";
+      }
+
+    }
+
+    description
+      "ptm work type";
+  }
+
+}

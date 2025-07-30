@@ -1,0 +1,274 @@
+module "miniotn-performance" {
+  yang-version "1";
+  namespace "urn:cmcc:yang:performance";
+  prefix "mo-performance";
+  import "ietf-yang-types" {
+    prefix "yang";
+  }
+
+  import "openconfig-types" {
+    prefix "oc-types";
+  }
+
+  import "miniotn-performance-types" {
+    prefix "mo-performance-types";
+  }
+
+  organization
+    "Cmcc minOTN working group";
+  contact
+    "";
+  description
+    "This module defines an interface for managing performances.";
+  revision "2023-04-26" {
+    description
+      "Initial release for MinOTN.";
+    reference
+      "RFC xxx";
+  }
+
+  grouping "performance" {
+    description
+      "device performances";
+    leaf "bin-no" {
+      type "int32";
+      description
+        "bin no from 0(current)";
+    }
+
+    leaf "object-name" {
+      type "string" {
+        length "1..64";
+      }
+
+      mandatory "true";
+      description
+        "object-name";
+    }
+
+    leaf "object-type" {
+      mandatory "true";
+      type "oc-types:object-type";
+      description
+        "object-type";
+    }
+
+    leaf "pm-parameter-name" {
+      type "mo-performance-types:pm-parameter-type";
+      mandatory "true";
+      description
+        "pm-parameter-name";
+    }
+
+    leaf "pm-granularity" {
+      type "oc-types:granularity";
+      mandatory "true";
+      description
+        "granularity";
+    }
+
+    leaf "pm-start-time" {
+      type "yang:date-and-time";
+      description
+        "pm-start-time";
+    }
+
+    choice "performance-type" {
+      case "digital" {
+        leaf "digital-pm-value" {
+          type "oc-types:real";
+          description
+            "digital-pm-value";
+        }
+
+      }
+
+      case "analog" {
+        container "analog-pm-value" {
+          leaf "max-value" {
+            type "oc-types:real";
+            description
+              "max-value";
+          }
+
+          leaf "min-value" {
+            type "oc-types:real";
+            description
+              "min-value";
+          }
+
+          leaf "average-value" {
+            type "oc-types:real";
+            description
+              "average-value";
+          }
+
+          leaf "current-value" {
+            type "oc-types:real";
+            description
+              "current-value";
+          }
+
+          description
+            "analog-pm-value";
+        }
+
+      }
+
+    }
+
+  }
+
+  grouping "gperformances" {
+    list "performance" {
+      key "object-name pm-parameter-name pm-granularity pm-start-time";
+      config "false";
+      uses "performance";
+      description
+        "device performances";
+    }
+
+  }
+
+  grouping "performance-pmp-config" {
+    description
+      "Configuration data for performance monitoring points";
+    leaf "pm-point-enable" {
+      mandatory "true";
+      type "boolean";
+      description
+        "Enable (true) or disable (false) the performance monitoring point for the object";
+    }
+
+  }
+
+  grouping "performance-pmp-top" {
+    description
+      "Top-level grouping for performance point in the performance inventory";
+    container "pmps" {
+      description
+        "Enclosed data for pmp.";
+      list "pmp" {
+        key "pm-point granularity";
+        description
+          "List of performance point, keyed by path of performance.";
+        leaf "pm-point" {
+          type "string";
+          description
+            "The path of the performance monitoring point";
+        }
+
+        leaf "granularity" {
+          type "oc-types:granularity";
+          description
+            "tca-parameter granularity";
+        }
+
+        uses "performance-pmp-config";
+      }
+
+    }
+
+  }
+
+  container "performances" {
+    uses "performance-pmp-top";
+    description
+      "performances container";
+  }
+
+  rpc "get-history-performance-monitoring-data" {
+    description
+      "none";
+    input {
+      leaf "collect-start-time" {
+        mandatory "true";
+        type "yang:date-and-time";
+        description
+          "none";
+      }
+
+      leaf "collect-end-time" {
+        mandatory "true";
+        type "yang:date-and-time";
+        description
+          "none";
+      }
+
+      leaf "object-name" {
+        mandatory "true";
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "none";
+      }
+
+      leaf "pm-granularity" {
+        mandatory "true";
+        type "oc-types:granularity";
+        description
+          "none";
+      }
+
+      leaf "pm-parameter-name" {
+        type "mo-performance-types:pm-parameter-type";
+        description
+          "none";
+      }
+
+    }
+
+    output {
+      container "performances" {
+        uses "gperformances";
+        description
+          "none";
+      }
+
+    }
+
+  }
+
+  rpc "get-current-performance-monitoring-data" {
+    description
+      "none";
+    input {
+      leaf "object-name" {
+        mandatory "true";
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "none";
+      }
+
+      leaf "pm-granularity" {
+        mandatory "true";
+        type "oc-types:granularity";
+        description
+          "none";
+      }
+
+      leaf "pm-parameter-name" {
+        type "mo-performance-types:pm-parameter-type";
+        description
+          "none";
+      }
+
+    }
+
+    output {
+      container "performances" {
+        uses "gperformances";
+        description
+          "none";
+      }
+
+    }
+
+  }
+
+}

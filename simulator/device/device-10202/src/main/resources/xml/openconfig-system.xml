@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+        <system xmlns="http://openconfig.net/yang/system">
+            <config>
+                <hostname>mss25dci-402</hostname>
+                <domain-name>www.optel.com.cn</domain-name>
+            </config>
+            <state>
+                <hostname>mss25dci-402</hostname>
+                <domain-name>www.optel.com.cn</domain-name>
+                <current-datetime>2025-06-06T09:57:55+08:00</current-datetime>
+                <boot-time>1747964629000000000</boot-time>
+            </state>
+            <clock>
+                <config>
+                    <timezone-name>+08:00</timezone-name>
+                </config>
+                <state>
+                    <timezone-name>+08:00</timezone-name>
+                </state>
+            </clock>
+            <ntp>
+                <config>
+                    <enabled>true</enabled>
+                </config>
+                <state>
+                    <enabled>true</enabled>
+                </state>
+                <servers>
+                    <server>
+                        <address>213.213.40.169</address>
+                        <config>
+                            <address>213.213.40.169</address>
+                            <port>123</port>
+                            <version>1</version>
+                        </config>
+                        <state>
+                            <address>213.213.40.169</address>
+                            <port>123</port>
+                            <version>1</version>
+                        </state>
+                    </server>
+                    <server>
+                        <address>213.213.40.232</address>
+                        <config>
+                            <address>213.213.40.232</address>
+                            <port>123</port>
+                            <version>4</version>
+                        </config>
+                        <state>
+                            <address>213.213.40.232</address>
+                            <port>123</port>
+                            <version>4</version>
+                        </state>
+                    </server>
+                </servers>
+            </ntp>
+        </system>
+    </data>
+
+</rpc-reply>

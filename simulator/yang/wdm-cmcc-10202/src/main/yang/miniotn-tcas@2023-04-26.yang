@@ -1,0 +1,232 @@
+module "miniotn-tcas" {
+  yang-version "1";
+  namespace "urn:cmcc:yang:tcas";
+  prefix "mo-tcas";
+  import "openconfig-alarm-types" {
+    prefix "oc-alarm-types";
+  }
+
+  import "openconfig-extensions" {
+    prefix "oc-ext";
+  }
+
+  import "openconfig-platform" {
+    prefix "oc-platform";
+  }
+
+  import "ietf-yang-types" {
+    prefix "yang";
+  }
+
+  import "openconfig-types" {
+    prefix "oc-types";
+  }
+
+  import "miniotn-performance-types" {
+    prefix "mo-performance-types";
+  }
+
+  organization
+    "Cmcc minOTN working group";
+  contact
+    "";
+  description
+    "This module defines operational state data related to alarms
+that the device is reporting.
+
+This model reuses some data items defined in the draft IETF
+YANG Alarm Module:
+https://tools.ietf.org/html/draft-vallin-netmod-alarm-module-02
+
+Portions of this code were derived from the draft IETF YANG Alarm
+Module. Please reproduce this note if possible.
+
+IETF code is subject to the following copyright and license:
+Copyright (c) IETF Trust and the persons identified as authors of
+the code.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, is permitted pursuant to, and subject to the license
+terms contained in, the Simplified BSD License set forth in
+Section 4.c of the IETF Trust's Legal Provisions Relating
+to IETF Documents (http://trustee.ietf.org/license-info).";
+  revision "2023-04-26" {
+    description
+      "Initial release for MinOTN.";
+    reference
+      "1.0.0";
+  }
+
+  grouping "tca-parameter" {
+    leaf "object-type" {
+      type "oc-types:object-type";
+      description
+        "tca-parameter object-type";
+    }
+
+    leaf "object-name" {
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "tca-parameter object-name";
+    }
+
+    leaf "pm-parameter-name" {
+      type "mo-performance-types:pm-parameter-type";
+      description
+        "tca-parameter pm-parameter-name";
+    }
+
+    leaf "granularity" {
+      type "oc-types:granularity";
+      description
+        "tca-parameter granularity";
+    }
+
+    leaf "threshold-type" {
+      type "oc-types:threshold-type";
+      description
+        "tca-parameter threshold-type";
+    }
+
+    leaf "threshold-value" {
+      type "oc-types:real";
+      mandatory "true";
+      description
+        "tca-parameter threshold-value";
+    }
+
+  }
+
+  grouping "tca" {
+    leaf "tca-serial-no" {
+      type "string";
+      description
+        "Unique ID for the alarm -- this will not be a
+      configurable parameter on many implementations";
+    }
+
+    leaf "tca-state" {
+      type "oc-alarm-types:alarm-state";
+      config "false";
+      description
+        "current tca state";
+    }
+
+    leaf "start-time" {
+      config "false";
+      type "yang:date-and-time";
+      description
+        "tca start-time";
+    }
+
+    leaf "end-time" {
+      config "false";
+      type "yang:date-and-time";
+      description
+        "tca end-tiem";
+    }
+
+    leaf "object-type" {
+      config "false";
+      type "oc-types:object-type";
+      description
+        "tca-parameter object-type";
+    }
+
+    leaf "object-name" {
+      config "false";
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "tca-parameter object-name";
+    }
+
+    leaf "pm-parameter-name" {
+      config "false";
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "tca-parameter pm-parameter-name";
+    }
+
+    leaf "granularity" {
+      type "oc-types:granularity";
+      config "false";
+      description
+        "tca-parameter granularity";
+    }
+
+    leaf "threshold-type" {
+      type "oc-types:threshold-type";
+      config "false";
+      description
+        "tca-parameter threshold-type";
+    }
+
+    leaf "threshold-value" {
+      type "oc-types:real";
+      config "false";
+      description
+        "tca-parameter threshold-value";
+    }
+
+    leaf "current-value" {
+      type "oc-types:real";
+      config "false";
+      description
+        "tca-parameter threshold-value";
+    }
+
+  }
+
+  grouping "tcas-top" {
+    list "tca" {
+      key "tca-serial-no";
+      uses "tca";
+      description
+        "tcas list";
+    }
+
+    description
+      "alarms";
+  }
+
+  container "tca-top" {
+    description
+      "tca top";
+    container "tcas" {
+      uses "tcas-top";
+      description
+        "tcas container";
+    }
+
+    container "tca-parameters" {
+      list "tca-parameter" {
+        key "object-type object-name pm-parameter-name granularity threshold-type";
+        uses "tca-parameter";
+        description
+          "tca-parameter";
+      }
+
+    }
+
+  }
+
+  notification "tca-notification" {
+    container "tca" {
+      uses "tca";
+      description
+        "tca-notification";
+    }
+
+  }
+
+}
