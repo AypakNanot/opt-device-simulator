@@ -1,0 +1,60 @@
+module miniotn-alarm-mask-types {
+
+  yang-version "1";
+
+  // namespace
+  namespace "urn:cmcc:yang:alarms:mask:types";
+
+  prefix "mo-alarm-mask-types";
+
+  // import some basic types
+  import openconfig-extensions { prefix oc-ext;revision-date "2018-10-17"; }
+
+
+  // meta
+  organization "Cmcc minOTN working group";
+
+  contact
+    "";
+
+  description
+    "This module";
+
+  oc-ext:openconfig-version "1.0.0";
+
+  revision "2023-04-26" {
+    description
+      "Initial release for MinOTN.";
+    reference "1.0.0";
+  }
+
+  // OpenConfig specific extensions for module metadata.
+
+  typedef alarm-mask-object-type {
+    type enumeration {
+      enum ME {
+        value 0;
+        description
+        "range of alarm mask is a chassis";
+      }
+      enum CHASSIS {
+        value 1;
+        description
+        "range of alarm mask is a chassis";
+      }
+      enum CARD {
+        value 2;
+        description
+        "range of alarm mask is a card";
+      }
+      enum PORT {
+        value 3;
+        description
+        "range of alarm mask is a port";
+      }
+    }
+    description
+      "the range of alarm mask";
+    reference "0.1.0";
+  }
+}

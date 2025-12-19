@@ -1,0 +1,19 @@
+module "opt-version" {
+  yang-version "1.1";
+  namespace "com:opt:s-otn:yearning:yang:version";
+  prefix "opt-ver";
+  revision "2025-08-25" {
+    description
+      "This revision change history:
+- 2025-08-25 cmcc yang update && 2025.10 Modify number-of-tributary-slots
+";
+  }
+
+  revision "2025-02-28" {
+    description
+      "This revision change history:
+- 2025-02-28 cmcc yang update V2.5.1
+";
+  }
+
+}

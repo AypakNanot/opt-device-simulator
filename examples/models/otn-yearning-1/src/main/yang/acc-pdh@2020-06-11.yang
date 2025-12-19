@@ -1,0 +1,126 @@
+module "acc-pdh" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-pdh";
+  prefix "acc-pdh";
+  import "acc-devm" {
+    prefix "acc-devm";
+  }
+
+  import "acc-sdh" {
+    prefix "acc-sdh";
+  }
+
+  import "acc-otn-types" {
+    prefix "acc-otn-types";
+  }
+
+  revision "2020-06-11" {
+    description
+      "Add Pdh pac for ptp.";
+  }
+
+  typedef "e1-phy-type" {
+    type "enumeration" {
+      enum "75o" {
+        value "1";
+        description
+          "Units: Ω 欧姆. ";
+      }
+
+      enum "120o" {
+        value "2";
+        description
+          "Units: Ω 欧姆. ";
+      }
+
+    }
+
+    description
+      "E1 interface type.";
+  }
+
+  typedef "e1-opcode" {
+    type "enumeration" {
+      enum "HDB3" {
+        value "1";
+        description
+          "HBD3";
+      }
+
+      enum "AMI" {
+        value "2";
+        description
+          "AMI";
+      }
+
+    }
+
+    description
+      "Encoding format of PDH ptp port. ";
+  }
+
+  typedef "e1-frame-type" {
+    type "enumeration" {
+      enum "unframe" {
+        value "1";
+        description
+          "unframe";
+      }
+
+      enum "PCM30" {
+        value "2";
+        description
+          "PCM30";
+      }
+
+      enum "PCM31" {
+        value "3";
+        description
+          "PCM31";
+      }
+
+      enum "PCM30C" {
+        value "4";
+        description
+          "PCM30C";
+      }
+
+      enum "PCM31C" {
+        value "5";
+        description
+          "PCM31C";
+      }
+
+    }
+
+    description
+      "E1 frame type. ";
+  }
+
+  augment "/acc-devm:ptps/acc-devm:ptp/acc-sdh:sdh-ptp-pac" {
+    when "current-sdh-signal-type = 'acc-otn-types:E1'";
+    container "pdh-ptp-pac" {
+      leaf "e1-phy-type" {
+        config "false";
+        type "e1-phy-type";
+        description
+          "optional";
+      }
+
+      leaf "e1-opcode" {
+        type "e1-opcode";
+        description
+          "optional";
+      }
+
+      leaf "e1-frame-type" {
+        type "e1-frame-type";
+        description
+          "optional";
+      }
+
+    }
+
+  }
+
+}

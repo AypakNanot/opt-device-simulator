@@ -1,0 +1,224 @@
+module openconfig-platform-port {
+
+  yang-version "1";
+
+  // namespace
+  namespace "http://openconfig.net/yang/platform/port";
+
+  prefix "oc-port";
+
+  // import some basic types
+  import openconfig-platform { prefix oc-platform;revision-date "2020-06-30"; }
+  import openconfig-interfaces { prefix oc-if;revision-date "2019-11-19"; }
+  import openconfig-extensions { prefix oc-ext;revision-date "2018-10-17"; }
+  import openconfig-transport-types { prefix oc-opt-types;revision-date "2020-06-30"; }
+
+  // meta
+  organization "OpenConfig working group";
+
+  contact
+    "OpenConfig working group
+    www.openconfig.net";
+
+  description
+    "This module defines data related to PORT components in the
+    openconfig-platform model";
+
+  oc-ext:openconfig-version "0.3.2";
+
+  revision "2020-06-30" {
+    description
+      "Initial release for DCI Box.";
+    reference "0.3.3";
+  }
+  
+  revision "2018-11-21" {
+    description
+      "Add OpenConfig module metadata extensions.";
+    reference "0.3.2";
+  }
+
+  revision "2018-11-07" {
+    description
+      "Fixed error in when statement path";
+    reference "0.3.1";
+  }
+
+  revision "2018-01-20" {
+    description
+      "Added augmentation for interface-to-port reference";
+    reference "0.3.0";
+  }
+
+  revision "2017-11-17" {
+    description
+      "Corrected augmentation path for port data";
+    reference "0.2.0";
+  }
+
+  revision "2016-10-24" {
+    description
+      "Initial revision";
+    reference "0.1.0";
+  }
+
+  // OpenConfig specific extensions for module metadata.
+  oc-ext:regexp-posix;
+  oc-ext:catalog-organization "openconfig";
+  oc-ext:origin "openconfig";
+
+  // extension statements
+
+  // feature statements
+
+  // identity statements
+
+  // typedef statements
+
+  // grouping statements
+
+  identity ETHERNET_SPEED {
+    description "base type to specify available Ethernet link
+    speeds";
+  }
+
+  grouping port-breakout-config {
+    description
+      "Configuration data for the port breakout mode";
+    leaf num-channels {
+      //TODO: mandatory true;
+      type uint8;
+      description
+        "Sets the number of channels to 'breakout' on a port
+        capable of channelization";
+    }
+    leaf channel-speed {
+      //TODO: mandatory true;
+      type identityref {
+      base ETHERNET_SPEED;
+    }
+      description
+        "Sets the channel speed on each channel -- the
+        supported values are defined by the
+        ETHERNET_SPEED identity";
+    }
+  }
+
+
+
+  grouping port-breakout-state {
+    description
+      "Operational state data for the port breakout mode ";
+  }
+
+  grouping port-breakout-top {
+    description
+      "Top-level grouping for port breakout data";
+    container breakout-mode {
+      description
+        "Top-level container for port breakout data";
+      container config {
+        description
+          "Configuration data for port breakout";
+        uses port-breakout-config;
+      }
+      container state {
+        config false;
+        description
+          "Operational state data for port breakout";
+        uses port-breakout-config;
+        uses port-breakout-state;
+      }
+    }
+  }
+   
+  grouping port-config {
+    leaf reverse-mode {
+      type enumeration {
+	    enum MANUAL {
+	      value 0;
+	    }
+	    enum AUTO {
+	      value 1;
+	    }
+	    enum NONE {
+	      value 2;
+	    }
+	  }
+    }
+	leaf layer-protocol-name {
+      type identityref {
+	    base oc-opt-types:TRIBUTARY_PROTOCOL_TYPE;
+	  }
+	  description
+	    "used layer protocol name";
+    }
+  }
+  grouping port-state {
+    uses port-config;
+
+    container supported-layer-protocol-names {
+	  leaf-list supported-layer-protocol-name {
+        type identityref {
+	      base oc-opt-types:TRIBUTARY_PROTOCOL_TYPE;
+	    }
+	    description
+	      "supported layer protocol name";
+      }
+	}
+  }
+	
+    
+
+  // data definition statements
+
+  // augment statements
+
+  augment "/oc-platform:components/oc-platform:component/" +
+    "oc-platform:port" {
+    description
+      "Adding port breakout data to physical platform data";
+    uses port-breakout-top {
+      when "../oc-platform:state/oc-platform:type = 'PORT'" {
+        description
+          "This data is valid only for PORT components";
+      }
+    }
+  }
+  
+  augment "/oc-platform:components/oc-platform:component/" +
+    "oc-platform:port/oc-platform:state" {
+    description
+      "Adding port state data to component model";
+    uses port-state;
+  }
+  
+  augment "/oc-platform:components/oc-platform:component/" +
+    "oc-platform:port/oc-platform:config" {
+	description
+      "Adding port config data to component model";
+    uses port-config;
+  }
+
+
+  augment "/oc-if:interfaces/oc-if:interface/oc-if:state" {
+    description
+      "Adds a reference from the base interface to the corresponding
+      port component in the device inventory.";
+
+    leaf hardware-port {
+      type leafref {
+        path "/oc-platform:components/oc-platform:component/" +
+          "oc-platform:name";
+      }
+      description
+        "For non-channelized interfaces, references the hardware port
+        corresponding to the base interface.";
+    }
+  }
+
+  // rpc statements
+
+  // notification statements
+
+}

@@ -1,0 +1,3666 @@
+module "opt-otn-extension" {
+  yang-version "1.1";
+  namespace "com:optel:yang:otn:extension";
+  prefix "opt-otn-extension";
+  import "acc-devm" {
+    prefix "acc-devm";
+  }
+
+  import "acc-alarms" {
+    prefix "acc-alm";
+  }
+
+  import "acc-performance" {
+    prefix "acc-pm";
+  }
+
+  import "acc-eth" {
+    prefix "acc-eth";
+  }
+
+  import "acc-otn-types" {
+    prefix "acc-otn-types";
+  }
+
+  import "acc-connection" {
+    prefix "acc-con";
+  }
+
+  import "acc-otn" {
+    prefix "acc-otn";
+  }
+
+  import "acc-yang-types" {
+    prefix "acc-type";
+  }
+
+  import "acc-protection-group" {
+    prefix "acc-protection-group";
+  }
+
+  import "ietf-yang-types" {
+    prefix "yang";
+  }
+
+  import "ietf-inet-types" {
+    prefix "inet";
+  }
+
+  import "acc-eos" {
+    prefix "acc-eos";
+  }
+
+  revision "2024-12-04" {
+    description
+      "Initial revision";
+  }
+
+  typedef "lpt-mode" {
+    type "enumeration" {
+      enum "ICSD" {
+        value "0";
+      }
+
+      enum "TOL" {
+        value "1";
+      }
+
+    }
+
+  }
+
+  typedef "insert-type" {
+    type "enumeration" {
+      enum "Direct-Insert" {
+        value "0";
+      }
+
+      enum "Delay-Insert" {
+        value "1";
+      }
+
+      enum "Null" {
+        value "2";
+      }
+
+      enum "PN11" {
+        value "3";
+      }
+
+      enum "MS_AIS" {
+        value "4";
+      }
+
+    }
+
+  }
+
+  container "eth-ptps-band-width" {
+    uses "eth-ptp-band-width-grouping";
+  }
+
+  container "oam-eth-config" {
+    container "eth-lm-configs" {
+      uses "eth-lm-configs-grouping";
+    }
+
+    container "eth-dm-configs" {
+      uses "eth-dm-configs-grouping";
+    }
+
+    container "eth-mip-configs" {
+      uses "eth-oam-mip-configs-grouping";
+    }
+
+  }
+
+  grouping "eth-oam-mip-configs-grouping" {
+    list "eth-oam-mip-config" {
+      key "ctp-name";
+      uses "eth-oam-mip-config-grouping";
+    }
+
+  }
+
+  grouping "eth-lm-configs-grouping" {
+    list "eth-lm-config" {
+      key "name";
+      uses "eth-lm-config-grouping";
+    }
+
+  }
+
+  grouping "eth-dm-configs-grouping" {
+    list "eth-dm-config" {
+      key "name";
+      uses "eth-dm-config-grouping";
+    }
+
+  }
+
+  container "lpt-pacs" {
+    uses "lpt-grouping";
+  }
+
+  grouping "lpt-grouping" {
+    list "lpt" {
+      key "name";
+      leaf "name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "Name of ptp";
+      }
+
+      leaf "admin-state" {
+        mandatory "true";
+        type "acc-devm:admin-state";
+      }
+
+      leaf "lpt-mode" {
+        mandatory "true";
+        type "lpt-mode";
+      }
+
+    }
+
+  }
+
+  container "alarm-delay-inserts" {
+    uses "alarm-delay-inserts-grouping";
+  }
+
+  grouping "alarm-delay-inserts-grouping" {
+    list "alarm-delay-insert" {
+      key "name";
+      uses "alarm-delay-insert-grouping";
+    }
+
+  }
+
+  grouping "alarm-delay-insert-grouping" {
+    leaf "name" {
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "Name of ptp";
+    }
+
+    leaf "insert-type" {
+      mandatory "true";
+      type "insert-type";
+    }
+
+    leaf "delay-time" {
+      type "uint8";
+    }
+
+  }
+
+  grouping "pm-counter-attr-grouping" {
+    leaf "zero-pm-count-enable" {
+      mandatory "true";
+      type "boolean";
+      description
+        "default false";
+    }
+
+  }
+
+  container "pm-counter-attr" {
+    uses "pm-counter-attr-grouping";
+  }
+
+  rpc "set-odu-termination-point-type" {
+    description
+      "Configurate or modify ODU signal type";
+    input {
+      leaf "odu-ptp-name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "ODU PTP unique identification";
+      }
+
+      leaf "signal-type" {
+        type "identityref" {
+          base "acc-otn-types:client-signal-type";
+        }
+
+        description
+          "The ODU signal type that use to be configurated or modified";
+      }
+
+    }
+
+  }
+
+  rpc "set-eth-ptp-optical-electrical" {
+    input {
+      leaf "eth-ptp-name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "eth PTP unique identification";
+      }
+
+      leaf "port-type" {
+        type "acc-eth:port-type";
+        description
+          "Electrical or Optical";
+      }
+
+    }
+
+  }
+
+  rpc "start-eth-lb" {
+    description
+      "Start eth cfm oam lb test";
+    input {
+      uses "eth-lb-input-grouping";
+    }
+
+  }
+
+  rpc "get-eth-lb" {
+    description
+      "Query eth cfm oam lb test results";
+    input {
+      uses "ctp-name-grouping";
+    }
+
+    output {
+      container "eth-lbs" {
+        uses "eth-lb-grouping";
+      }
+
+    }
+
+  }
+
+  rpc "stop-eth-lb" {
+    description
+      "Stop eth cfm oam lb test";
+    input {
+      uses "ctp-name-grouping";
+    }
+
+  }
+
+  notification "lb-notification" {
+    description
+      "ETH CFM OAM LB notification results";
+    uses "lb-notification-grouping";
+  }
+
+  rpc "start-eth-lt" {
+    description
+      "Start eth cfm oam lt test";
+    input {
+      uses "eth-lt-input-grouping";
+    }
+
+  }
+
+  notification "lt-notification" {
+    description
+      "ETH CFM OAM LT notification results";
+    uses "lt-notification-grouping";
+  }
+
+  rpc "start-eth-lm" {
+    description
+      "Start eth cfm oam lm test";
+    input {
+      uses "eth-lm-input-grouping";
+    }
+
+  }
+
+  rpc "get-eth-lm" {
+    description
+      "Query eth cfm oam lm test results";
+    input {
+      uses "eth-lm-input-grouping";
+    }
+
+    output {
+      container "eth-lms" {
+        uses "eth-lm-grouping";
+      }
+
+    }
+
+  }
+
+  notification "lm-notification" {
+    description
+      "ETH CFM OAM Lm notification results";
+    uses "lm-notification-grouping";
+  }
+
+  rpc "stop-eth-lm" {
+    description
+      "Stop eth cfm oam lm test";
+    input {
+      uses "eth-lm-input-grouping";
+    }
+
+  }
+
+  rpc "start-eth-dm" {
+    description
+      "Start eth cfm oam dm test";
+    input {
+      uses "eth-dm-input-grouping";
+    }
+
+  }
+
+  rpc "get-eth-dm" {
+    description
+      "Query eth cfm oam dm test results";
+    input {
+      uses "eth-dm-input-grouping";
+    }
+
+    output {
+      container "eth-dms" {
+        uses "eth-dm-grouping";
+      }
+
+    }
+
+  }
+
+  notification "dm-notification" {
+    description
+      "ETH CFM OAM Lm notification results";
+    uses "dm-notification-grouping";
+  }
+
+  rpc "stop-eth-dm" {
+    description
+      "Stop eth cfm oam dm test";
+    input {
+      uses "eth-dm-input-grouping";
+    }
+
+  }
+
+  grouping "dm-notification-grouping" {
+    container "dm-notification" {
+      description
+        "CFM OAM DM Test notification results";
+      uses "ctp-name-grouping";
+      leaf "name" {
+        type "string";
+        description
+          "test uniqueness name";
+      }
+
+      uses "eth-dm-grouping";
+      uses "eth-dm-summary-grouping";
+    }
+
+  }
+
+  grouping "eth-dm-summary-grouping" {
+    container "summary" {
+      description
+        "CFM OAM dm summary";
+      leaf "average-delay" {
+        type "decimal64" {
+          fraction-digits "4";
+        }
+
+        description
+          "average delay usec";
+      }
+
+      leaf "maximum-delay" {
+        type "decimal64" {
+          fraction-digits "4";
+        }
+
+        description
+          "maximum delay usec";
+      }
+
+      leaf "minimum-delay" {
+        type "decimal64" {
+          fraction-digits "4";
+        }
+
+        description
+          "minimum delay usec";
+      }
+
+      leaf "average-delay-variation" {
+        type "decimal64" {
+          fraction-digits "4";
+        }
+
+        description
+          "average delay delay variation usec";
+      }
+
+      leaf "maximum-delay-variation" {
+        type "decimal64" {
+          fraction-digits "4";
+        }
+
+        description
+          "maximum delay delay variation usec";
+      }
+
+      leaf "minimum-delay-variation" {
+        type "decimal64" {
+          fraction-digits "4";
+        }
+
+        description
+          "minimum delay delay variation usec";
+      }
+
+    }
+
+  }
+
+  grouping "eth-dm-grouping" {
+    description
+      "eth cfm oam dm results";
+    list "eth-dm" {
+      description
+        "results";
+      leaf "index" {
+        type "uint32";
+        description
+          "test index number,increasing";
+      }
+
+      leaf "delay" {
+        type "decimal64" {
+          fraction-digits "4";
+        }
+
+        description
+          "delay usec";
+      }
+
+      leaf "delay-variation" {
+        type "decimal64" {
+          fraction-digits "4";
+        }
+
+        description
+          "delay variation usec";
+      }
+
+    }
+
+  }
+
+  grouping "eth-dm-input-grouping" {
+    description
+      "eth cfm oam dm input test";
+    uses "ctp-name-grouping";
+    leaf "name" {
+      type "string" {
+        length "1..128";
+      }
+
+      description
+        "test uniqueness name";
+    }
+
+  }
+
+  typedef "eth-lm-working-mode" {
+    type "enumeration" {
+      enum "dual-ended";
+      enum "single-ended";
+    }
+
+  }
+
+  grouping "lm-notification-grouping" {
+    container "lm-notification" {
+      description
+        "CFM OAM LM Test notification results";
+      uses "ctp-name-grouping";
+      leaf "name" {
+        type "string" {
+          length "1..128";
+        }
+
+        description
+          "test uniqueness name";
+      }
+
+      uses "eth-lm-grouping";
+      uses "eth-lm-summary-grouping";
+    }
+
+  }
+
+  grouping "eth-lm-summary-grouping" {
+    container "summary" {
+      description
+        "CFM OAM lm summary";
+      leaf "local-loss" {
+        type "uint32";
+        description
+          "local loss package count";
+      }
+
+      leaf "local-loss-ratio" {
+        type "decimal64" {
+          fraction-digits "4";
+        }
+
+        description
+          "local loss ratio";
+      }
+
+      leaf "remote-tx-pkts" {
+        type "uint32";
+        description
+          "remote send package count";
+      }
+
+      leaf "remote-loss" {
+        type "uint32";
+        description
+          "remote loss package count";
+      }
+
+      leaf "remote-loss-ratio" {
+        type "decimal64" {
+          fraction-digits "4";
+        }
+
+        description
+          "remote loss ratio";
+      }
+
+      leaf "local-tx-pkts" {
+        type "uint32";
+        description
+          "local send package count";
+      }
+
+    }
+
+  }
+
+  grouping "eth-lm-grouping" {
+    description
+      "eth cfm oam lm results";
+    list "eth-lm" {
+      description
+        "results";
+      leaf "index" {
+        type "uint32";
+        description
+          "test index number,increasing";
+      }
+
+      leaf "remote-send-count" {
+        type "uint32";
+        description
+          "remote send package count";
+      }
+
+      leaf "local-receive-count" {
+        type "uint32";
+        description
+          "local receive package count";
+      }
+
+      leaf "local-lost-pack-ratio" {
+        type "decimal64" {
+          fraction-digits "4";
+        }
+
+        description
+          "local lost pack ratio";
+      }
+
+      leaf "local-send-count" {
+        type "uint32";
+        description
+          "local send pack count";
+      }
+
+      leaf "remote-receive-count" {
+        type "uint32";
+        description
+          "remote receive pack count";
+      }
+
+      leaf "remote-lost-pack-ratio" {
+        type "decimal64" {
+          fraction-digits "4";
+        }
+
+        description
+          "remote lost pack ratio";
+      }
+
+    }
+
+  }
+
+  grouping "eth-lm-input-grouping" {
+    description
+      "eth cfm oam lm input test";
+    uses "ctp-name-grouping";
+    leaf "name" {
+      type "string" {
+        length "1..128";
+      }
+
+      description
+        "test uniqueness name";
+    }
+
+  }
+
+  grouping "lt-notification-grouping" {
+    container "lt-notification" {
+      description
+        "CFM OAM LT Test notification results";
+      uses "ctp-name-grouping";
+      uses "eth-lt-grouping";
+    }
+
+  }
+
+  grouping "eth-lt-input-grouping" {
+    description
+      "CFM OAM LT Test input";
+    uses "ctp-name-grouping";
+    leaf "mac" {
+      type "yang:mac-address";
+      description
+        "mac";
+    }
+
+    leaf "mp-id" {
+      type "uint16" {
+        range "0..8191";
+      }
+
+      description
+        "remote mp id, mep id or mip id";
+    }
+
+    leaf "priority" {
+      mandatory "true";
+      type "uint16" {
+        range "0..7";
+      }
+
+      description
+        "priority, default 6";
+    }
+
+    leaf "ttl" {
+      type "uint16" {
+        range "1..64";
+      }
+
+      description
+        "ttl";
+    }
+
+  }
+
+  grouping "eth-lt-grouping" {
+    description
+      "CFM OAM LT Test output";
+    list "eth-lt" {
+      key "mp-mac";
+      leaf "hops" {
+        type "uint16";
+        description
+          "hops";
+      }
+
+      leaf "mp-mac" {
+        type "string";
+        description
+          "remote MEP MAC";
+      }
+
+      leaf "reply-action" {
+        type "string";
+        description
+          "reply action";
+      }
+
+    }
+
+  }
+
+  grouping "lb-notification-grouping" {
+    container "lb-notification" {
+      description
+        "CFM OAM LB Test notification results";
+      uses "ctp-name-grouping";
+      uses "eth-lb-grouping";
+      uses "eth-lb-summary-grouping";
+    }
+
+  }
+
+  grouping "eth-lb-grouping" {
+    description
+      "CFM OAM LB Test output";
+    list "eth-lb" {
+      key "sequence";
+      leaf "bytes" {
+        type "uint16";
+        description
+          "package length";
+      }
+
+      leaf "sequence" {
+        type "int32";
+        description
+          "test sequence number,increasing";
+      }
+
+      leaf "time" {
+        type "int32";
+        description
+          "test time difference (ms)";
+      }
+
+    }
+
+  }
+
+  grouping "eth-lb-summary-grouping" {
+    container "summary" {
+      description
+        "CFM OAM LB Test notification summary";
+      leaf "maximumTime" {
+        type "int32";
+        description
+          "The max time difference (ms)";
+      }
+
+      leaf "minimumTime" {
+        type "int32";
+        description
+          "The min time difference (ms)";
+      }
+
+      leaf "averageTime" {
+        type "int32";
+        description
+          "The avg time difference (ms)";
+      }
+
+    }
+
+  }
+
+  grouping "eth-lb-input-grouping" {
+    description
+      "CFM OAM LB Test input";
+    uses "ctp-name-grouping";
+    leaf "mac" {
+      type "yang:mac-address";
+      description
+        "mac";
+    }
+
+    leaf "mp-id" {
+      type "uint16" {
+        range "0..8191";
+      }
+
+      description
+        "remote mp id, mep id or mip id";
+    }
+
+    leaf "length" {
+      type "uint16" {
+        range "64..1518";
+      }
+
+      default "64";
+      description
+        "package length, default 64";
+    }
+
+    leaf "priority" {
+      mandatory "true";
+      type "uint16" {
+        range "0..7";
+      }
+
+      description
+        "priority, default 6";
+    }
+
+    leaf "duration" {
+      type "uint16" {
+        range "0..36000";
+      }
+
+      description
+        "test duration,if duration and times is 0, it is a continuous test";
+    }
+
+    leaf "times" {
+      type "uint16";
+      description
+        "test times, if duration and times is 0, it is a continuous test";
+    }
+
+    leaf "period" {
+      type "uint16";
+      default "1";
+      description
+        "default 1 s";
+    }
+
+  }
+
+  grouping "eth-dm-config-grouping" {
+    description
+      "CFM OAM DM Test config";
+    uses "ctp-name-grouping";
+    leaf "name" {
+      mandatory "true";
+      type "string" {
+        length "1..32";
+      }
+
+      description
+        "test uniqueness name";
+    }
+
+    leaf "priority" {
+      mandatory "true";
+      type "uint16" {
+        range "0..7";
+      }
+
+      description
+        "priority, default 6";
+    }
+
+    leaf "duration" {
+      type "uint16" {
+        range "0..36000";
+      }
+
+      description
+        "test duration,if duration and times is 0, it is a continuous test";
+    }
+
+    leaf "times" {
+      type "uint16";
+      description
+        "test times, if duration and times is 0, it is a continuous test";
+    }
+
+  }
+
+  grouping "eth-lm-config-grouping" {
+    description
+      "CFM OAM LM Test config";
+    uses "ctp-name-grouping";
+    leaf "name" {
+      mandatory "true";
+      type "string" {
+        length "1..32";
+      }
+
+      description
+        "test uniqueness name";
+    }
+
+    leaf "priority" {
+      mandatory "true";
+      type "uint16" {
+        range "0..7";
+      }
+
+      description
+        "priority, default 6";
+    }
+
+    leaf "duration" {
+      type "uint16" {
+        range "0..36000";
+      }
+
+      description
+        "test duration,if duration and times is 0, it is a continuous test";
+    }
+
+    leaf "times" {
+      type "uint16";
+      description
+        "test times, if duration and times is 0, it is a continuous test";
+    }
+
+    leaf "working-mode" {
+      type "eth-lm-working-mode";
+      mandatory "true";
+      description
+        "dual-ended / single-ended";
+    }
+
+  }
+
+  grouping "ctp-name-grouping" {
+    description
+      "Name of ctp";
+    leaf "ctp-name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "Name of ctp";
+    }
+
+  }
+
+  grouping "alarm-mask-states-grouping" {
+    list "alarm-mask-state" {
+      key "object-name alarm-code";
+      min-elements "1";
+      leaf "object-name" {
+        type "string" {
+          length "1..64";
+        }
+
+        mandatory "true";
+        description
+          "alarm-mask-state object-name";
+      }
+
+      leaf "alarm-code" {
+        type "string" {
+          length "1..64";
+        }
+
+        mandatory "true";
+        description
+          "alarm-mask-state alarm-code";
+      }
+
+      leaf "object-type" {
+        type "string" {
+          length "1..64";
+        }
+
+        mandatory "true";
+        description
+          "alarm-mask-state object-type";
+      }
+
+      leaf "mask-state" {
+        type "boolean";
+        mandatory "true";
+        description
+          "true is mask";
+      }
+
+      description
+        "alarm mask state list";
+    }
+
+    description
+      "alarm mas states";
+  }
+
+  grouping "performance-input-grouping" {
+    leaf "object-name" {
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "object-name";
+    }
+
+    leaf "granularity" {
+      type "acc-type:granularity";
+      description
+        "granularity";
+    }
+
+    leaf "pm-parameter-name" {
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "pm-parameter-name";
+    }
+
+  }
+
+  grouping "tca-parameters-grouping" {
+    list "tca-parameter" {
+      key "object-name pm-parameter-name granularity threshold-type";
+      uses "acc-alm:tca-parameter";
+      description
+        "tca-parameter";
+    }
+
+  }
+
+  rpc "set-alarm-mask-batch" {
+    description
+      "set-alarm-mask-status";
+    input {
+      leaf "object-name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "alarm-mask-state object-name";
+      }
+
+      leaf "alarm-code" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "alarm-mask-state alarm-code";
+      }
+
+      leaf "object-type" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "alarm object-type";
+      }
+
+      leaf "perceived-severity" {
+        type "acc-alm:perceived-severity";
+        description
+          "alarm perceived-severity";
+      }
+
+      leaf "mask-state" {
+        type "boolean";
+        mandatory "true";
+        description
+          "true is mask";
+      }
+
+    }
+
+  }
+
+  rpc "get-alarm-mask-state" {
+    input {
+      leaf "object-name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "alarm-mask-state object-name";
+      }
+
+      leaf "object-type" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "alarm object-type";
+      }
+
+      leaf "alarm-code" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "alarm-mask-state alarm-code";
+      }
+
+    }
+
+    output {
+      container "alarm-mask-states" {
+        uses "alarm-mask-states-grouping";
+      }
+
+    }
+
+  }
+
+  rpc "get-current-performance-monitoring-data" {
+    input {
+      uses "performance-input-grouping";
+    }
+
+    output {
+      container "performances" {
+        uses "acc-pm:performances";
+      }
+
+    }
+
+  }
+
+  rpc "get-tca-parameter" {
+    input {
+      uses "performance-input-grouping";
+    }
+
+    output {
+      container "tca-parameters" {
+        uses "tca-parameters-grouping";
+      }
+
+    }
+
+  }
+
+  grouping "eth-ptp-band-width-grouping" {
+    list "eth-ptp-band-width" {
+      key "name";
+      leaf "name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "Name of ptp";
+      }
+
+      container "ingress-capacity" {
+        uses "acc-con:capacity";
+      }
+
+      container "egress-capacity" {
+        uses "acc-con:capacity";
+      }
+
+    }
+
+  }
+
+  typedef "unknown-frame-process" {
+    type "enumeration" {
+      enum "transmit" {
+        value "0";
+      }
+
+      enum "discard" {
+        value "1";
+      }
+
+    }
+
+  }
+
+  typedef "learning-mode" {
+    type "enumeration" {
+      enum "SVL" {
+        value "0";
+      }
+
+      enum "IVL" {
+        value "1";
+      }
+
+    }
+
+  }
+
+  container "vsis" {
+    uses "vsis-grouping";
+    description
+      "vsi container";
+  }
+
+  grouping "vsis-grouping" {
+    list "vsi" {
+      key "name";
+      uses "vsi-grouping";
+      description
+        "vsi list";
+    }
+
+  }
+
+  grouping "storm-suppression-grouping" {
+    leaf "broadcast-suppress" {
+      type "uint32";
+      description
+        "Suppress broadcast frame storm threshold";
+    }
+
+    leaf "unknown-unicast-suppress" {
+      type "uint32";
+      description
+        "Suppress unknown unicast frame storm threshold";
+    }
+
+    leaf "unknown-multicast-suppress" {
+      type "uint32";
+      description
+        "Suppress unknown storm multicast frame storm threshold";
+    }
+
+  }
+
+  grouping "unknown-frame-grouping" {
+    description
+      "unknown frame Processing";
+    leaf "unknown-unicast-proc" {
+      mandatory "true";
+      type "unknown-frame-process";
+      description
+        "unknown unicast frame Processing";
+    }
+
+    leaf "unknown-multicast-proc" {
+      mandatory "true";
+      type "unknown-frame-process";
+      description
+        "unknown multicast frame Processing";
+    }
+
+    leaf "broadcast-proc" {
+      mandatory "true";
+      type "unknown-frame-process";
+      description
+        "unknown broadcast frame Processing";
+    }
+
+  }
+
+  grouping "mac-learning-grouping" {
+    leaf "mac-auto-learning-capacity" {
+      mandatory "true";
+      type "acc-devm:admin-state";
+      description
+        "";
+    }
+
+    leaf "mac-learning-mode" {
+      mandatory "true";
+      type "learning-mode";
+      description
+        "Mac address learning mode";
+    }
+
+  }
+
+  grouping "vsi-grouping" {
+    leaf "name" {
+      mandatory "true";
+      type "string";
+      description
+        "vsi name must be unique in one device";
+    }
+
+    leaf "label" {
+      type "string";
+      description
+        "对于单独设备无意义，仅仅为网管上层串接端到端connection方便";
+    }
+
+    leaf "mtu" {
+      mandatory "true";
+      type "uint16" {
+        range "64..9600";
+      }
+
+      description
+        "Maximum transmission unit";
+    }
+
+    uses "unknown-frame-grouping";
+    uses "mac-learning-grouping";
+    leaf "service-type" {
+      mandatory "true";
+      type "acc-devm:service-type";
+      description
+        "Service Type";
+    }
+
+    leaf-list "uni-ctp" {
+      type "leafref" {
+        path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+      }
+
+      min-elements "1";
+      description
+        "uni side ctp name list.";
+    }
+
+    leaf-list "nni-ctp" {
+      type "leafref" {
+        path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+      }
+
+      min-elements "1";
+      description
+        "nni side ctp name list.";
+    }
+
+    leaf-list "pg-id" {
+      type "uint16";
+      description
+        "与该VSI关联的保护组的ID";
+    }
+
+    container "state-pac" {
+      uses "acc-devm:state-pac";
+    }
+
+  }
+
+  grouping "basic-param-grouping" {
+    leaf "label" {
+      type "string";
+      description
+        "";
+    }
+
+    leaf "service-type" {
+      mandatory "true";
+      type "acc-devm:service-type";
+    }
+
+    leaf "mtu" {
+      mandatory "true";
+      type "uint16" {
+        range "64..9216";
+      }
+
+      description
+        "Maximum transmission unit";
+    }
+
+    uses "unknown-frame-grouping";
+    uses "mac-learning-grouping";
+  }
+
+  grouping "uni-grouping" {
+    leaf "uni-ptp-name" {
+      type "string";
+    }
+
+    container "ingress-capacity" {
+      uses "acc-con:capacity";
+    }
+
+    container "egress-capacity" {
+      uses "acc-con:capacity";
+    }
+
+    container "client-vlan-spec" {
+      uses "acc-con:vlan-spec";
+      description
+        "指定C-VLAN，用于客户Vlan与运营商Vlan的匹配，无需携带accessAction。不携带该参数时表示端口匹配";
+    }
+
+    container "uni-vlan-spec" {
+      uses "acc-con:vlan-spec";
+      description
+        "用于在客户VLAN交换的情况下，指定C-VLAN的交换值，类型为C-TAG，可选.";
+    }
+
+    uses "storm-suppression-grouping";
+    leaf "partition-id" {
+      type "uint16" {
+        range "0..127";
+      }
+
+      default "0";
+      description
+        "水平分割组ID.";
+    }
+
+  }
+
+  grouping "etree-uni-grouping" {
+    uses "uni-grouping";
+    leaf "port-role" {
+      type "acc-devm:port-role";
+    }
+
+  }
+
+  grouping "nni-grouping" {
+    uses "acc-eos:nni-grouping";
+    leaf "mapping-type" {
+      type "acc-eth:eth-mapping-type";
+      description
+        "线路口为ODU层协议时，mappingType包括：EOO、EOS；线路口为SDH层协议时，mappingType固定为EOS，线路口为ETH层协议时，mappingType不填";
+    }
+
+    leaf "partition-id" {
+      type "uint16" {
+        range "0..127";
+      }
+
+      default "0";
+      description
+        "水平分割组ID.";
+    }
+
+  }
+
+  rpc "create-eth-lan-service" {
+    input {
+      uses "create-eth-lan-service-in-grouping";
+    }
+
+    output {
+      uses "create-service-out-grouping";
+    }
+
+  }
+
+  grouping "create-eth-lan-service-in-grouping" {
+    uses "basic-param-grouping";
+    list "unis" {
+      key "uni-ptp-name";
+      uses "uni-grouping";
+    }
+
+    list "nnis" {
+      key "nni-key";
+      leaf "nni-key" {
+        type "string";
+        description
+          "1,2,3,4编号下发，保证唯一";
+      }
+
+      uses "nni-grouping";
+      description
+        "ptp是ODU层协议时，nni参数中必填nni中的nni-ts-detail、adaptation-type、odu-signal-type、switch-capability这几个参数，否侧除nni-ts-detail固定填字符串“0”外，其它参数都不用填；当以太网业务映射类型（mappingType）为EOS时，eos-pac 中的参数需要填写，否侧除vcg-key固定填字符串“0”外，其它参数都不用填";
+    }
+
+  }
+
+  rpc "create-eth-tree-service" {
+    input {
+      uses "create-eth-tree-service-in-grouping";
+    }
+
+    output {
+      uses "create-service-out-grouping";
+    }
+
+  }
+
+  grouping "create-eth-tree-service-in-grouping" {
+    uses "basic-param-grouping";
+    list "unis" {
+      key "uni-ptp-name";
+      uses "etree-uni-grouping";
+    }
+
+    list "nnis" {
+      key "nni-key";
+      leaf "nni-key" {
+        type "string";
+        description
+          "1,2,3,4编号下发，保证唯一";
+      }
+
+      uses "nni-grouping";
+      description
+        "ptp是ODU层协议时，nni参数中必填nni中的nni-ts-detail、adaptation-type、odu-signal-type、switch-capability这几个参数，否侧除nni-ts-detail固定填字符串“0”外，其它参数都不用填；当以太网业务映射类型（mappingType）为EOS时，eos-pac 中的参数需要填写，否侧除vcg-key固定填字符串“0”外，其它参数都不用填";
+    }
+
+  }
+
+  grouping "create-service-out-grouping" {
+    container "vsi" {
+      uses "vsi-grouping";
+    }
+
+    container "create-component" {
+      uses "create-component-grouping";
+    }
+
+  }
+
+  grouping "create-component-grouping" {
+    leaf-list "vc-connection-name" {
+      type "string";
+      min-elements "0";
+    }
+
+    leaf-list "ftp-name" {
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    leaf-list "ctp-name" {
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+  }
+
+  rpc "add-vsi-uni-member" {
+    input {
+      uses "add-vsi-uni-member-in-grouping";
+    }
+
+    output {
+      uses "add-vsi-uni-member-out-grouping";
+    }
+
+  }
+
+  grouping "add-vsi-uni-member-in-grouping" {
+    leaf "name" {
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "vsi name";
+    }
+
+    uses "uni-grouping";
+  }
+
+  grouping "add-vsi-uni-member-out-grouping" {
+    leaf-list "uni-ctp-name" {
+      type "leafref" {
+        path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+      }
+
+      min-elements "1";
+      description
+        "The new uni CTP name list in vsi.";
+    }
+
+    leaf-list "nni-ctp-name" {
+      type "leafref" {
+        path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+      }
+
+      min-elements "1";
+      description
+        "The new nni CTP name list in vsi.";
+    }
+
+    leaf-list "pg-id" {
+      type "uint16";
+      description
+        "新增成员的保护组的ID";
+    }
+
+  }
+
+  rpc "add-vsi-nni-member" {
+    input {
+      uses "add-vsi-nni-member-in-grouping";
+    }
+
+    output {
+      uses "add-vsi-nni-member-out-grouping";
+    }
+
+  }
+
+  grouping "add-vsi-nni-member-in-grouping" {
+    leaf "name" {
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "vsi name";
+    }
+
+    uses "nni-grouping";
+  }
+
+  grouping "add-vsi-nni-member-out-grouping" {
+    leaf-list "nni-ctp" {
+      type "leafref" {
+        path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+      }
+
+      min-elements "1";
+      description
+        "nni side ctp name list in vsi.";
+    }
+
+    container "create-component" {
+      uses "create-component-grouping";
+    }
+
+    leaf-list "pg-id" {
+      type "uint16";
+      description
+        "新增成员的保护组的ID";
+    }
+
+  }
+
+  rpc "delete-vsi-member" {
+    input {
+      uses "delete-vsi-member-in-grouping";
+    }
+
+  }
+
+  grouping "delete-vsi-member-in-grouping" {
+    leaf "vsi-name" {
+      mandatory "true";
+      type "string";
+      description
+        "vsi name";
+    }
+
+    leaf "interface-type" {
+      mandatory "true";
+      type "acc-devm:interface-type";
+      description
+        "UNI or NNI";
+    }
+
+    leaf-list "member-name" {
+      type "string";
+      min-elements "1";
+      description
+        "Member port list";
+    }
+
+  }
+
+  rpc "get-vsi-member-attr" {
+    input {
+      leaf "vsi-name" {
+        mandatory "true";
+        type "string";
+        description
+          "vsi name";
+      }
+
+    }
+
+    output {
+      uses "get-vsi-member-attr-out-grouping";
+    }
+
+  }
+
+  grouping "get-vsi-member-attr-out-grouping" {
+    list "vsi-member-attr" {
+      key "ctp-name";
+      min-elements "1";
+      uses "vsi-member-attr-grouping";
+    }
+
+  }
+
+  grouping "vsi-member-attr-grouping" {
+    leaf "ctp-name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "Name of Eth ctp";
+    }
+
+    container "ingress-capacity" {
+      uses "acc-con:capacity";
+    }
+
+    container "egress-capacity" {
+      uses "acc-con:capacity";
+    }
+
+    uses "storm-suppression-grouping";
+    leaf "partition-id" {
+      type "uint16" {
+        range "0..127";
+      }
+
+      default "0";
+      description
+        "水平分割组ID.";
+    }
+
+  }
+
+  grouping "eth-oam-mip-config-grouping" {
+    uses "ctp-name-grouping";
+    leaf "mip-id" {
+      mandatory "true";
+      type "uint16" {
+        range "1..8191";
+      }
+
+    }
+
+    leaf "meg-id" {
+      mandatory "true";
+      type "string";
+    }
+
+    leaf "md-name" {
+      type "string" {
+        length "1..43";
+      }
+
+    }
+
+    leaf "mel" {
+      mandatory "true";
+      type "uint8" {
+        range "0..7";
+      }
+
+    }
+
+    description
+      "ethernet oam mip config";
+  }
+
+  grouping "dhcp-relay-interface-grouping" {
+    leaf "name" {
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "ptp name";
+    }
+
+    leaf-list "dhcp-service-ip" {
+      min-elements "1";
+      type "inet:ipv4-address";
+      description
+        "Ip address(ipv4)";
+    }
+
+  }
+
+  grouping "dhcp-relay-grouping" {
+    leaf "enable" {
+      mandatory "true";
+      type "boolean";
+      description
+        "Enable or disable dhcp relay";
+    }
+
+    container "dhcp-relay-interfaces" {
+      list "dhcp-relay-interface" {
+        key "name";
+        uses "dhcp-relay-interface-grouping";
+      }
+
+    }
+
+  }
+
+  container "dhcp-relay" {
+    uses "dhcp-relay-grouping";
+  }
+
+  typedef "measure-type" {
+    type "enumeration" {
+      enum "PM" {
+        value "1";
+      }
+
+      enum "TCM" {
+        value "2";
+      }
+
+    }
+
+  }
+
+  grouping "service-delay-measure-configs-grouping" {
+    list "service-delay-measure-config" {
+      key "ptp-name";
+      uses "service-delay-measure-config-grouping";
+    }
+
+  }
+
+  grouping "service-delay-measure-config-grouping" {
+    leaf "ptp-name" {
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "nni ptp name";
+    }
+
+    leaf "connection-name" {
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "connection name";
+    }
+
+    leaf "measure-name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "measure name";
+    }
+
+    leaf "measure-type" {
+      mandatory "true";
+      type "measure-type";
+      description
+        "measure location:SOURCE,DESTINATION";
+    }
+
+    leaf "tcm" {
+      when "../measure-type = 'TCM'";
+      type "uint8" {
+        range "1..6";
+      }
+
+    }
+
+    leaf "enable" {
+      mandatory "true";
+      type "boolean";
+      description
+        "Enable or disable dhcp relay, default false";
+    }
+
+  }
+
+  container "service-delay-measure-configs" {
+    uses "service-delay-measure-configs-grouping";
+  }
+
+  rpc "get-service-delay-measure-result" {
+    input {
+      leaf "ptp-name" {
+        mandatory "true";
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "nni ptp name";
+      }
+
+      leaf "connection-name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "connection name";
+      }
+
+    }
+
+    output {
+      uses "service-delay-measure-result-grouping";
+    }
+
+  }
+
+  grouping "service-delay-measure-result-grouping" {
+    leaf "link-delay" {
+      mandatory "true";
+      type "decimal64" {
+        fraction-digits "4";
+      }
+
+      description
+        "The link delay usec";
+    }
+
+    leaf "service-delay" {
+      mandatory "true";
+      type "decimal64" {
+        fraction-digits "4";
+      }
+
+      description
+        "The service delay usec";
+    }
+
+  }
+
+  typedef "tim-mode" {
+    type "enumeration" {
+      enum "SAPI" {
+        description
+          "SAPI";
+      }
+
+      enum "DAPI" {
+        description
+          "DAPI";
+      }
+
+      enum "SAPInDAPI" {
+        description
+          "SAPI and DAPI";
+      }
+
+      enum "NoCheck" {
+        description
+          "none";
+      }
+
+    }
+
+  }
+
+  typedef "active-mode" {
+    type "enumeration" {
+      enum "Operation" {
+        description
+          "Operation";
+      }
+
+      enum "Transparency" {
+        description
+          "Transparency";
+      }
+
+      enum "Monitor" {
+        description
+          "Monitor";
+      }
+
+    }
+
+  }
+
+  grouping "tcm-parameter-grouping" {
+    leaf "name" {
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "ODU ptp/ctp name";
+    }
+
+    leaf "tcm-grade" {
+      type "uint8" {
+        range "1..6";
+      }
+
+    }
+
+    leaf "tim-mode" {
+      mandatory "true";
+      type "tim-mode";
+      description
+        "default NoCheck";
+    }
+
+    leaf "source-mode" {
+      mandatory "true";
+      type "active-mode";
+      description
+        "default Transparency";
+    }
+
+    leaf "dest-mode" {
+      mandatory "true";
+      type "active-mode";
+      description
+        "default Transparency";
+    }
+
+    leaf "tti-actual-tx" {
+      mandatory "true";
+      type "string" {
+        length "1..128";
+      }
+
+    }
+
+    leaf "tti-actual-rx" {
+      mandatory "true";
+      type "string" {
+        length "1..128";
+      }
+
+      config "false";
+    }
+
+    leaf "tti-expected-rx" {
+      mandatory "true";
+      type "string" {
+        length "1..128";
+      }
+
+    }
+
+    leaf "lck-insert" {
+      mandatory "true";
+      type "boolean";
+      description
+        "default false";
+    }
+
+    leaf "tim-action" {
+      mandatory "true";
+      type "boolean";
+      description
+        "default false";
+    }
+
+    leaf "ltc-action" {
+      mandatory "true";
+      type "boolean";
+      description
+        "default false";
+    }
+
+  }
+
+  grouping "tcm-parameters-grouping" {
+    list "tcm-parameter" {
+      key "name tcm-grade";
+      uses "tcm-parameter-grouping";
+    }
+
+  }
+
+  container "tcm-parameters" {
+    uses "tcm-parameters-grouping";
+  }
+
+  container "eh-installation-capabilitys" {
+    uses "eh-installation-capabilitys-grouping";
+  }
+
+  grouping "eh-installation-capabilitys-grouping" {
+    list "eh-installation-capability" {
+      key "name";
+      uses "eh-installation-capability-grouping";
+    }
+
+  }
+
+  grouping "eh-installation-capability-grouping" {
+    leaf "name" {
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "Eh name";
+    }
+
+    leaf "eq-type" {
+      type "string" {
+        length "0..32";
+      }
+
+      config "false";
+      description
+        "The installed eq type in the slot.";
+    }
+
+    leaf "actual-eq-type" {
+      type "string" {
+        length "0..32";
+      }
+
+      config "false";
+      description
+        "The actual eq type in the slot.";
+    }
+
+    leaf-list "support-eq-type" {
+      type "string" {
+        length "1..32";
+      }
+
+      config "false";
+      min-elements "1";
+      description
+        "supported Eq type list";
+    }
+
+  }
+
+  container "eq-installation-capabilitys" {
+    uses "eq-installation-capabilitys-grouping";
+  }
+
+  grouping "eq-installation-capabilitys-grouping" {
+    list "eq-installation-capability" {
+      key "eq-name";
+      uses "eq-installation-capability-grouping";
+    }
+
+  }
+
+  grouping "eq-installation-capability-grouping" {
+    leaf "eq-name" {
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "Eq name";
+    }
+
+    list "ptp-capability" {
+      key "port-id";
+      uses "ptp-capability-grouping";
+    }
+
+  }
+
+  grouping "ptp-capability-grouping" {
+    leaf "port-id" {
+      type "string" {
+        length "1..32";
+      }
+
+      description
+        "Port Identification";
+    }
+
+    leaf "ptp-type" {
+      type "string" {
+        length "0..32";
+      }
+
+      config "false";
+      description
+        "The Installed PTP type.";
+    }
+
+    leaf "actual-ptp-type" {
+      type "string" {
+        length "0..32";
+      }
+
+      config "false";
+      description
+        "The actual PTP type.";
+    }
+
+    leaf-list "support-ptp-type" {
+      type "string" {
+        length "1..32";
+      }
+
+      config "false";
+      min-elements "1";
+      description
+        "supported PTP type list";
+    }
+
+  }
+
+  typedef "set-type-result" {
+    type "enumeration" {
+      enum "success" {
+        description
+          "success";
+      }
+
+      enum "fail" {
+        description
+          "fail";
+      }
+
+    }
+
+  }
+
+  rpc "set-eq-type" {
+    input {
+      uses "set-eq-type-in-parameter-grouping";
+    }
+
+    output {
+      uses "set-eq-type-out-parameter-grouping";
+    }
+
+  }
+
+  grouping "set-eq-type-in-parameter-grouping" {
+    list "set-eq-type-in-parameter" {
+      key "eh-name";
+      leaf "eh-name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "EH(slot) name";
+      }
+
+      leaf "eq-type" {
+        type "string" {
+          length "1..32";
+        }
+
+        description
+          "EQ type name.";
+      }
+
+    }
+
+  }
+
+  grouping "set-eq-type-out-parameter-grouping" {
+    list "set-eq-type-out-parameter" {
+      key "eh-name";
+      leaf "eh-name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "EH(slot) name";
+      }
+
+      leaf "result" {
+        type "set-type-result";
+      }
+
+      leaf "eq-name" {
+        type "string" {
+          length "0..64";
+        }
+
+        description
+          "The Eq name.";
+      }
+
+    }
+
+  }
+
+  rpc "set-ptp-type" {
+    input {
+      uses "set-ptp-type-in-parameter-grouping";
+    }
+
+    output {
+      uses "set-ptp-type-out-parameter-grouping";
+    }
+
+  }
+
+  grouping "set-ptp-type-in-parameter-grouping" {
+    list "set-ptp-type-in-parameter" {
+      key "eq-name port-id";
+      leaf "eq-name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "Eq name";
+      }
+
+      leaf "port-id" {
+        type "string" {
+          length "1..32";
+        }
+
+        description
+          "Port number,it from 1 to begin.";
+      }
+
+      leaf "ptp-type" {
+        type "string" {
+          length "1..32";
+        }
+
+        description
+          "ptp type name";
+      }
+
+    }
+
+  }
+
+  grouping "set-ptp-type-out-parameter-grouping" {
+    list "set-ptp-type-out-parameter" {
+      key "eq-name port-id";
+      leaf "eq-name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "EH(slot) name";
+      }
+
+      leaf "port-id" {
+        type "string" {
+          length "1..32";
+        }
+
+        description
+          "Port Identification";
+      }
+
+      leaf "result" {
+        type "set-type-result";
+      }
+
+      leaf "ptp-name" {
+        type "string" {
+          length "0..64";
+        }
+
+        description
+          "The PTP name.";
+      }
+
+    }
+
+  }
+
+  container "sf-persistency-timers" {
+    uses "sf-persistency-timers-grouping";
+  }
+
+  grouping "sf-persistency-timers-grouping" {
+    list "sf-persistency-timer" {
+      key "pg-id";
+      uses "sf-persistency-timer-grouping";
+    }
+
+  }
+
+  grouping "sf-persistency-timer-grouping" {
+    leaf "pg-id" {
+      type "uint16" {
+        range "1..65535";
+      }
+
+    }
+
+    leaf "persistency-time" {
+      type "uint16" {
+        range "0..10";
+      }
+
+      default "0";
+      description
+        "SF persistency time";
+    }
+
+  }
+
+  container "eth-ptp-frame-spaces" {
+    uses "eth-ptp-frame-spaces-grouping";
+  }
+
+  grouping "eth-ptp-frame-spaces-grouping" {
+    list "eth-ptp-frame-space" {
+      key "name";
+      leaf "name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "Name of Eth ptp";
+      }
+
+      leaf "frame-space" {
+        mandatory "true";
+        type "uint16" {
+          range "8..12";
+        }
+
+        description
+          "default 12";
+      }
+
+    }
+
+  }
+
+  container "gfpf-parameters" {
+    uses "gfpf-parameter-grouping";
+  }
+
+  grouping "gfpf-parameter-grouping" {
+    list "gfpf-parameter" {
+      key "ethFtp";
+      leaf "ethFtp" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "Name of Eth ftp";
+      }
+
+      leaf "scrambler" {
+        mandatory "true";
+        type "boolean";
+        description
+          "The scrambler enable,true:enable false:disable, default true";
+      }
+
+      leaf "payload-fcs" {
+        mandatory "true";
+        type "boolean";
+        description
+          "The payload fcs enable,true:enable false:disable, default true";
+      }
+
+    }
+
+  }
+
+  rpc "delete-connection-group" {
+    input {
+      leaf "group-id" {
+        type "uint16";
+      }
+
+    }
+
+  }
+
+  container "msi-auto-parameters" {
+    uses "msi-auto-parameter-grouping";
+  }
+
+  grouping "msi-auto-parameter-grouping" {
+    list "msi-auto-parameter" {
+      key "name";
+      leaf "name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "Name of ODU PTP";
+      }
+
+      leaf "auto" {
+        mandatory "true";
+        type "boolean";
+        description
+          "default true";
+      }
+
+    }
+
+  }
+
+  container "msi-parameters" {
+    uses "msi-parameter-grouping";
+  }
+
+  grouping "msi-parameter-grouping" {
+    list "msi-parameter" {
+      key "name tributary-port-num";
+      leaf "name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "Name of ODU PTP";
+      }
+
+      leaf "tributary-port-num" {
+        type "uint16";
+        description
+          "The tributary port number.";
+      }
+
+      leaf "oduk-level" {
+        type "identityref" {
+          base "acc-otn-types:switch-type";
+        }
+
+      }
+
+      leaf "tsNum" {
+        type "uint16";
+        description
+          "The amounts of timeslot.";
+      }
+
+      leaf "ts-occupied-tx" {
+        type "string";
+        description
+          "The timeslot that should be occupied to transmit.";
+      }
+
+      leaf "ts-occupied-rx" {
+        type "string";
+        description
+          "The timeslot that should be occupied to receive.";
+      }
+
+      leaf "ts-actual-rx" {
+        config "false";
+        type "string";
+      }
+
+    }
+
+  }
+
+  grouping "tpid-grouping" {
+    list "tpid" {
+      key "name";
+      leaf "name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "Name of eth PTP or eth FTP or eth CTP";
+      }
+
+      leaf "tpid-value" {
+        mandatory "true";
+        type "acc-eth:tpid-difinition";
+        description
+          "default 0x8100";
+      }
+
+    }
+
+  }
+
+  container "tpids" {
+    uses "tpid-grouping";
+  }
+
+  typedef "remote-state" {
+    type "enumeration" {
+      enum "online" {
+        description
+          "";
+      }
+
+      enum "offline" {
+        description
+          "";
+      }
+
+    }
+
+  }
+
+  grouping "remote-module-grouping" {
+    list "remote-module" {
+      key "name";
+      leaf "name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "Name of eth PTP";
+      }
+
+      leaf "monitoring-enable" {
+        mandatory "true";
+        type "boolean";
+        description
+          "default false";
+      }
+
+      leaf "vlan-id" {
+        mandatory "true";
+        type "uint16" {
+          range "1..4094";
+        }
+
+        description
+          "default 4094";
+      }
+
+      leaf "remote-state" {
+        mandatory "true";
+        type "remote-state";
+        config "false";
+        description
+          "default offline";
+      }
+
+      leaf "remote-module-name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "Name of remote module";
+      }
+
+      leaf "remote-module-mac" {
+        type "yang:mac-address";
+        description
+          "mac";
+        config "false";
+      }
+
+      leaf "remote-module-uuid" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "remote uuid.";
+        config "false";
+      }
+
+      leaf-list "remote-ptp" {
+        type "leafref" {
+          path "/acc-devm:ptps/acc-devm:ptp/acc-devm:name";
+        }
+
+        config "false";
+      }
+
+    }
+
+  }
+
+  container "remote-modules" {
+    uses "remote-module-grouping";
+  }
+
+  rpc "delete-remote-ptps" {
+    input {
+      leaf "name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "Name of eth PTP";
+      }
+
+    }
+
+  }
+
+  notification "remote-change-notification" {
+    leaf "ptp-name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    leaf "changing-reason" {
+      mandatory "true";
+      type "remote-state";
+    }
+
+    leaf "remote-module-name" {
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "Name of remote module";
+    }
+
+    leaf "remote-module-mac" {
+      type "yang:mac-address";
+      description
+        "mac";
+    }
+
+    leaf "remote-module-uuid" {
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "remote uuid.";
+      config "false";
+    }
+
+    leaf-list "remote-ptp-name" {
+      type "string";
+      min-elements "1";
+      description
+        "remote port name list";
+    }
+
+  }
+
+  grouping "ptp-type-grouping" {
+    list "ptp-type" {
+      key "name";
+      leaf "name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "Name of ptp";
+      }
+
+      leaf "ptp-type" {
+        mandatory "true";
+        type "identityref" {
+          base "acc-otn-types:client-signal-type";
+        }
+
+      }
+
+    }
+
+  }
+
+  typedef "aggregation-mode" {
+    type "enumeration" {
+      enum "Manual" {
+        description
+          "";
+      }
+
+      enum "Lacp" {
+        description
+          "";
+      }
+
+    }
+
+  }
+
+  typedef "load-algorithm" {
+    type "enumeration" {
+      enum "S_MAC" {
+        description
+          "";
+      }
+
+      enum "D_MAC" {
+        description
+          "";
+      }
+
+      enum "SD_MAC" {
+        description
+          "";
+      }
+
+      enum "S_IP" {
+        description
+          "";
+      }
+
+      enum "D_IP" {
+        description
+          "";
+      }
+
+      enum "SD_IP" {
+        description
+          "";
+      }
+
+    }
+
+  }
+
+  typedef "port-member-role" {
+    type "enumeration" {
+      enum "Master" {
+        description
+          "";
+      }
+
+      enum "Slave" {
+        description
+          "";
+      }
+
+    }
+
+  }
+
+  grouping "port-member-grouping" {
+    list "port-member" {
+      key "name";
+      leaf "name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "Name of eth ptp";
+      }
+
+      leaf "role" {
+        mandatory "true";
+        type "port-member-role";
+      }
+
+      leaf "priority" {
+        mandatory "true";
+        type "uint16" {
+          range "0..65535";
+        }
+
+      }
+
+    }
+
+  }
+
+  grouping "lag-parameters-grouping" {
+    list "lag-parameter" {
+      key "lag-id";
+      uses "lag-parameter-grouping";
+    }
+
+  }
+
+  grouping "lag-parameter-grouping" {
+    leaf "lag-id" {
+      type "uint16" {
+        range "1..65535";
+      }
+
+    }
+
+    leaf "working-mode" {
+      mandatory "true";
+      type "acc-protection-group:protection-type";
+    }
+
+    leaf "aggregation-mode" {
+      mandatory "true";
+      type "aggregation-mode";
+    }
+
+    leaf "load-algorithm" {
+      type "load-algorithm";
+    }
+
+    leaf "sys-priority" {
+      type "uint16" {
+        range "0..65535";
+      }
+
+    }
+
+    container "port-members" {
+      uses "port-member-grouping";
+    }
+
+    leaf-list "selected-ports" {
+      type "string" {
+        length "1..64";
+      }
+
+      min-elements "1";
+      config "false";
+      description
+        "A list of working eth PTP names";
+    }
+
+  }
+
+  typedef "eth-port-mode" {
+    type "enumeration" {
+      enum "access" {
+        description
+          "";
+      }
+
+      enum "hybrid" {
+        description
+          "";
+      }
+
+      enum "trunk" {
+        description
+          "";
+      }
+
+      enum "transport" {
+        description
+          "";
+      }
+
+    }
+
+  }
+
+  grouping "eth-ptp-extension-parameter-grouping" {
+    leaf "pvid" {
+      mandatory "true";
+      type "uint16" {
+        range "1..4094";
+      }
+
+    }
+
+    leaf "port-mode" {
+      type "eth-port-mode";
+    }
+
+    leaf "qinq-enable" {
+      type "boolean";
+    }
+
+  }
+
+  grouping "odu-ptp-extension-parameter-grouping" {
+    leaf "sm-tim-mode" {
+      mandatory "true";
+      type "tim-mode";
+      description
+        "default NoCheck";
+    }
+
+    leaf "sm-tim-action" {
+      mandatory "true";
+      type "boolean";
+      description
+        "default false";
+    }
+
+    leaf "pm-tim-mode" {
+      mandatory "true";
+      type "tim-mode";
+      description
+        "default NoCheck";
+    }
+
+    leaf "pm-tim-action" {
+      mandatory "true";
+      type "boolean";
+      description
+        "default false";
+    }
+
+  }
+
+  grouping "ptp-extension-parameter-grouping" {
+    leaf "name" {
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "Name of ptp";
+    }
+
+    leaf "laser-auto-enable" {
+      mandatory "true";
+      type "boolean";
+      description
+        "default false";
+    }
+
+    container "eth-ptp-extension" {
+      uses "eth-ptp-extension-parameter-grouping";
+    }
+
+    container "odu-ptp-extension" {
+      uses "odu-ptp-extension-parameter-grouping";
+    }
+
+  }
+
+  grouping "ptp-extension-grouping" {
+    list "ptp-extension" {
+      key "name";
+      uses "ptp-extension-parameter-grouping";
+    }
+
+  }
+
+  grouping "odu-ctp-extension-parameter-grouping" {
+    leaf "pm-tim-mode" {
+      mandatory "true";
+      type "tim-mode";
+      description
+        "default NoCheck";
+    }
+
+    leaf "pm-tim-action" {
+      mandatory "true";
+      type "boolean";
+      description
+        "default false";
+    }
+
+  }
+
+  grouping "eth-ctp-extension-parameter-grouping" {
+    container "storm-suppression-pac" {
+      uses "storm-suppression-grouping";
+      description
+        "storm suppression container";
+    }
+
+    container "ingress-capacity" {
+      uses "acc-con:capacity";
+    }
+
+    container "egress-capacity" {
+      uses "acc-con:capacity";
+    }
+
+    leaf "partition-id" {
+      type "uint16" {
+        range "0..127";
+      }
+
+      default "0";
+      description
+        "水平分割组ID.";
+    }
+
+  }
+
+  grouping "ctp-extension-parameter-grouping" {
+    leaf "name" {
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "Name of ctp";
+    }
+
+    container "odu-ctp-extension" {
+      uses "odu-ctp-extension-parameter-grouping";
+    }
+
+    container "eth-ctp-extension" {
+      uses "eth-ctp-extension-parameter-grouping";
+    }
+
+  }
+
+  grouping "ctp-extension-grouping" {
+    list "ctp-extension" {
+      key "name";
+      uses "ctp-extension-parameter-grouping";
+    }
+
+  }
+
+  grouping "alarm-attr-grouping" {
+    leaf "object-name" {
+      type "string" {
+        length "1..64";
+      }
+
+      mandatory "true";
+      description
+        "alarm attributes object-name";
+    }
+
+    leaf "alarm-code" {
+      type "string" {
+        length "1..64";
+      }
+
+      mandatory "true";
+      description
+        "alarm  code";
+    }
+
+    leaf "object-type" {
+      type "string" {
+        length "1..64";
+      }
+
+      mandatory "true";
+      description
+        "alarm object type";
+    }
+
+    leaf "perceived-severity" {
+      mandatory "true";
+      type "acc-alm:perceived-severity";
+      description
+        "alarm perceived severity";
+    }
+
+    leaf "appear-delay-time" {
+      type "uint16" {
+        range "0..2500";
+      }
+
+      mandatory "true";
+      description
+        "alarm appear delay time,unit: ms. default 500";
+    }
+
+    leaf "disappear-delay-time" {
+      type "uint16" {
+        range "0..10000";
+      }
+
+      mandatory "true";
+      description
+        "alarm disappear delay time,unit: ms. default 10000";
+    }
+
+  }
+
+  grouping "alarm-attrs-grouping" {
+    list "alarm-attr" {
+      key "object-name alarm-code";
+      min-elements "1";
+      uses "alarm-attr-grouping";
+    }
+
+  }
+
+  rpc "set-alarm-attr" {
+    description
+      "set alarm  ";
+    input {
+      leaf "object-name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "alarm object name";
+      }
+
+      leaf "alarm-code" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "alarm code";
+      }
+
+      leaf "perceived-severity" {
+        type "acc-alm:perceived-severity";
+        description
+          "alarm perceived severity";
+      }
+
+      leaf "appear-delay-time" {
+        type "uint16" {
+          range "0..2500";
+        }
+
+        description
+          "alarm appear delay time";
+      }
+
+      leaf "disappear-delay-time" {
+        type "uint16" {
+          range "0..10000";
+        }
+
+        description
+          "alarm disappear delay time";
+      }
+
+    }
+
+  }
+
+  rpc "get-alarm-attr" {
+    input {
+      leaf "object-name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "alarm attr object name";
+      }
+
+      leaf "alarm-code" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "alarm code";
+      }
+
+    }
+
+    output {
+      container "alarm-attrs" {
+        uses "alarm-attrs-grouping";
+      }
+
+    }
+
+  }
+
+  typedef "prbs-result-type" {
+    type "enumeration" {
+      enum "line-normal" {
+        value "0";
+        description
+          "设备工作正常";
+      }
+
+      enum "line-degrade" {
+        value "1";
+        description
+          "线路存在误码";
+      }
+
+      enum "line-break" {
+        value "2";
+        description
+          "线路中断完全失效";
+      }
+
+    }
+
+  }
+
+  typedef "prbs-measure-state" {
+    type "enumeration" {
+      enum "measuring" {
+        value "0";
+        description
+          "设备正在测量";
+      }
+
+      enum "finished" {
+        value "1";
+        description
+          "设备测量已结束";
+      }
+
+    }
+
+  }
+
+  grouping "prbs-parameters-grouping" {
+    list "prbs-parameter" {
+      key "ctp-name";
+      uses "ctp-name-grouping";
+      leaf "prbs-send-enable" {
+        type "boolean";
+        description
+          "prbs 发送使能";
+      }
+
+      leaf "prbs-monitor-enable" {
+        type "boolean";
+        description
+          "prbs 检测使能";
+      }
+
+    }
+
+  }
+
+  rpc "set-prbs-parameters" {
+    description
+      "Set prbs configuration parameter";
+    input {
+      container "prbs-parameters" {
+        uses "prbs-parameters-grouping";
+      }
+
+    }
+
+  }
+
+  rpc "get-prbs-parameter" {
+    description
+      "Get prbs configuration parameter";
+    input {
+      uses "ctp-name-grouping";
+    }
+
+    output {
+      container "prbs-parameters" {
+        uses "prbs-parameters-grouping";
+      }
+
+    }
+
+  }
+
+  rpc "prbs-bit-error-value-clean" {
+    description
+      "prbs bit error value clean";
+    input {
+      uses "ctp-name-grouping";
+    }
+
+  }
+
+  rpc "get-prbs-result" {
+    description
+      "Get prbs result";
+    input {
+      uses "ctp-name-grouping";
+    }
+
+    output {
+      leaf "result" {
+        default "line-normal";
+        type "prbs-result-type";
+        description
+          "PRBS result, default line-normal";
+      }
+
+      leaf "bit-error-value" {
+        type "uint64";
+        description
+          "PRBS bit error value";
+      }
+
+      leaf "measure-state" {
+        default "finished";
+        type "prbs-measure-state";
+        description
+          "PRBS work state";
+      }
+
+    }
+
+  }
+
+  container "extension" {
+    container "ptp-type-pacs" {
+      uses "ptp-type-grouping";
+    }
+
+    container "lag-parameters" {
+      uses "lag-parameters-grouping";
+    }
+
+    container "ptp-extensions" {
+      uses "ptp-extension-grouping";
+    }
+
+    container "ctp-extensions" {
+      uses "ctp-extension-grouping";
+    }
+
+    container "alarm-attrs" {
+      uses "alarm-attrs-grouping";
+    }
+
+  }
+
+  rpc "add-vcg-path" {
+    input {
+      uses "add-vcg-path-input-grouping";
+    }
+
+    output {
+      uses "add-vcg-path-output-grouping";
+    }
+
+  }
+
+  grouping "add-vcg-path-input-grouping" {
+    leaf "eth-ftp-name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "The name of eth ftp name.";
+    }
+
+    uses "acc-eos:multi-nni-grouping";
+  }
+
+  grouping "add-vcg-path-output-grouping" {
+    leaf-list "vc-connection-name" {
+      type "string";
+      min-elements "1";
+    }
+
+    leaf-list "ftp-name" {
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    leaf-list "ctp-name" {
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+  }
+
+  notification "protection-switch-notification" {
+    leaf "protection-switch-serial-no" {
+      mandatory "true";
+      type "uint64";
+    }
+
+    container "eq-pg" {
+      uses "acc-protection-group:eq-pg";
+    }
+
+    description
+      "eq protection switch notification";
+  }
+
+  container "dev-capability-set" {
+    container "shelf-info" {
+      uses "drawing-info";
+    }
+
+    container "slot-capability-pac" {
+      uses "slot-capability-pac-list";
+    }
+
+  }
+
+  grouping "slot-capability-pac-list" {
+    list "slot-capability-pacs" {
+      key "slotNo";
+      leaf "slotNo" {
+        type "uint16";
+      }
+
+      leaf "name" {
+        type "string";
+      }
+
+      leaf "eq-type" {
+        type "acc-devm:eq-type";
+      }
+
+      list "support-eq" {
+        key "eq-name";
+        leaf "eq-name" {
+          type "string";
+        }
+
+      }
+
+      uses "drawing-info";
+    }
+
+  }
+
+  grouping "drawing-info" {
+    leaf "width" {
+      type "uint16";
+    }
+
+    leaf "height" {
+      type "uint16";
+    }
+
+    leaf "pos-x" {
+      type "uint16";
+      description
+        "x location";
+    }
+
+    leaf "pos" {
+      type "uint16";
+      description
+        "y location";
+    }
+
+  }
+
+  container "me-locations" {
+    uses "me-info";
+  }
+
+  grouping "me-info" {
+    leaf "me-width" {
+      type "uint16";
+    }
+
+    leaf "me-height" {
+      type "uint16";
+    }
+
+    list "eq-object" {
+      key "slot";
+      leaf "slot" {
+        type "uint16";
+      }
+
+      leaf "eq-type" {
+        type "acc-devm:eq-type";
+      }
+
+      leaf "name" {
+        type "string";
+      }
+
+      leaf "eq-width" {
+        type "uint16";
+      }
+
+      leaf "eq-height" {
+        type "uint16";
+      }
+
+      leaf "eq-id" {
+        type "string";
+      }
+
+      leaf "location-x" {
+        type "uint16";
+      }
+
+      leaf "location-y" {
+        type "uint16";
+      }
+
+    }
+
+  }
+
+  rpc "fgoduflex-two-way-dm" {
+    input {
+      leaf "ctp-name" {
+        mandatory "true";
+        type "string";
+      }
+
+      leaf "dm-type" {
+        mandatory "true";
+        type "string";
+        description
+          "PM or TCM1";
+      }
+
+    }
+
+    output {
+      leaf "fgoduflex-delay" {
+        mandatory "true";
+        type "uint64";
+      }
+
+    }
+
+  }
+
+  rpc get-vcfgotn-vc-connection {
+    input {
+      leaf-list fgotn-conn-name {
+        type string;
+        description "fgotn连接名";
+      }
+    }
+    output {
+      list relation {
+        key "fgotn-conn-name";
+        leaf fgotn-conn-name {
+          type string;
+          description "fgotn连接名";
+        }
+        leaf-list vc-conn-name {
+          type string;
+          description "fgotn连接关联的vc连接名";
+        }
+      }
+    }
+  }
+
+}

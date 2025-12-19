@@ -1,0 +1,98 @@
+
+ module openconfig-platform-me {
+
+  yang-version "1";
+
+  // namespace
+  namespace "http://openconfig.net/yang/platform/me";
+
+  prefix "oc-me";
+
+  import openconfig-platform { prefix oc-platform;revision-date "2023-04-26"; }
+  import openconfig-platform-types { prefix oc-platform-types;revision-date "2023-04-26"; }
+  import openconfig-extensions { prefix oc-ext;revision-date "2018-10-17"; }
+
+
+  // meta
+  organization " working group";
+
+  contact
+    "  working group";
+
+  description
+    "This module defines data related to me components in
+    the openconfig-platform model";
+
+  oc-ext:openconfig-version "0.1.0";
+ 
+  revision "2023-04-26" {
+    description
+      "Initial revision for minOTN";
+    reference "1.0.0";
+  }
+
+  // extension statements
+
+  // feature statements
+
+  // identity statements
+
+  // typedef statements
+    
+  // grouping statements
+
+  grouping me-config {
+    description
+      "Configuration data for management element components";     
+  }
+
+  grouping me-state {
+    description
+      "Operational state data for management element components"; 
+              
+    leaf device-type  {
+      type enumeration {
+        enum E {
+          description
+            "Electrical Device ";
+        }
+        enum O {
+          description 
+            "Optical Device";
+        }
+        enum EO {
+          description 
+            "Hybrid (E and O) Device";
+        }
+      }   
+      description
+         "me type for management element components";         
+    }    
+  }
+
+  
+
+  // data definition statements
+
+  // augment statements
+
+  augment "/oc-platform:components/oc-platform:component/oc-platform:me/oc-platform:config" {
+    description
+      "Adding me data to physical inventory";
+
+    uses me-config;
+  }
+
+ augment "/oc-platform:components/oc-platform:component/oc-platform:me/oc-platform:state" {
+    description
+      "Adding me state data";
+
+    uses me-config;
+    uses me-state;
+  }
+
+  // rpc statements
+  
+  // notification statements
+
+}

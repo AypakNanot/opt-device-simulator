@@ -1,0 +1,504 @@
+module "opt-create-service" {
+  yang-version "1.1";
+  namespace "com:optel:yang:otn:opt-create-service";
+  prefix "opt-create-service";
+  import "acc-devm" {
+    prefix "acc-devm";
+  }
+
+  import "acc-enum" {
+    prefix "acc-enum";
+  }
+
+  import "acc-connection" {
+    prefix "acc-con";
+  }
+
+  import "opt-otn-extension" {
+    prefix "opt-otn-extension";
+  }
+
+  import "acc-protection-group" {
+    prefix "acc-pg";
+  }
+
+  import "acc-yang-types" {
+    prefix "acc-type";
+  }
+
+  revision "2022-03-09" {
+    description
+      "Initial revision";
+  }
+
+  typedef "service-direction" {
+    type "enumeration" {
+      enum "uni-direction" {
+        value "1";
+        description
+          "A -> Z direction";
+      }
+
+      enum "bi-direction" {
+        value "2";
+        description
+          "A <=> Z direction";
+      }
+
+    }
+
+  }
+
+  rpc "create-service" {
+    input {
+      list "service-param" {
+        key "service-key";
+        leaf "service-key" {
+          type "string";
+        }
+
+        uses "service-basic-param-grouping";
+        container "a-params" {
+          uses "service-param-grouping";
+        }
+
+        container "z-params" {
+          uses "service-param-grouping";
+        }
+
+      }
+
+    }
+
+    output {
+      list "connection" {
+        key "name";
+        uses "acc-con:connection";
+      }
+
+      list "vsi" {
+        key "name";
+        uses "opt-otn-extension:vsi-grouping";
+      }
+
+      container "create-component" {
+        leaf-list "connection-name" {
+          type "string" {
+            length "1..64";
+          }
+
+          min-elements "0";
+          description
+            "创建的内部连接名称,除connection外的连接";
+        }
+
+        leaf-list "port-name" {
+          type "string" {
+            length "1..64";
+          }
+
+          min-elements "1";
+          description
+            "返回的业务内部的端口";
+        }
+
+      }
+
+      list "fail-service" {
+        key "service-key";
+        leaf "service-key" {
+          type "string";
+          description
+            "失败的service-key";
+        }
+
+        leaf "message" {
+          type "string";
+          description
+            "创建失败的原因";
+        }
+
+      }
+
+    }
+
+  }
+
+  grouping "service-basic-param-grouping" {
+    leaf "label" {
+      type "string";
+      description
+        "创建业务时不再下发name，由设备自己生成，可以下发这个新增的可选的label标识";
+    }
+
+    leaf "service-type" {
+      mandatory "true";
+      type "acc-devm:service-type";
+      description
+        "业务类型";
+    }
+
+    leaf "layer-protocol-name" {
+      mandatory "true";
+      type "identityref" {
+        base "acc-type:layer-protocol-name";
+      }
+
+      description
+        "连接层协议";
+    }
+
+    leaf "service-mapping-mode" {
+      type "acc-enum:adaptation-type";
+      description
+        "业务映射模式";
+    }
+
+    leaf "direction" {
+      type "service-direction";
+      description
+        "业务方向, A->Z或A<=>Z;默认方向A->Z.";
+    }
+
+    container "vsi-param" {
+      leaf "mtu" {
+        mandatory "true";
+        type "uint16" {
+          range "64..9216";
+        }
+
+        description
+          "Maximum transmission unit";
+      }
+
+      uses "opt-otn-extension:unknown-frame-grouping";
+      uses "opt-otn-extension:mac-learning-grouping";
+    }
+
+  }
+
+  grouping "service-param-grouping" {
+    list "point-attrs" {
+      description
+        "端点参数";
+      key "point-key";
+      leaf "point-key" {
+        type "string";
+        description
+          "1,2,3,4编号下发, 保证唯一";
+      }
+
+      container "requested-capacity" {
+        uses "acc-con:capacity";
+      }
+
+      leaf "protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "保护类型";
+      }
+
+      leaf "tcm" {
+        type "uint16";
+        description
+          "when nni-protection-type = 'snc-s', needs to be issued to present the nni tcm of both work path and protection path";
+      }
+
+      container "primary-param" {
+        uses "port-param-grouping";
+        description
+          "主用参数";
+      }
+
+      container "secondary-param" {
+        uses "port-param-grouping";
+        description
+          "备用参数";
+      }
+
+    }
+
+  }
+
+  grouping "port-param-grouping" {
+    leaf "ptp-name" {
+      type "string";
+      description
+        "ptp端口";
+    }
+
+    container "eth-attr-pac" {
+      uses "eth-attr-pac-grouping";
+    }
+
+    container "lcas-attr-pac" {
+      uses "lcas-attr-pac-grouping";
+    }
+
+    container "odu-attr-pac" {
+      uses "odu-attr-pac-grouping";
+    }
+
+    container "osu-attr-pac" {
+      uses "osu-attr-pac-grouping";
+    }
+
+    container "sdh-attr-pac" {
+      uses "sdh-attr-pac-grouping";
+    }
+
+  }
+
+  grouping "eth-attr-pac-grouping" {
+    container "vlan-spec" {
+      uses "acc-con:vlan-spec";
+      description
+        "指定VLAN，用于客户Vlan与运营商Vlan的匹配，根据客户需求指定C-TAG或S-TAG,无需携带accessAction.";
+    }
+
+    container "switch-vlan-spec" {
+      uses "acc-con:vlan-spec";
+      description
+        "当剥离添加或转换Vlan时，指定VLAN的值，accessAction = push_pop或accessAction = exchange";
+    }
+
+    uses "opt-otn-extension:storm-suppression-grouping";
+    leaf "partition-id" {
+      type "uint16" {
+        range "0..127";
+      }
+
+      default "0";
+      description
+        "水平分割组ID.只在配置专网汇聚时可填";
+    }
+
+  }
+
+  grouping "lcas-attr-pac-grouping" {
+    leaf "lcas" {
+      type "boolean";
+      default "true";
+    }
+
+    leaf "hold-off" {
+      type "uint32";
+      default "0";
+      description
+        "unit: ms";
+    }
+
+    leaf "wtr" {
+      type "uint32";
+      default "300";
+      description
+        "unit: s";
+    }
+
+    leaf "tsd" {
+      type "boolean";
+      default "false";
+    }
+
+  }
+
+  grouping "sdh-attr-pac-grouping" {
+    leaf "vc-type" {
+      type "acc-enum:sdh-switch-type";
+    }
+
+    leaf "signal-type" {
+      type "acc-enum:signal-type";
+      description
+        "sdh signal";
+    }
+
+    leaf-list "mapping-path" {
+      min-elements "0";
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    leaf "time-slot" {
+      type "string";
+      description
+        "批量时隙";
+    }
+
+  }
+
+  grouping "odu-attr-pac-grouping" {
+    leaf "adaptation-type" {
+      type "acc-enum:adaptation-type";
+    }
+
+    leaf "signal-type" {
+      type "acc-enum:signal-type";
+      description
+        "odu signal";
+    }
+
+    leaf "switch-capability" {
+      type "acc-enum:odu-switch-type";
+      description
+        "Switch capability";
+    }
+
+    leaf "ts-detail" {
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+  }
+
+  grouping "osu-attr-pac-grouping" {
+    leaf "tpn" {
+      type "uint64";
+      description
+        "TPN的编号0～1000";
+    }
+
+  }
+
+  rpc "add-service-member" {
+    input {
+      list "add-member" {
+        key "name";
+        leaf "name" {
+          type "string" {
+            length "1..64";
+          }
+
+          description
+            "connection/vsi name";
+        }
+
+        container "az-params" {
+          leaf "az-type" {
+            type "uint16";
+            description
+              "一次只能添加一种类型端点,指定添加的a/z端点类型。1--A端点，2--Z端点";
+          }
+
+          uses "service-param-grouping";
+          description
+            "添加a/z端的成员配置，只有专网汇聚业务可添加A端成员,专网汇聚广播业务均可添加Z端成员";
+        }
+
+      }
+
+    }
+
+    output {
+      list "results" {
+        key "name";
+        leaf "name" {
+          type "string" {
+            length "1..64";
+          }
+
+          description
+            "connection/vsi name";
+        }
+
+        leaf-list "port-name" {
+          type "string";
+          description
+            "The new CTP name list in connection.";
+        }
+
+        leaf-list "pg-id" {
+          type "uint16";
+          description
+            "新增成员的保护组的ID";
+        }
+
+      }
+
+      list "fail-data" {
+        key "name";
+        leaf "name" {
+          type "string";
+          description
+            "失败的connection/vsi名称";
+        }
+
+        leaf-list "point-key" {
+          type "string";
+          description
+            "失败的端点配置key";
+        }
+
+        leaf "message" {
+          type "string";
+          description
+            "失败的原因";
+        }
+
+      }
+
+    }
+
+  }
+
+  rpc "delete-service-member" {
+    input {
+      list "delete-member" {
+        key "name";
+        leaf "name" {
+          type "string" {
+            length "1..64";
+          }
+
+          description
+            "connection/vsi name";
+        }
+
+        leaf "az-type" {
+          type "uint16";
+          description
+            "指定删除的端点类型。1--A端点，2--Z端点";
+        }
+
+        leaf-list "port-name" {
+          type "string";
+          description
+            "删除端点成员CTP，都是A端口或者都是Z端点，由az-type决定";
+        }
+
+      }
+
+    }
+
+    output {
+      list "fail-data" {
+        key "name";
+        leaf "name" {
+          type "string";
+          description
+            "失败的connection/vsi名称";
+        }
+
+        leaf-list "port-name" {
+          type "string";
+          description
+            "删除失败的成员端口";
+        }
+
+        leaf "message" {
+          type "string";
+          description
+            "失败的原因";
+        }
+
+      }
+
+    }
+
+  }
+
+}

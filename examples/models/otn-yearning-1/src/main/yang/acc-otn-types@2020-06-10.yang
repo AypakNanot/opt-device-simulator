@@ -1,0 +1,376 @@
+module "acc-otn-types" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-otn-types";
+  prefix "acc-otn-types";
+  organization
+    "China Communications Standards Association
+TC 6 WG 1. ";
+  contact
+    "Editor: Xing Zhao
+        <mailto:zhaoxing@caict.ac.cn>
+
+Editor: Haomian Zheng
+        <mailto:zhenghaomian@huawei.com>
+";
+  description
+    "This module defines common types used for OTN CPE devices.
+The model fully conforms to the Network Management Datastore
+Architecture (NMDA).";
+  revision "2020-06-10" {
+    description
+      "Initial Version";
+    reference
+      "接入型OTN管控技术要求";
+  }
+
+  identity "switch-type" {
+    description
+      "Base identity for protocol framing used by tributary signals.";
+  }
+
+  identity "ODU0" {
+    base "switch-type";
+    description
+      "ODU0 protocol (1.24Gb/s). ";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "ODU1" {
+    base "switch-type";
+    description
+      "ODU1 protocol (2.49Gb/s).";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "ODU2" {
+    base "switch-type";
+    description
+      "ODU2 protocol (10.03Gb/s).";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "ODU2e" {
+    base "switch-type";
+    description
+      "ODU2e protocol (10.39Gb/s).";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "ODU3" {
+    base "switch-type";
+    description
+      "ODU3 protocol (40.31Gb/s).";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "ODU4" {
+    base "switch-type";
+    description
+      "ODU4 protocol (104.79Gb/s).";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "ODUflex-CBR" {
+    base "switch-type";
+    description
+      "ODUflex protocol (flexibile bit rate, not resizable).
+It could be used for ODUflex(CBR).";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "ODUflex-GFP" {
+    base "switch-type";
+    description
+      "ODUflex protocol (flexibile bit rate, not resizable).
+It could be used for any type of ODUflex(GFP).";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "fgODUflex" {
+    base "switch-type";
+    description
+      "fgODUflex for mapping sub1G client signals with user
+    configured bit rate of p × 1 244 160 kbit/s / 119.525 ± 20 ppm
+    in which p = 1 to 119.";
+    reference
+      "ITU-T G.709/Y.1331 Amd3(03/2024)";
+  }
+
+  identity "VC-12" {
+    base "switch-type";
+    description
+      "VC-12 for SDH Switching.";
+    reference
+      "ITU-T G.707";
+  }
+
+  identity "VC-3" {
+    base "switch-type";
+    description
+      "VC-3 for SDH Switching.";
+    reference
+      "ITU-T G.707";
+  }
+
+  identity "VC-4" {
+    base "switch-type";
+    description
+      "VC-4 for SDH Switching.";
+    reference
+      "ITU-T G.707";
+  }
+
+  identity "client-signal-type" {
+    description
+      "Base identity from which specific client signals are derived.";
+  }
+
+  identity "GE" {
+    base "client-signal-type";
+    description
+      "Client signal type of 1GbE. ";
+    reference
+      "ITU-T G.709";
+  }
+
+  identity "FE" {
+    base "client-signal-type";
+    description
+      "Client signal type Fast Ethernet. ";
+    reference
+      "ITU-T G.709";
+  }
+
+  identity "LAN-10GE" {
+    base "client-signal-type";
+    description
+      "Client signal type of 10GE-LAN. Identity name cannot start with numbers,
+so put  in front.";
+    reference
+      "ITU-T G.709";
+  }
+
+  identity "no-signal" {
+    base "client-signal-type";
+    description
+      "Client signal type as NULL. ";
+  }
+
+  identity "VC-n" {
+    base "client-signal-type";
+    description
+      "Client signal type of VC-n. ";
+    reference
+      "ITU-T G.709";
+  }
+
+  identity "STM-1" {
+    base "client-signal-type";
+    description
+      "Client signal type of STM-1";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "STM-4" {
+    base "client-signal-type";
+    description
+      "Client signal type of STM-4";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "STM-16" {
+    base "client-signal-type";
+    description
+      "Client signal type of STM-16";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "STM-64" {
+    base "client-signal-type";
+    description
+      "Client signal type of STM-64";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "OTU0" {
+    base "client-signal-type";
+    description
+      "Client signal type of OTU0. ";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "OTU1" {
+    base "client-signal-type";
+    description
+      "Client signal type of OTU1. ";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "OTU2" {
+    base "client-signal-type";
+    description
+      "Client signal type of OTU2. ";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "OTU2e" {
+    base "client-signal-type";
+    description
+      "Client signal type of OTU2e.";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "OTU4" {
+    base "client-signal-type";
+    description
+      "Client signal type of OTU4. ";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "E1" {
+    base "client-signal-type";
+    description
+      "Client signal type of E1. ";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "adaptation-type" {
+    description
+      "Base identity for the adaptation types to the devices.";
+  }
+
+  identity "CBR-AMP" {
+    base "adaptation-type";
+    description
+      "Asynchronous CBR mapping. ";
+    reference
+      "ITU-T G.709";
+  }
+
+  identity "CBR-BMP" {
+    base "adaptation-type";
+    description
+      "Bit-synchronous CBR mapping. ";
+    reference
+      "ITU-T G.709";
+  }
+
+  identity "GFP-T" {
+    base "adaptation-type";
+    description
+      "Transparent generic framing procedure. ";
+    reference
+      "ITU-T G.709";
+  }
+
+  identity "GFP-F" {
+    base "adaptation-type";
+    description
+      "Frame-Mapped Framing Generic Procedure. ";
+  }
+
+  identity "NULL" {
+    base "adaptation-type";
+    description
+      "NULL test signal mapping. ";
+  }
+
+  identity "PRBS" {
+    base "adaptation-type";
+    description
+      "PRBS test signal mapping. ";
+  }
+
+  identity "CBRx" {
+    base "adaptation-type";
+    description
+      "Adaption with CBRx. ";
+  }
+
+  identity "GMP" {
+    base "adaptation-type";
+    description
+      "Adaption with GMP. ";
+    reference
+      "ITU-T G.709";
+  }
+
+  identity "ODUij" {
+    base "adaptation-type";
+    description
+      "逐级复用。 ";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "ODUj21" {
+    base "adaptation-type";
+    description
+      "单级复用。";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "ODUk" {
+    base "adaptation-type";
+    description
+      "不解复用。";
+    reference
+      "RFC7139/ITU-T G.709";
+  }
+
+  identity "PKT-fgOPUflex" {
+    base "adaptation-type";
+    description
+      "Mapping of a packet client signal into fgOPUflex.";
+    reference
+      "ITU-T G.709/Y.1331 Amd3(03/2024)";
+  }
+
+  identity "CBR-fgOPUflex" {
+    base "adaptation-type";
+    description
+      "Mapping of CBR client signals into fgOPUflex.";
+    reference
+      "ITU-T G.709/Y.1331 Amd3(03/2024)";
+  }
+
+  identity "VCn-fgOPUflex" {
+    base "adaptation-type";
+    description
+      "Mapping of VC-n client signals into fgOPUflex.";
+    reference
+      "ITU-T G.709/Y.1331 Amd3(03/2024)";
+  }
+
+  identity "BMP" {
+    base "adaptation-type";
+    description
+      "";
+  }
+
+  identity "IMP" {
+    base "adaptation-type";
+    description
+      "";
+  }
+
+}

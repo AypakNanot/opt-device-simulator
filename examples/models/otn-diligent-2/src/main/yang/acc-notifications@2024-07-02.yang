@@ -1,0 +1,145 @@
+module "acc-notifications" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-notifications";
+  prefix "acc-ntf";
+  revision "2024-07-02" {
+    description
+      "M-OTN2.0 管控与设备双向调优，减负";
+  }
+
+  revision "2021-09-24" {
+    description
+      "uniform date for motn";
+  }
+
+  typedef "event-type" {
+    type "enumeration" {
+      enum "object-creation" {
+        value "0";
+      }
+
+      enum "object-deletion" {
+        value "1";
+      }
+
+      enum "attribute-value-change" {
+        value "2";
+      }
+
+      enum "user-login" {
+        value "3";
+      }
+
+      enum "user-logoff" {
+        value "4";
+      }
+
+      enum "ems-event" {
+        value "5";
+      }
+
+    }
+
+  }
+
+  grouping "event" {
+    leaf "event-serial-no" {
+      mandatory "true";
+      type "uint64";
+    }
+
+    leaf "event-type" {
+      mandatory "true";
+      type "event-type";
+    }
+
+    leaf "object-name" {
+      mandatory "true";
+      type "string";
+    }
+
+    leaf "object-type" {
+      mandatory "true";
+      type "string";
+    }
+
+    leaf "user-name" {
+      type "string";
+    }
+
+    leaf "ems-event-code" {
+      type "string";
+      description
+        "在去年要求设备向ems/ums发送告警一致性的时候，ems的告警中很多不是以告警开始和结束成对出现，而是以类似通知事件类型上报导致ums收到太多没有end的告警，这样的就不要以start告警上报了，以新增的这种事件方式上报即可，可以随着ems扩展事件code。 ems网管自己的配置加载失败等类型可以不上报，因为跟设备无关";
+    }
+
+  }
+
+  notification "common-notification" {
+    container "event" {
+      uses "event";
+    }
+
+  }
+
+  notification "attribute-value-change-notification" {
+    container "event" {
+      uses "event";
+    }
+
+    container "attribute-value-change" {
+      leaf "attribute-name" {
+        mandatory "true";
+        type "string";
+      }
+
+      leaf "new-value" {
+        mandatory "true";
+        type "string";
+      }
+
+      leaf "old-value" {
+        type "string";
+      }
+
+    }
+
+  }
+
+  notification "ems-oper-notification" {
+    leaf "category" {
+      mandatory "true";
+      type "string";
+      description
+        "必填，大类别：CONNECTION/PG/TP/ALARM/PM/ME";
+    }
+
+    leaf "object-type" {
+      type "string";
+      description
+        "可选，详细类别：ETH/VC/ODU/OSU/PTP/FTP/CTP";
+    }
+
+    leaf "object-name" {
+      type "string";
+      description
+        "可选，具体对象名，category为CONNECTION，PG，TP相关重要类别时，必须上报";
+    }
+
+    leaf "oper-type" {
+      mandatory "true";
+      type "string";
+      description
+        "必填，默认操作类型： change，如果能分清具体类型，则使用add or update or delete";
+    }
+
+    leaf "oper-detail" {
+      mandatory "true";
+      type "string";
+      description
+        "必填，具体操作内容，没有固定格式，可使用英文或者中文简单描述";
+    }
+
+  }
+
+}

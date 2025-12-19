@@ -1,0 +1,63 @@
+module opt-wdm-extension {
+    yang-version "1.1";
+	
+    namespace "com:optel:yang:wdm:extension";
+    prefix opt-wdm-extension;
+	
+	import miniotn-rpc {prefix mo-rpc;}
+	
+	revision 2024-12-11 {
+        description 
+		 "This revision change history:
+		 -2024-12-11 add rpc operate-port-server
+		 -2024-12-04 init wdm externsions for optel to add content
+		";
+    }
+    
+
+	grouping device-mode-grouping {
+		leaf auto-config-mode {
+				type boolean;
+				description "Enable os disables the automatic power on and off mode for boards and ports";			
+		}
+		leaf graded-energy-saving-mode {
+				type boolean;
+				description "The parameter is used to enable or disable the hierarchical energy saving mode";			
+		}
+    }
+	
+	/* The root of extension-top */
+    grouping extension-top {
+		container device-mode {
+			description "extension for minni otn add auto-config-mode,graded-energy-saving-mode";
+			uses device-mode-grouping ;
+		}
+		
+	}
+	uses extension-top;
+	
+	
+	/* The operate of create or delete the port server */
+	rpc operate-port-server{
+		description "create or delete the port server";
+		input{
+			leaf obj-name{
+			type string;
+			description "obj name";
+			}
+			leaf operate{
+			type string;
+			description "create or delete";
+			}
+		}
+		output{
+			leaf result{
+				type mo-rpc:rpc-result;
+				description "result of the operate-port-server";
+			}
+		}
+	
+	}
+	
+	
+}

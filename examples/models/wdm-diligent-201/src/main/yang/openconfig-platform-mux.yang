@@ -1,0 +1,229 @@
+
+ module openconfig-platform-mux {
+
+  yang-version "1";
+
+  // namespace
+  namespace "http://openconfig.net/yang/platform/mux";
+
+  prefix "oc-mux";
+
+  import openconfig-platform { prefix oc-platform;revision-date "2020-06-30"; }
+  import openconfig-platform-types { prefix oc-platform-types;revision-date "2020-06-30"; }
+  import openconfig-extensions { prefix oc-ext;revision-date "2018-10-17"; }
+  import openconfig-transport-types { prefix oc-opt-types;revision-date "2020-06-30"; }
+
+
+  // meta
+  organization " working group";
+
+  contact
+    "  working group";
+
+  description
+    "This module defines data related to mux components in
+    the openconfig-platform model";
+
+  oc-ext:openconfig-version "0.1.0";
+ 
+  revision "2020-06-30" {
+    description
+      "Initial revision";
+    reference "0.1.0";
+  }
+
+
+  // extension statements
+
+  // feature statements
+
+  // identity statements
+
+  // typedef statements
+    
+  // grouping statements
+
+  grouping mux-config {
+
+    // container awg-pac {
+    //   uses awg-pac-config;
+    // }
+
+       
+  }
+
+  grouping mux-state {
+    
+    description
+      "Operational state data for mux components";
+                
+    leaf channel-interval  {
+      //TODO: mandatory true;
+      type oc-platform-types:channel-interval-type;
+      description
+         "channel interval, 50/75/100GHz";
+    }     
+    
+    leaf support-flex-grid  {
+      //TODO: mandatory true;
+      type boolean;      
+      description
+         "Support flex grid status for mux components";
+    }    
+    
+    leaf channel-num  {
+      //TODO: mandatory true;
+      type uint32;
+      description
+         "The channel number for the mux, example 44,96";
+    }
+  }
+
+  grouping awg-pac-config {
+    uses frequency-config;
+  }
+
+  grouping awg-pac-state {
+
+    leaf channel-interval  {
+      type oc-platform-types:channel-interval-type;
+      description
+         "channel interval, 50/75/100GHz";
+    }
+
+    leaf channel-num  {
+      //TODO: mandatory true;
+      type uint32;
+      description
+         "The channel number for the mux, example 44,96";
+    }
+    uses frequency-state;
+  }
+
+  
+
+
+
+
+
+
+
+
+
+  grouping  frequency-config {
+    list frequency-channel{
+      key "index";
+      description
+        "List of frequency-channel for the component";
+      uses frequency-channels-config;
+    }
+  }
+
+  grouping  frequency-state {
+    list frequency-channel{
+      key "index";
+      description
+        "List of frequency-channel for the component";
+      uses frequency-channels-config;
+      uses frequency-channels-state;
+    }
+  }
+
+
+
+
+  grouping  frequency-channels-config {
+    description
+      "Configuration parameters relating to the
+       grouping of frequency-channels";
+      leaf index {
+        type string;
+        description
+          "The serial number corresponding to the 
+          channel is used to identify and index the channel."; 
+      }
+      leaf ad-port {
+        type string;
+        description
+          "The a/d port name corresponding to the 
+          channel, such as port-1-1-x,only for wss can be modified"; 
+      }
+      leaf line-port {
+        type string;
+        description
+          "The port name corresponding to the 
+          channel, such as port-1-1-x,only for wss can be modified"; 
+      }
+      leaf target-add-voa-attenuation {
+        type decimal64 {
+          fraction-digits 2;
+        }
+        description
+          "The target attenuation of adjustable
+           light attenuation is 0.1dB."; 
+      }
+      leaf target-drop-voa-attenuation {
+        type decimal64 {
+          fraction-digits 2;
+        }
+        description
+          "The target attenuation of adjustable
+           light attenuation is 0.1dB."; 
+      }
+      leaf min-edge-freq {
+        type uint32;
+        description
+          "The lower frequency limit corresponding
+           to the channel"; 
+      }
+      leaf max-edge-freq {
+        type uint32;
+        description
+          "The upper frequency limit of the channel"; 
+      }
+  }
+
+  grouping  frequency-channels-state {
+    leaf actual-add-voa-attenuation {
+      type decimal64 {
+        fraction-digits 2;
+      }
+      description
+        "The actual attenuation of adjustable light
+         attenuation is 0.1dB."; 
+    }
+    leaf actual-drop-voa-attenuation {
+      type decimal64 {
+        fraction-digits 2;
+      }
+      description
+        "The actual attenuation of adjustable light
+         decay in 0.1dB"; 
+    }
+  }
+
+
+  
+
+  // data definition statements
+
+  // augment statements
+ 
+ augment "/oc-platform:components/oc-platform:component/oc-platform:mux/oc-platform:state" {
+    description
+      "Adding mux state data";
+
+    uses mux-state;
+  }
+  augment "/oc-platform:components/oc-platform:component/oc-platform:mux/oc-platform:config" {
+    description
+      "Adding mux state data";
+
+    uses mux-config;
+  }
+
+  // rpc statements
+  
+  // notification statements
+
+}

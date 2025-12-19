@@ -1,0 +1,372 @@
+module miniotn-performance-types {
+
+  yang-version "1";
+
+  // namespace
+  namespace "urn:cmcc:yang:performance:types";
+
+  prefix "mo-performance-types";
+
+  // import some basic types
+  import openconfig-extensions { prefix oc-ext;revision-date "2018-10-17"; }
+
+  // meta 
+  organization "Cmcc minOTN working group";
+
+  contact
+    "";
+
+  description
+    "This module defines data types (e.g., YANG identities)
+    to support the OpenConfig perfomance model.";
+
+  oc-ext:openconfig-version "1.0.0";
+
+  revision "2023-04-26" {
+    description
+    	"Initial release for MinOTN.";
+    reference "1.0.0";
+  }
+
+  // OpenConfig specific extensions for module metadata.
+
+    typedef pm-parameter-type {
+        type enumeration {
+        
+            enum ALL {
+                value 0;
+                description 
+                  "";
+            }
+            
+            enum RX-PKTS {
+                value 1;
+                description
+                    "";
+            }
+            enum TX-PKTS {
+                value 2;
+                description
+                    "";
+            }
+            enum RX-CRC-ERR-SUM {
+                value 3;
+                description
+                    "";
+            }
+            enum RX-PKTS-64OCTETS {
+                value 4;
+                description
+                    "";
+            }
+            enum RX-PKTS-65TO127OCTETS {
+                value 5;
+                description
+                    "";
+            }
+            enum RX-PKTS-128TO255OCTETS {
+                value 6;
+                description
+                    "";
+            }
+            enum RX-PKTS-256TO511OCTETS {
+                value 7;
+                description
+                    "";
+            }
+            enum RX-PKTS-512TO1023OCTETS {
+                value 8;
+                description
+                    "";
+            }
+            enum RX-PKTS-1024TO1518OCTETS {
+                value 9;
+                description
+                    "";
+            }
+            enum TX-PKTS-64OCTETS {
+                value 10;
+                description
+                    "";
+            }
+            enum TX-PKTS-OCTETS65TO127 {
+                value 11;
+                description
+                    "";
+            }
+            enum TX-PKTS-128TO255OCTETS {
+                value 12;
+                description
+                    "";
+            }
+            enum TX-PKTS-256TO511OCTETS {
+                value 13;
+                description
+                    "";
+            }
+            enum TX-PKTS-512TO1023OCTETS {
+                value 14;
+                description
+                    "";
+            }
+            enum TX-PKTS-1024TO1518OCTETS {
+                value 15;
+                description
+                    "";
+            }
+            enum RX-STAT-OSZ {
+                value 16;
+                description
+                    "";
+            }
+            enum TX-STAT-OSZ {
+                value 17;
+                description
+                    "";
+            }
+            enum RX-STAT-USZ {
+                value 18;
+                description
+                    "";
+            }
+            enum TX-STAT-USZ {
+                value 19;
+                description
+                    "";
+            }
+            enum BBE {
+                value 20;
+                description
+                    "";
+            }
+            enum BBER {
+                value 21;
+                description
+                    "";
+            }
+            enum ES {
+                value 22;
+                description
+                    "";
+            }
+            enum SES {
+                value 23;
+                description
+                    "";
+            }
+            enum SESR {
+                value 24;
+                description
+                    "";
+            }
+            enum UAS {
+                value 25;
+                description
+                    "";
+            }
+            enum FEBBE {
+                value 26;
+                description
+                    "";
+            }
+            enum FEBBER {
+                value 27;
+                description
+                    "";
+            }
+            enum FEES {
+                value 28;
+                description
+                    "";
+            }
+            enum FESES {
+                value 29;
+                description
+                    "";
+            }
+            enum FEUAS {
+                value 30;
+                description
+                    "";
+            }
+            enum FESESR {
+                value 31;
+                description
+                    "";
+            }
+            enum PRE-FEC-BER {
+                value 32;
+                description
+                    "";
+            }
+            enum POST-FEC-BER {
+                value 33;
+                description
+                    "";
+            }
+            enum RX-MESSAGE-NUM {
+                value 34;
+                description
+                    "";
+            }
+            enum TX-MESSAGE-NUM {
+                value 35;
+                description
+                    "";
+            }
+            enum RX-DROP-MESSAGE-NUM {
+                value 36;
+                description
+                    "";
+            }
+            enum INPUT-POWER {
+                value 37;
+                description
+                    "";
+            }
+            enum OUTPUT-POWER {
+                value 38;
+                description
+                    "";
+            }
+            enum LASER-BIAS-CURRENT {
+                value 39;
+                description
+                    "";
+            }
+            enum TEMPERATURE {
+                value 40;
+                description
+                    "";
+            }
+            enum TEC-CURRENT  {
+                value 41;
+                description
+                    "";
+            }
+            enum ACTUAL-GAIN {
+                value 42;
+                description
+                    "";
+            }
+            enum ACTUAL-GAIN-TILT {
+                value 43;
+                description
+                    "";
+            }
+            enum INPUT-POWER-TOTAL {
+                value 44;
+                description
+                    "";
+            }
+            enum OUTPUT-POWER-TOTAL {
+                value 45;
+                description
+                    "";
+            }
+            enum OPTICAL-RETURN-LOSS {
+                value 46;
+                description
+                    "";
+            }
+            enum ACTUAL-VOA-ATTENUATION {
+                value 47;
+                description
+                    "";
+            }
+            enum LOWER-FREQUENCY {
+                value 48;
+                description
+                    "";
+            }
+            enum UPPER-FREQUENCY {
+                value 49;
+                description
+                    "";
+            }
+            enum OSNR {
+                value 50;
+                description
+                    "";
+            }
+            enum CHANNEL-OPTICAL-POWER {
+                value 51;
+                description
+                    "";
+            }
+            enum SUPPLY-VOLTAGE {
+                value 52;
+                description
+                    "";
+            }
+            enum RX-BYTES {
+                value 53;
+                description
+                  "";
+            }
+            enum TX-BYTES {
+                value 54;
+                description
+                  "";
+            }
+            enum TX-CRC-ERR-SUM {
+                value 55;
+                description
+                    "";
+            } 
+            
+			enum PILOT-TONE-STATUS {
+                value 56;
+                description 
+                  "";
+		    }
+			enum OUT-PCS-BIP-ERRORS {
+                value 57;
+                description 
+                  "";
+		    }
+			enum IN-PCS-BIP-ERRORS {
+                value 58;
+                description 
+                  "";
+		    }
+			enum RX-PKTS-ERR {
+			    value 59;
+				description
+				  "";
+			}
+            enum RX-ERR-SUM {
+			    value 60;
+				description
+				  "";
+			}
+            enum USED-POWER {
+                value 61;
+                description
+                    "used power for chassis";
+            }
+            enum TEMPERATURE-CHANGE {
+                value 62;
+                description
+                    "规范yang文件中不存在它，临时添加";
+            }
+            enum SPEED-CHANGE {
+                value 63;
+                description
+                    "规范yang文件中不存在它，临时添加";
+            }
+			enum UNKNOWN {
+                value 100;
+                description
+                  "规范yang文件中不存在它，目的是标识未定义的类型";
+            }
+        }
+        description
+            "Parameter type of performance data";
+        reference
+            "";
+    }
+
+
+
+}

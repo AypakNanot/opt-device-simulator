@@ -1,0 +1,508 @@
+module "acc-alarms" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-alarms";
+  prefix "acc-alm";
+  import "ietf-yang-types" {
+    prefix "yang";
+  }
+
+  import "acc-yang-types" {
+    prefix "acc-type";
+  }
+
+  organization
+    "motn";
+  contact
+    "zhaogy";
+  description
+    "this module defines an interface for managing alarms.";
+  revision "2024-07-02" {
+    description
+      "M-OTN 2.0 管控与设备双向减负调优";
+  }
+
+  revision "2021-09-24" {
+    description
+      "uniform date for motn";
+  }
+
+  typedef "alarm-state" {
+    type "enumeration" {
+      enum "start" {
+        value "0";
+        description
+          "alarm-state start";
+      }
+
+      enum "end" {
+        value "1";
+        description
+          "alarm-state end";
+      }
+
+    }
+
+    description
+      "alarm-state";
+  }
+
+  typedef "perceived-severity" {
+    type "enumeration" {
+      enum "critical" {
+        value "0";
+        description
+          "perceived-severity critical";
+      }
+
+      enum "major" {
+        value "1";
+        description
+          "perceived-severity major";
+      }
+
+      enum "minor" {
+        value "2";
+        description
+          "perceived-severity minor";
+      }
+
+      enum "warning" {
+        value "3";
+        description
+          "perceived-severity warning";
+      }
+
+    }
+
+    description
+      "perceived-severity";
+  }
+
+  grouping "alarm" {
+    description
+      "common parameters for an alarm.";
+    leaf "alarm-serial-no" {
+      mandatory "true";
+      type "uint64";
+      description
+        "alarm alarm-serial-no";
+    }
+
+    leaf "object-name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "alarm object-name";
+    }
+
+    leaf "object-type" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "alarm object-type";
+    }
+
+    leaf "alarm-code" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "alarm alarm-code";
+    }
+
+    leaf "alarm-state" {
+      mandatory "true";
+      type "alarm-state";
+      description
+        "alarm alarm-state";
+    }
+
+    leaf "perceived-severity" {
+      mandatory "true";
+      type "perceived-severity";
+      description
+        "alarm perceived-severity";
+    }
+
+    leaf "start-time" {
+      mandatory "true";
+      type "yang:date-and-time";
+      description
+        "alarm start-time";
+    }
+
+    leaf "end-time" {
+      type "yang:date-and-time";
+      description
+        "alarm end-time";
+    }
+
+    leaf "additional-text" {
+      type "string" {
+        length "1..512";
+      }
+
+      description
+        "凡是涉及业务告警，尤其是涉及具体哪个VC时隙或者ODU时隙，需要上报，格式尽量与厂商EMS上报的相同，能清晰的表达具体哪个时隙；另外，如果该告警编码在EMS上显示的与当前企标定义的名称不同，也需补充到最前面，方便比对";
+    }
+
+  }
+
+  grouping "alarms" {
+    list "alarm" {
+      key "alarm-serial-no";
+      config "false";
+      uses "alarm";
+      description
+        "alarms list";
+    }
+
+    description
+      "alarms";
+  }
+
+  grouping "tca-parameter" {
+    leaf "object-name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "tca-parameter object-name";
+    }
+
+    leaf "pm-parameter-name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "tca-parameter pm-parameter-name";
+    }
+
+    leaf "granularity" {
+      mandatory "true";
+      type "acc-type:granularity";
+      description
+        "tca-parameter granularity";
+    }
+
+    leaf "threshold-type" {
+      mandatory "true";
+      type "acc-type:threshold-type";
+      description
+        "tca-parameter threshold-type";
+    }
+
+    leaf "object-type" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "tca-parameter object-type";
+    }
+
+    leaf "threshold-value" {
+      mandatory "true";
+      type "acc-type:real";
+      description
+        "tca-parameter threshold-value";
+    }
+
+    description
+      "tca-parameter";
+  }
+
+  grouping "tca" {
+    leaf "tca-serial-no" {
+      type "uint64";
+      description
+        "tca tca-serial-no";
+    }
+
+    container "tca-parameter" {
+      config "false";
+      uses "tca-parameter";
+      description
+        "tca-parameter";
+    }
+
+    leaf "tca-state" {
+      mandatory "true";
+      type "alarm-state";
+      config "false";
+      description
+        "tca tca-state";
+    }
+
+    leaf "current-value" {
+      mandatory "true";
+      type "acc-type:real";
+      config "false";
+      description
+        "tca current-value";
+    }
+
+    leaf "start-time" {
+      mandatory "true";
+      type "yang:date-and-time";
+      config "false";
+      description
+        "tca start-time";
+    }
+
+    leaf "end-time" {
+      type "yang:date-and-time";
+      config "false";
+      description
+        "tca end-time";
+    }
+
+    description
+      "tca";
+  }
+
+  grouping "tcas" {
+    list "tca" {
+      key "tca-serial-no";
+      uses "tca";
+      description
+        "tcas list";
+    }
+
+    description
+      "tcas";
+  }
+
+  container "alarms" {
+    uses "alarms";
+    description
+      "alarms container";
+  }
+
+  container "tcas" {
+    uses "tcas";
+    description
+      "tcas container";
+  }
+
+  container "tca-parameters" {
+    list "tca-parameter" {
+      key "object-name pm-parameter-name granularity threshold-type";
+      uses "tca-parameter";
+      description
+        "tca-parameter";
+    }
+
+  }
+
+  notification "alarm-notification" {
+    container "alarm" {
+      uses "alarm";
+      description
+        "alarm-notification container";
+    }
+
+    description
+      "alarm-notification";
+  }
+
+  notification "tca-notification" {
+    container "tca" {
+      uses "tca";
+      description
+        "tca-notification container";
+    }
+
+    description
+      "tca-notification";
+  }
+
+  rpc "get-history-alarms" {
+    description
+      "get-history-alarms";
+    input {
+      leaf "start-time" {
+        mandatory "true";
+        type "yang:date-and-time";
+        description
+          "start-time";
+      }
+
+      leaf "end-time" {
+        mandatory "true";
+        type "yang:date-and-time";
+        description
+          "end-time";
+      }
+
+    }
+
+    output {
+      container "alarms" {
+        uses "alarms";
+        description
+          "output alarms";
+      }
+
+      container "tcas" {
+        uses "tcas";
+        description
+          "output tcas";
+      }
+
+    }
+
+  }
+
+  rpc "clear-alarms" {
+    description
+      "清除指定一个端口或者多个端口或者全部端口的特定编码的告警。 允许设备后续继续产生该告警，只是临时清理一下当前设备内存储的";
+    input {
+      leaf "alarm-code" {
+        mandatory "true";
+        type "string";
+        description
+          "要清除的告警编码。 该编码也间接决定了告警的级别（端口级/单板级/网元级），所以不增加告警级别的参数下发了。";
+      }
+
+      leaf "category" {
+        mandatory "true";
+        type "string";
+        description
+          "指定清理当前告警还是历史告警，还是全清。  下发的值：active or history or all";
+      }
+
+      leaf "scope" {
+        mandatory "true";
+        type "string";
+        description
+          "指定下面的object的数量。枚举值：designate/all  如果是all，下面的object-name不用填了";
+      }
+
+      leaf-list "object-name" {
+        type "string";
+        description
+          "根据级别对应的指定告警对象的名称，一个或多个";
+      }
+
+    }
+
+  }
+
+  rpc "set-alarm-mask-configdata" {
+    input {
+      leaf "alarm-code" {
+        mandatory "true";
+        type "string";
+        description
+          "要清除的告警编码。 该编码也间接决定了告警的级别，与level要严格匹配，否则直接返错。";
+      }
+
+      leaf "alarm-level" {
+        mandatory "true";
+        type "string";
+        description
+          "告警级别，枚举：ME/EQ/PORT";
+      }
+
+      leaf "scope" {
+        mandatory "true";
+        type "string";
+        description
+          "作用范围枚举：整个网元范围内ME/整个单板范围内EQ/具体指定的端口PORT";
+      }
+
+      leaf-list "range-name" {
+        min-elements "1";
+        type "string";
+        description
+          "具体对象，可以是网元的uuid，单板的name，或者具体某些端口名称，20个以内";
+      }
+
+      leaf "mask-state" {
+        mandatory "true";
+        type "boolean";
+        description
+          " true进行屏蔽， false取消屏蔽，正常上报";
+      }
+
+    }
+
+  }
+
+  rpc "get-alarm-mask-configdata" {
+    input {
+      leaf "alarm-code" {
+        type "string";
+        description
+          "指定告警编码查询，可选";
+      }
+
+      leaf "alarm-level" {
+        type "string";
+        description
+          "指定告警级别查询，可选，枚举：ME/EQ/PORT 当同时指定alarmcode和alarmlevel的时候，二者需要严格匹配，否则设备返错";
+      }
+
+      leaf "range-name" {
+        type "string";
+        description
+          "具体对象，可以是网元的uuid，单板的name，或者具体某个端口名称";
+      }
+
+    }
+
+    output {
+      container "alarm-mask-configs" {
+        list "alarm-mask-config" {
+          key "alarm-code alarm-level scope";
+          min-elements "0";
+          leaf "alarm-code" {
+            mandatory "true";
+            type "string";
+          }
+
+          leaf "alarm-level" {
+            mandatory "true";
+            type "string";
+            description
+              "告警级别 ME/EQ/PORT";
+          }
+
+          leaf "scope" {
+            mandatory "true";
+            type "string";
+            description
+              "作用范围 ME/EQ/PORT";
+          }
+
+          leaf-list "range-name" {
+            type "string";
+            description
+              "范围对象名";
+          }
+
+        }
+
+        description
+          "代替以前的alarm-mask-states";
+      }
+
+    }
+
+  }
+
+}

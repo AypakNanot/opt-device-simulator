@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# 获取当前目录名
+CURRENT_DIR_NAME=${PWD##*/}
+
+# 构建 jar 文件名
+JAR_NAME="$CURRENT_DIR_NAME.jar"
+
+# 默认参数
+PORT=$(echo $CURRENT_DIR_NAME | sed 's/device-//')
+DEVICE=1
+THREAD=1
+
+# 解析命令行参数
+while getopts "d:t:" opt; do
+  case $opt in
+    d)
+      DEVICE=$OPTARG
+      ;;
+	  t)
+      THREAD=$OPTARG
+      ;;
+    *)
+      exit 1
+      ;;
+  esac
+done
+
+# 复制原 jar 为临时名称
+cp device.jar $JAR_NAME
+
+# 后台运行
+nohup java -jar $JAR_NAME -p $PORT -d $DEVICE -t $THREAD > device-$PORT.log 2>&1 &
+
+echo "Started device on port $PORT with device number $DEVICE"
+echo "Check process with: jps | grep device-$PORT"

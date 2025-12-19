@@ -1,0 +1,1008 @@
+module "acc-osu" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-osu";
+  prefix "acc-osu";
+  import "acc-yang-types" {
+    prefix "acc-type";
+  }
+
+  import "acc-devm" {
+    prefix "acc-devm";
+  }
+
+  import "acc-eth" {
+    prefix "acc-eth";
+  }
+
+  import "acc-connection" {
+    prefix "acc-con";
+  }
+
+  import "acc-otn" {
+    prefix "acc-otn";
+  }
+
+  import "acc-enum" {
+    prefix "acc-enum";
+  }
+
+  import "acc-protection-group" {
+    prefix "acc-pg";
+  }
+
+  revision "2024-07-02" {
+    description
+      "M-OTN2.0 管控与设备双向调优，减负";
+  }
+
+  revision "2021-01-31" {
+    description
+      "for M-OTN 1.0";
+  }
+
+  identity "OSU" {
+    base "acc-type:layer-protocol-name";
+  }
+
+  typedef "tcm-mode-type" {
+    type "enumeration" {
+      enum "operational" {
+        value "0";
+        description
+          "enable TCM";
+      }
+
+      enum "monitor" {
+        value "1";
+        description
+          "monitor TCM";
+      }
+
+      enum "transparent" {
+        value "2";
+        description
+          "disable TCM";
+      }
+
+    }
+
+  }
+
+  typedef "fail-reason" {
+    type "enumeration" {
+      enum "service-fail" {
+        value "0";
+        description
+          "业务失败";
+      }
+
+      enum "no-resource" {
+        value "1";
+        description
+          "资源不足";
+      }
+
+      enum "timeout" {
+        value "2";
+        description
+          "定时器超时";
+      }
+
+    }
+
+  }
+
+  typedef "modify-action" {
+    type "enumeration" {
+      enum "add" {
+        value "0";
+        description
+          "Add";
+      }
+
+      enum "delete" {
+        value "1";
+        description
+          "Delete";
+      }
+
+      enum "rollback" {
+        value "2";
+        description
+          "Abort";
+      }
+
+    }
+
+  }
+
+  augment "/acc-devm:ptps/acc-devm:ptp" {
+    when "acc-devm:layer-protocol-name = 'acc-osu:OSU'";
+    container "osu-ptp-pac" {
+      leaf-list "osu-signal-type" {
+        config "false";
+        min-elements "1";
+        type "acc-enum:signal-type";
+      }
+
+      leaf-list "adaptation-type" {
+        config "false";
+        min-elements "1";
+        type "acc-enum:adaptation-type";
+      }
+
+    }
+
+  }
+
+  augment "/acc-devm:ftps/acc-devm:ftp" {
+    when "acc-devm:layer-protocol-name = 'acc-osu:OSU'";
+    container "osu-ftp-pac" {
+      leaf "available-tpn-number" {
+        mandatory "true";
+        config "false";
+        type "uint64";
+        description
+          "可用TPN 0~1000";
+      }
+
+      leaf "total-band-width" {
+        mandatory "true";
+        config "false";
+        type "uint64";
+        description
+          "所支持的OSU基准带宽单元的数量，与对应ODU类型相关";
+      }
+
+      leaf "available-band-width" {
+        mandatory "true";
+        config "false";
+        type "uint64";
+        description
+          "当前可用OSU基准带宽单元的数量";
+      }
+
+    }
+
+  }
+
+  augment "/acc-devm:ctps/acc-devm:ctp" {
+    when "acc-devm:layer-protocol-name = 'acc-osu:OSU'";
+    container "osu-ctp-pac" {
+      leaf "osu-signal-type" {
+        type "acc-enum:signal-type";
+        description
+          "";
+      }
+
+      leaf "adaptation-type" {
+        type "acc-enum:adaptation-type";
+        description
+          "";
+      }
+
+      leaf "tpn" {
+        mandatory "true";
+        type "uint64";
+        description
+          "TPN的数字编号";
+      }
+
+      leaf "bandwidth" {
+        mandatory "true";
+        config "false";
+        type "uint64";
+        description
+          "CTP占用的OSU基准单元的数量";
+      }
+
+      leaf "tcm1-mode" {
+        type "tcm-mode-type";
+      }
+
+      leaf "tcm2-mode" {
+        type "tcm-mode-type";
+      }
+
+    }
+
+  }
+
+  rpc "osu-two-way-dm" {
+    input {
+      leaf "ctp-name" {
+        mandatory "true";
+        type "string";
+      }
+
+      leaf "dm-type" {
+        mandatory "true";
+        type "string";
+        description
+          "PM or TCM1";
+      }
+
+    }
+
+    output {
+      leaf "osu-delay" {
+        mandatory "true";
+        type "uint64";
+      }
+
+    }
+
+  }
+
+  rpc "create-eo-osu-connection" {
+    input {
+      uses "acc-con:create-connection";
+      leaf "uni-protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "default lag";
+      }
+
+      leaf "nni-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      container "uni" {
+        leaf "uni-ptp-name" {
+          mandatory "true";
+          type "string";
+        }
+
+        leaf "second-uni-ptp-name" {
+          type "string";
+          description
+            "可选，LAG保护（非负载均衡，单端保护）";
+        }
+
+        container "client-vlan-spec" {
+          when "../../service-type = 'EVPL'";
+          uses "acc-con:vlan-spec";
+          description
+            "用于客户Vlan与运营商Vlan的匹配，根据客户需求指定vlanType，不带accessAction视为keep";
+        }
+
+        container "uni-vlan-spec" {
+          uses "acc-con:vlan-spec";
+          description
+            "可针对client-vlan-spec进行vlan的交换exchange或者添加剥离 pop_push; 或者无client-vlan-spec，单纯push-pop新的vlan；或者不下发";
+        }
+
+      }
+
+      container "primary-nni" {
+        uses "acc-otn:nni";
+        leaf "tpn" {
+          mandatory "true";
+          type "uint64";
+          description
+            "value Range: 1~1000";
+        }
+
+        container "ftp-client-vlan-spec" {
+          uses "acc-con:vlan-spec";
+          description
+            "";
+        }
+
+        container "ftp-vlan-spec" {
+          uses "acc-con:vlan-spec";
+          description
+            "EVPL必须下发，当剥离添加或转换S-Vlan时，指定S-VLAN的值，accessAction = push_pop或accessAction = exchange";
+        }
+
+        leaf "tpid" {
+          type "acc-eth:tpid-difinition";
+        }
+
+        description
+          "primary nni,必选";
+      }
+
+      container "secondary-nni" {
+        uses "acc-otn:nni";
+        leaf "tpn" {
+          type "uint64";
+          description
+            "value Range: 1~1000";
+        }
+
+        container "ftp-client-vlan-spec" {
+          uses "acc-con:vlan-spec";
+          description
+            "";
+        }
+
+        container "ftp-vlan-spec" {
+          uses "acc-con:vlan-spec";
+          description
+            "EVPL必须下发，当剥离添加或转换S-Vlan时，指定S-VLAN的值，accessAction = push_pop或accessAction = exchange";
+        }
+
+        leaf "tpid" {
+          type "acc-eth:tpid-difinition";
+        }
+
+        description
+          "业务带保护模式，可选";
+      }
+
+    }
+
+    output {
+      choice "err-or-ok" {
+        case "oper-err" {
+          container "rpc-error" {
+            leaf "error-type" {
+              type "string";
+              default "rpc";
+            }
+
+            leaf "error-tag" {
+              type "string";
+            }
+
+            leaf "error-message" {
+              type "string";
+            }
+
+          }
+
+        }
+
+        case "oper-ok" {
+          container "connection" {
+            uses "acc-con:connection";
+          }
+
+          container "create-component" {
+            leaf-list "osu-connection-name" {
+              type "string" {
+                length "1..64";
+              }
+
+              min-elements "0";
+            }
+
+            leaf-list "ftp-name" {
+              type "string" {
+                length "1..64";
+              }
+
+            }
+
+            leaf-list "ctp-name" {
+              type "string" {
+                length "1..64";
+              }
+
+            }
+
+          }
+
+          container "ports-with-role" {
+            leaf "eth-ptp-ctp" {
+              type "string";
+              mandatory "true";
+              description
+                "客户侧 PTP的CTP";
+            }
+
+            leaf "eth-ftp-ctp" {
+              type "string";
+              mandatory "true";
+              description
+                "ETH FTP的clientCtp";
+            }
+
+            leaf "eth-ftp" {
+              type "string";
+              mandatory "true";
+              description
+                "ETH FTP";
+            }
+
+            leaf "eth-ftp-osu-ctp" {
+              type "string";
+              description
+                "ETH FTP绑定的serverCtp,针对集中式设备可以没有这个CTP，eth-ftp直接挂到右侧sdh ctp，没有connection";
+            }
+
+            leaf "osu-ftp" {
+              type "string";
+              mandatory "true";
+              description
+                "OSU FTP(主)";
+            }
+
+            leaf "osu-ftp-ctp" {
+              type "string";
+              mandatory "true";
+              description
+                "OSU FTP(主)的clientCtp";
+            }
+
+            leaf "osu-ftp-p" {
+              type "string";
+              description
+                "OSU FTP(备)(only SNCP）";
+            }
+
+            leaf "osu-ftp-ctp-p" {
+              type "string";
+              description
+                "OSU FTP(备)的clientCtp（only SNCP）";
+            }
+
+            leaf "ul-odu-ctp" {
+              type "string";
+              mandatory "true";
+              description
+                "上联 ODU CTP(主)";
+            }
+
+            leaf "ul-odu-ctp-p" {
+              type "string";
+              description
+                "上联 ODU CTP(备)(SNCP or ODU)";
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  rpc "create-osu-connection" {
+    input {
+      uses "acc-con:create-connection";
+      leaf "uni-protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "for UNI-NNI 若有保护则: msp";
+      }
+
+      leaf "nni-protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "若有保护则: osu-sncp-i";
+      }
+
+      leaf "nni2-protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "for NNI-NNI 若有保护则: osu-sncp-i";
+      }
+
+      container "uni" {
+        leaf "uni-ptp-name" {
+          type "string";
+        }
+
+        leaf "second-uni-ptp-name" {
+          type "string";
+        }
+
+        leaf "client-signal-type" {
+          type "acc-enum:signal-type";
+        }
+
+        description
+          "for UNI-NNI";
+      }
+
+      container "primary-nni" {
+        uses "acc-otn:nni";
+        leaf "tpn" {
+          mandatory "true";
+          type "uint64";
+          description
+            "value Range: 1~1000";
+        }
+
+        description
+          "primary nni,必选";
+      }
+
+      container "secondary-nni" {
+        uses "acc-otn:nni";
+        leaf "tpn" {
+          type "uint64";
+          description
+            "value Range: 1~1000";
+        }
+
+        description
+          "带保护模式，可选";
+      }
+
+      container "primary-nni2" {
+        uses "acc-otn:nni";
+        leaf "tpn" {
+          type "uint64";
+          description
+            "value Range: 1~1000";
+        }
+
+        description
+          "NNI-NNI不带保护，可选";
+      }
+
+      container "secondary-nni2" {
+        uses "acc-otn:nni";
+        leaf "tpn" {
+          type "uint64";
+          description
+            "value Range: 1~1000";
+        }
+
+        description
+          "NNI-NNI带保护，可选";
+      }
+
+    }
+
+    output {
+      choice "err-or-ok" {
+        case "oper-err" {
+          container "rpc-error" {
+            leaf "error-type" {
+              type "string";
+              default "rpc";
+            }
+
+            leaf "error-tag" {
+              type "string";
+            }
+
+            leaf "error-message" {
+              type "string";
+            }
+
+          }
+
+        }
+
+        case "oper-ok" {
+          container "connection" {
+            uses "acc-con:connection";
+          }
+
+          container "create-component" {
+            leaf-list "ftp-name" {
+              type "string" {
+                length "1..64";
+              }
+
+            }
+
+            leaf-list "ctp-name" {
+              type "string" {
+                length "1..64";
+              }
+
+            }
+
+          }
+
+          container "ports-with-role" {
+            leaf "osu-ptp-ctp" {
+              type "string";
+              description
+                "客户侧 PTP的子CTP(only UNI-NNI)";
+            }
+
+            leaf "ul-osu-ftp" {
+              mandatory "true";
+              type "string";
+              description
+                "OSU FTP(主)";
+            }
+
+            leaf "ul-osu-ftp-ctp" {
+              mandatory "true";
+              type "string";
+              description
+                "OSU FTP(主)的子CTP";
+            }
+
+            leaf "ul-osu-ftp-p" {
+              type "string";
+              description
+                "OSU FTP(备)(only SNCP)";
+            }
+
+            leaf "ul-osu-ftp-ctp-p" {
+              type "string";
+              description
+                "OSU FTP(备)的子CTP (only SNCP)";
+            }
+
+            leaf "dl-odu-ctp" {
+              type "string";
+              description
+                "下联ODU CTP(主)(only NNI-NNI)";
+            }
+
+            leaf "dl-odu-ctp-p" {
+              type "string";
+              description
+                "下联ODU CTP(备)(only NNI-NNI）";
+            }
+
+            leaf "dl-osu-ftp" {
+              type "string";
+              description
+                "下联OSU FTP(主)";
+            }
+
+            leaf "dl-osu-ftp-ctp" {
+              type "string";
+              description
+                "下联OSU FTP(主)的子CTP";
+            }
+
+            leaf "dl-osu-ftp-p" {
+              type "string";
+              description
+                "下联OSU FTP(备)（only NNI-NNI SNCP）";
+            }
+
+            leaf "dl-osu-ftp-ctp-p" {
+              type "string";
+              description
+                "下联OSU FTP(备)的子CTP(only NNI-NNI SNCP）";
+            }
+
+            leaf "ul-odu-ctp" {
+              mandatory "true";
+              type "string";
+              description
+                "上联ODU CTP(主)";
+            }
+
+            leaf "ul-odu-ctp-p" {
+              type "string";
+              description
+                "上联ODU CTP(备)(有保护时必须报）";
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  rpc "create-eos2eoosu-connection" {
+    input {
+      uses "acc-con:create-connection";
+      leaf "uni-protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "若有保护则: msp1+1";
+      }
+
+      leaf "nni-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      container "uni" {
+        leaf "uni-ptp-name" {
+          type "string";
+        }
+
+        leaf "second-uni-ptp-name" {
+          type "string";
+        }
+
+        leaf "vc-type" {
+          type "acc-enum:sdh-switch-type";
+        }
+
+        leaf-list "mapping-path" {
+          type "string";
+        }
+
+      }
+
+      container "primary-nni" {
+        uses "acc-otn:nni";
+        leaf "tpn" {
+          type "uint64";
+          description
+            "value Range: 1~1000";
+        }
+
+        description
+          "primary nni,必选";
+      }
+
+      container "secondary-nni" {
+        uses "acc-otn:nni";
+        leaf "tpn" {
+          type "uint64";
+          description
+            "value Range: 1~1000";
+        }
+
+        description
+          "带保护模式，可选";
+      }
+
+      container "eos-pac" {
+        leaf "lcas" {
+          type "boolean";
+          default "true";
+        }
+
+        leaf "hold-off" {
+          type "uint32";
+          default "0";
+          description
+            "unit: ms";
+        }
+
+        leaf "wtr" {
+          type "uint32";
+          default "300";
+          description
+            "unit: s";
+        }
+
+        leaf "tsd" {
+          type "boolean";
+          default "false";
+        }
+
+      }
+
+    }
+
+    output {
+      choice "err-or-ok" {
+        case "oper-err" {
+          container "rpc-error" {
+            leaf "error-type" {
+              type "string";
+              default "rpc";
+            }
+
+            leaf "error-tag" {
+              type "string";
+            }
+
+            leaf "error-message" {
+              type "string";
+            }
+
+          }
+
+        }
+
+        case "oper-ok" {
+          container "connection" {
+            uses "acc-con:connection";
+          }
+
+          container "create-component" {
+            leaf-list "ftp-name" {
+              type "string" {
+                length "1..64";
+              }
+
+            }
+
+            leaf-list "ctp-name" {
+              type "string" {
+                length "1..64";
+              }
+
+            }
+
+            leaf-list "osu-connection-name" {
+              type "string" {
+                length "1..64";
+              }
+
+            }
+
+          }
+
+          container "ports-with-role" {
+            leaf-list "vc-ctp" {
+              min-elements "1";
+              type "string";
+              description
+                "SDH PTP侧关联的vc ctp";
+            }
+
+            leaf "dl-eth-ftp" {
+              mandatory "true";
+              type "string";
+              description
+                "与VC CTP关联 ETH FTP";
+            }
+
+            leaf "dl-eth-ftp-ctp" {
+              mandatory "true";
+              type "string";
+              description
+                "下联ETH FTP的子ETH CTP";
+            }
+
+            leaf "ul-eth-ftp-ctp" {
+              mandatory "true";
+              type "string";
+              description
+                "上联ETH FTP的子ETH CTP";
+            }
+
+            leaf "ul-eth-ftp" {
+              mandatory "true";
+              type "string";
+              description
+                "与OSU CTP关联 ETH FTP";
+            }
+
+            leaf "ul-eth-ftp-osu-ctp" {
+              type "string";
+              description
+                "ETH FTP绑定的serverCtp,针对集中式设备可以没有这个CTP，ul-eth-ftp直接挂到右侧osu ctp，没有connection";
+            }
+
+            leaf "osu-ftp-ctp" {
+              mandatory "true";
+              type "string";
+              description
+                "OSU FTP(主)的子 OSU CTP";
+            }
+
+            leaf "osu-ftp" {
+              mandatory "true";
+              type "string";
+              description
+                "OSU FTP(主)";
+            }
+
+            leaf "osu-ftp-p" {
+              type "string";
+              description
+                "OSU FTP(备)(only SNCP）";
+            }
+
+            leaf "osu-ftp-ctp-p" {
+              type "string";
+              description
+                "OSU FTP(备)的clientCtp（only SNCP）";
+            }
+
+            leaf "ul-odu-ctp" {
+              type "string";
+              mandatory "true";
+              description
+                "上联 ODU CTP(主)";
+            }
+
+            leaf "ul-odu-ctp-p" {
+              type "string";
+              description
+                "上联 ODU CTP(备)(SNCP or ODU)";
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  rpc "modify-osu-connection-capacity" {
+    input {
+      leaf "ctp-name" {
+        mandatory "true";
+        type "string";
+      }
+
+      uses "acc-con:capacity";
+      leaf "timer" {
+        mandatory "true";
+        type "uint64";
+        description
+          "default 60   range:1~1023";
+      }
+
+      leaf "action" {
+        mandatory "true";
+        type "modify-action";
+        description
+          "因企标文档中对带宽已经解释为目的带宽，所以此action的作用不是很大，当增减带宽时候建议忽略该值。除了rollback";
+      }
+
+    }
+
+  }
+
+  notification "osu-adjustment-notification" {
+    leaf "osu-adjust-serial-no" {
+      mandatory "true";
+      type "uint64";
+    }
+
+    leaf "ctp-name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    leaf "modify-result" {
+      mandatory "true";
+      type "string";
+      description
+        "success , failure";
+    }
+
+    leaf "fail-reason" {
+      type "fail-reason";
+      description
+        "if only failure";
+    }
+
+    container "requested-capacity" {
+      uses "acc-con:capacity";
+    }
+
+  }
+
+  rpc "send-osu-adjustment-notification" {
+    input {
+      leaf "osu-adjust-serial-no" {
+        mandatory "true";
+        type "uint64";
+      }
+
+      leaf "ctp-name" {
+        mandatory "true";
+        type "string" {
+          length "1..64";
+        }
+
+      }
+
+      leaf "modify-result" {
+        mandatory "true";
+        type "string";
+        description
+          "success , failure";
+      }
+
+      leaf "fail-reason" {
+        type "fail-reason";
+        description
+          "if only failure";
+      }
+
+      container "requested-capacity" {
+        uses "acc-con:capacity";
+      }
+    }
+
+  }
+
+}

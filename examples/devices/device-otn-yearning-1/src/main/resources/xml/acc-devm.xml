@@ -1,0 +1,1436 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+        <eqs xmlns="urn:ccsa:yang:acc-devm">
+            <eq>
+                <name>EH=/shelf=1/slot=1/EQ=LO1_02</name>
+                <plug-state>true</plug-state>
+                <eq-type>service</eq-type>
+                <xc-capability>true</xc-capability>
+                <working-state>normal</working-state>
+                <software-version>-</software-version>
+                <hardware-version>1.0</hardware-version>
+                <ptp>PTP=/shelf=1/slot=1/port=1</ptp>
+                <ptp>PTP=/shelf=1/slot=1/port=2</ptp>
+                <ftp>FTP=/shelf=1/slot=1/port=702</ftp>
+            </eq>
+            <eq>
+                <name>EH=/shelf=1/slot=2/EQ=TE1_04</name>
+                <plug-state>true</plug-state>
+                <eq-type>service</eq-type>
+                <xc-capability>true</xc-capability>
+                <working-state>normal</working-state>
+                <software-version>-</software-version>
+                <hardware-version>1.0</hardware-version>
+                <ptp>PTP=/shelf=1/slot=2/port=1</ptp>
+                <ptp>PTP=/shelf=1/slot=2/port=2</ptp>
+                <ptp>PTP=/shelf=1/slot=2/port=3</ptp>
+                <ptp>PTP=/shelf=1/slot=2/port=4</ptp>
+                <ftp/>
+            </eq>
+            <eq>
+                <name>EH=/shelf=1/slot=3/EQ=TP0_04</name>
+                <plug-state>true</plug-state>
+                <eq-type>service</eq-type>
+                <xc-capability>true</xc-capability>
+                <working-state>normal</working-state>
+                <software-version>-</software-version>
+                <hardware-version>1.0</hardware-version>
+                <ptp>PTP=/shelf=1/slot=3/port=1</ptp>
+                <ptp>PTP=/shelf=1/slot=3/port=2</ptp>
+                <ptp>PTP=/shelf=1/slot=3/port=3</ptp>
+                <ptp>PTP=/shelf=1/slot=3/port=4</ptp>
+                <ftp>FTP=/shelf=1/slot=3/port=301</ftp>
+            </eq>
+            <eq>
+                <name>EH=/shelf=1/slot=4/EQ=TS1_02</name>
+                <plug-state>true</plug-state>
+                <eq-type>service</eq-type>
+                <xc-capability>true</xc-capability>
+                <working-state>normal</working-state>
+                <software-version>-</software-version>
+                <hardware-version>1.0</hardware-version>
+                <ptp/>
+                <ftp/>
+            </eq>
+            <eq>
+                <name>EH=/shelf=1/slot=9/EQ=A1M_01</name>
+                <plug-state>true</plug-state>
+                <eq-type>system-control</eq-type>
+                <eq-type>cross-connect</eq-type>
+                <eq-type>clock</eq-type>
+                <xc-capability>true</xc-capability>
+                <working-state>normal</working-state>
+                <software-version>7.0.0.0</software-version>
+                <hardware-version>1.0</hardware-version>
+                <ptp/>
+                <ftp/>
+            </eq>
+            <eq>
+                <name>EH=/shelf=1/slot=12/EQ=DC_A1</name>
+                <plug-state>true</plug-state>
+                <eq-type>power</eq-type>
+                <xc-capability>false</xc-capability>
+                <working-state>normal</working-state>
+                <software-version>-</software-version>
+                <hardware-version>1.0</hardware-version>
+                <ptp/>
+                <ftp/>
+            </eq>
+            <eq>
+                <name>EH=/shelf=1/slot=13/EQ=DC_A1</name>
+                <plug-state>true</plug-state>
+                <eq-type>power</eq-type>
+                <xc-capability>false</xc-capability>
+                <working-state>normal</working-state>
+                <software-version>-</software-version>
+                <hardware-version>1.0</hardware-version>
+                <ptp/>
+                <ftp/>
+            </eq>
+        </eqs>
+        <mc-ports xmlns="urn:ccsa:yang:acc-devm">
+            <mc-port>
+                <name>RJ45_1</name>
+                <mac-address>00073008fbc1</mac-address>
+                <operational-state>up</operational-state>
+                <admin-state>enabled</admin-state>
+            </mc-port>
+            <mc-port>
+                <name>Serial_1</name>
+                <mac-address/>
+                <operational-state>up</operational-state>
+                <admin-state>enabled</admin-state>
+            </mc-port>
+        </mc-ports>
+        <ctps xmlns="urn:ccsa:yang:acc-devm">
+            <ctp>
+                <name>PTP=/shelf=1/slot=1/port=1/CTP=2</name>
+                <state-pac>
+                    <operational-state>up</operational-state>
+                    <admin-state>enabled</admin-state>
+                </state-pac>
+                <layer-protocol-name xmlns:acc-otn="urn:ccsa:yang:acc-otn">acc-otn:ODU</layer-protocol-name>
+                <port-role>symmetric</port-role>
+                <protect-role>null</protect-role>
+                <server-tp>PTP=/shelf=1/slot=1/port=1</server-tp>
+                <loop-back>non-loopback</loop-back>
+                <remote-node-id>0.0.0.0</remote-node-id>
+                <fgotn-ctp-pac xmlns="urn:ccsa:yang:acc-fgotn">
+                    <client-signal-type/>
+                    <adaptation-type/>
+                    <signal-capability/>
+                    <ts-detail/>
+                    <current-number-of-tributary-slots>0</current-number-of-tributary-slots>
+                    <pmtrail-trace-actual-tx/>
+                    <pmtrail-trace-actual-rx/>
+                    <pmtrail-trace-expected-rx/>
+                    <bw-adjust-status/>
+                    <tcm1-mode/>
+                    <tcm2-mode/>
+                    <tpid/>
+                </fgotn-ctp-pac>
+                <eth-ctp-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <vlan-spec>
+                        <vlan-id/>
+                        <vlan-priority/>
+                        <access-action/>
+                        <vlan-type/>
+                    </vlan-spec>
+                    <client-vlan-spec>
+                        <vlan-id/>
+                        <vlan-priority/>
+                        <access-action/>
+                        <vlan-type/>
+                    </client-vlan-spec>
+                    <performance>
+                        <delay/>
+                        <near-packet-loss-rate/>
+                        <far-packet-loss-rate/>
+                        <tx-bytes/>
+                        <rx-bytes/>
+                    </performance>
+                    <oam-state-pac>
+                        <dm-state/>
+                        <tm-state/>
+                        <lm-state/>
+                        <cc-state/>
+                    </oam-state-pac>
+                    <oam-config>
+                        <mep-id/>
+                        <remote-mep-id/>
+                        <meg-id/>
+                        <md-name/>
+                        <mel/>
+                        <mdl/>
+                        <cc-interval/>
+                        <lm-interval/>
+                        <dm-interval/>
+                    </oam-config>
+                    <ipv4-address/>
+                    <ipv6-address/>
+                </eth-ctp-pac>
+                <vc-ctp-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <vc-type/>
+                    <mapping-path/>
+                    <j1-actual-tx/>
+                    <j1-expected-rx/>
+                    <j1-actual-rx/>
+                </vc-ctp-pac>
+                <odu-ctp-pac xmlns="urn:ccsa:yang:acc-otn">
+                    <odu-signal-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:OTU1</odu-signal-type>
+                    <adaptation-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODUij</adaptation-type>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU0</switch-capability>
+                    <ts-detail>2-40</ts-detail>
+                    <current-number-of-tributary-slots>0</current-number-of-tributary-slots>
+                    <pmtrail-trace-actual-tx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</pmtrail-trace-actual-tx>
+                    <pmtrail-trace-actual-rx>ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff</pmtrail-trace-actual-rx>
+                    <pmtrail-trace-expected-rx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</pmtrail-trace-expected-rx>
+                    <g-hao-status/>
+                </odu-ctp-pac>
+            </ctp>
+            <ctp>
+                <name>FTP=/shelf=1/slot=1/port=702/CTP=50001</name>
+                <state-pac>
+                    <operational-state>up</operational-state>
+                    <admin-state>enabled</admin-state>
+                </state-pac>
+                <layer-protocol-name xmlns:acc-fgotn="urn:ccsa:yang:acc-fgotn">acc-fgotn:fgODUflex</layer-protocol-name>
+                <port-role>symmetric</port-role>
+                <protect-role>null</protect-role>
+                <server-tp>FTP=/shelf=1/slot=1/port=702</server-tp>
+                <loop-back>non-loopback</loop-back>
+                <remote-node-id>0.0.0.0</remote-node-id>
+                <fgotn-ctp-pac xmlns="urn:ccsa:yang:acc-fgotn">
+                    <client-signal-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-n</client-signal-type>
+                    <adaptation-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:GMP</adaptation-type>
+                    <signal-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:fgODUflex</signal-capability>
+                    <ts-detail>119-f00000000000000000000000000000</ts-detail>
+                    <current-number-of-tributary-slots>4</current-number-of-tributary-slots>
+                    <pmtrail-trace-actual-tx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</pmtrail-trace-actual-tx>
+                    <pmtrail-trace-actual-rx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</pmtrail-trace-actual-rx>
+                    <pmtrail-trace-expected-rx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</pmtrail-trace-expected-rx>
+                    <bw-adjust-status/>
+                    <tcm1-mode>operation</tcm1-mode>
+                    <tcm2-mode>operation</tcm2-mode>
+                    <tpid>1</tpid>
+                </fgotn-ctp-pac>
+                <eth-ctp-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <vlan-spec>
+                        <vlan-id/>
+                        <vlan-priority/>
+                        <access-action/>
+                        <vlan-type/>
+                    </vlan-spec>
+                    <client-vlan-spec>
+                        <vlan-id/>
+                        <vlan-priority/>
+                        <access-action/>
+                        <vlan-type/>
+                    </client-vlan-spec>
+                    <performance>
+                        <delay/>
+                        <near-packet-loss-rate/>
+                        <far-packet-loss-rate/>
+                        <tx-bytes/>
+                        <rx-bytes/>
+                    </performance>
+                    <oam-state-pac>
+                        <dm-state/>
+                        <tm-state/>
+                        <lm-state/>
+                        <cc-state/>
+                    </oam-state-pac>
+                    <oam-config>
+                        <mep-id/>
+                        <remote-mep-id/>
+                        <meg-id/>
+                        <md-name/>
+                        <mel/>
+                        <mdl/>
+                        <cc-interval/>
+                        <lm-interval/>
+                        <dm-interval/>
+                    </oam-config>
+                    <ipv4-address/>
+                    <ipv6-address/>
+                </eth-ctp-pac>
+                <vc-ctp-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <vc-type/>
+                    <mapping-path/>
+                    <j1-actual-tx/>
+                    <j1-expected-rx/>
+                    <j1-actual-rx/>
+                </vc-ctp-pac>
+                <odu-ctp-pac xmlns="urn:ccsa:yang:acc-otn">
+                    <odu-signal-type/>
+                    <adaptation-type/>
+                    <switch-capability/>
+                    <ts-detail/>
+                    <current-number-of-tributary-slots/>
+                    <pmtrail-trace-actual-tx/>
+                    <pmtrail-trace-actual-rx/>
+                    <pmtrail-trace-expected-rx/>
+                    <g-hao-status/>
+                </odu-ctp-pac>
+            </ctp>
+            <ctp>
+                <name>PTP=/shelf=1/slot=3/port=1/CTP=10001</name>
+                <state-pac>
+                    <operational-state>up</operational-state>
+                    <admin-state>enabled</admin-state>
+                </state-pac>
+                <layer-protocol-name xmlns:acc-sdh="urn:ccsa:yang:acc-sdh">acc-sdh:SDH</layer-protocol-name>
+                <port-role>symmetric</port-role>
+                <protect-role>null</protect-role>
+                <server-tp>PTP=/shelf=1/slot=3/port=1</server-tp>
+                <loop-back>non-loopback</loop-back>
+                <remote-node-id>0.0.0.0</remote-node-id>
+                <fgotn-ctp-pac xmlns="urn:ccsa:yang:acc-fgotn">
+                    <client-signal-type/>
+                    <adaptation-type/>
+                    <signal-capability/>
+                    <ts-detail/>
+                    <current-number-of-tributary-slots>4</current-number-of-tributary-slots>
+                    <pmtrail-trace-actual-tx/>
+                    <pmtrail-trace-actual-rx/>
+                    <pmtrail-trace-expected-rx/>
+                    <bw-adjust-status/>
+                    <tcm1-mode/>
+                    <tcm2-mode/>
+                    <tpid/>
+                </fgotn-ctp-pac>
+                <eth-ctp-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <vlan-spec>
+                        <vlan-id/>
+                        <vlan-priority/>
+                        <access-action/>
+                        <vlan-type/>
+                    </vlan-spec>
+                    <client-vlan-spec>
+                        <vlan-id/>
+                        <vlan-priority/>
+                        <access-action/>
+                        <vlan-type/>
+                    </client-vlan-spec>
+                    <performance>
+                        <delay/>
+                        <near-packet-loss-rate/>
+                        <far-packet-loss-rate/>
+                        <tx-bytes/>
+                        <rx-bytes/>
+                    </performance>
+                    <oam-state-pac>
+                        <dm-state/>
+                        <tm-state/>
+                        <lm-state/>
+                        <cc-state/>
+                    </oam-state-pac>
+                    <oam-config>
+                        <mep-id/>
+                        <remote-mep-id/>
+                        <meg-id/>
+                        <md-name/>
+                        <mel/>
+                        <mdl/>
+                        <cc-interval/>
+                        <lm-interval/>
+                        <dm-interval/>
+                    </oam-config>
+                    <ipv4-address/>
+                    <ipv6-address/>
+                </eth-ctp-pac>
+                <vc-ctp-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <vc-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</vc-type>
+                    <mapping-path/>
+                    <j1-actual-tx>00000000000000000000000000000000</j1-actual-tx>
+                    <j1-expected-rx>00000000000000000000000000000000</j1-expected-rx>
+                    <j1-actual-rx>00000000000000000000000000000000</j1-actual-rx>
+                </vc-ctp-pac>
+                <odu-ctp-pac xmlns="urn:ccsa:yang:acc-otn">
+                    <odu-signal-type/>
+                    <adaptation-type/>
+                    <switch-capability/>
+                    <ts-detail/>
+                    <current-number-of-tributary-slots/>
+                    <pmtrail-trace-actual-tx/>
+                    <pmtrail-trace-actual-rx/>
+                    <pmtrail-trace-expected-rx/>
+                    <g-hao-status/>
+                </odu-ctp-pac>
+            </ctp>
+            <ctp>
+                <name>FTP=/shelf=1/slot=3/port=301/CTP=58065</name>
+                <state-pac>
+                    <operational-state>up</operational-state>
+                    <admin-state>enabled</admin-state>
+                </state-pac>
+                <layer-protocol-name xmlns:acc-fgotn="urn:ccsa:yang:acc-fgotn">acc-fgotn:fgODUflex</layer-protocol-name>
+                <port-role>symmetric</port-role>
+                <protect-role>null</protect-role>
+                <server-tp/>
+                <loop-back>non-loopback</loop-back>
+                <remote-node-id>0.0.0.0</remote-node-id>
+                <fgotn-ctp-pac xmlns="urn:ccsa:yang:acc-fgotn">
+                    <client-signal-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-n</client-signal-type>
+                    <adaptation-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:GMP</adaptation-type>
+                    <signal-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:fgODUflex</signal-capability>
+                    <ts-detail>119-f00000000000000000000000000000</ts-detail>
+                    <current-number-of-tributary-slots>4</current-number-of-tributary-slots>
+                    <pmtrail-trace-actual-tx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</pmtrail-trace-actual-tx>
+                    <pmtrail-trace-actual-rx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</pmtrail-trace-actual-rx>
+                    <pmtrail-trace-expected-rx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</pmtrail-trace-expected-rx>
+                    <bw-adjust-status/>
+                    <tcm1-mode/>
+                    <tcm2-mode/>
+                    <tpid>1</tpid>
+                </fgotn-ctp-pac>
+                <eth-ctp-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <vlan-spec>
+                        <vlan-id/>
+                        <vlan-priority/>
+                        <access-action/>
+                        <vlan-type/>
+                    </vlan-spec>
+                    <client-vlan-spec>
+                        <vlan-id/>
+                        <vlan-priority/>
+                        <access-action/>
+                        <vlan-type/>
+                    </client-vlan-spec>
+                    <performance>
+                        <delay/>
+                        <near-packet-loss-rate/>
+                        <far-packet-loss-rate/>
+                        <tx-bytes/>
+                        <rx-bytes/>
+                    </performance>
+                    <oam-state-pac>
+                        <dm-state/>
+                        <tm-state/>
+                        <lm-state/>
+                        <cc-state/>
+                    </oam-state-pac>
+                    <oam-config>
+                        <mep-id/>
+                        <remote-mep-id/>
+                        <meg-id/>
+                        <md-name/>
+                        <mel/>
+                        <mdl/>
+                        <cc-interval/>
+                        <lm-interval/>
+                        <dm-interval/>
+                    </oam-config>
+                    <ipv4-address/>
+                    <ipv6-address/>
+                </eth-ctp-pac>
+                <vc-ctp-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <vc-type/>
+                    <mapping-path/>
+                    <j1-actual-tx/>
+                    <j1-expected-rx/>
+                    <j1-actual-rx/>
+                </vc-ctp-pac>
+                <odu-ctp-pac xmlns="urn:ccsa:yang:acc-otn">
+                    <odu-signal-type/>
+                    <adaptation-type/>
+                    <switch-capability/>
+                    <ts-detail/>
+                    <current-number-of-tributary-slots/>
+                    <pmtrail-trace-actual-tx/>
+                    <pmtrail-trace-actual-rx/>
+                    <pmtrail-trace-expected-rx/>
+                    <g-hao-status/>
+                </odu-ctp-pac>
+            </ctp>
+        </ctps>
+        <ftps xmlns="urn:ccsa:yang:acc-devm">
+            <ftp>
+                <name>FTP=/shelf=1/slot=3/port=301</name>
+                <state-pac>
+                    <operational-state>up</operational-state>
+                    <admin-state>enabled</admin-state>
+                </state-pac>
+                <layer-protocol-name xmlns:acc-sdh="urn:ccsa:yang:acc-sdh">acc-sdh:SDH</layer-protocol-name>
+                <client-ctp/>
+                <server-ctp>FTP=/shelf=1/slot=3/port=301/CTP=58065</server-ctp>
+                <fgotn-ftp-pac xmlns="urn:ccsa:yang:acc-fgotn">
+                    <total-tributary-slots/>
+                    <available-tributary-slots/>
+                    <ts-detail/>
+                </fgotn-ftp-pac>
+                <eth-ftp-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-mtu/>
+                    <current-mtu/>
+                    <service-mapping-mode/>
+                    <mapping-type/>
+                    <vcg-parameters xmlns="urn:ccsa:yang:acc-eos">
+                        <vc-type/>
+                        <lcas/>
+                        <hold-off/>
+                        <wtr/>
+                        <tsd/>
+                        <tx-number/>
+                        <rx-number/>
+                        <so-handshake-state/>
+                    </vcg-parameters>
+                </eth-ftp-pac>
+                <sdh-ftp-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <sdh-signal-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-n</sdh-signal-type>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</switch-capability>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-3</switch-capability>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-4</switch-capability>
+                    <service-mapping-mode xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:GMP</service-mapping-mode>
+                    <j0-actual-tx>00000000000000000000000000000000</j0-actual-tx>
+                    <j0-expected-rx>00000000000000000000000000000000</j0-expected-rx>
+                    <j0-actual-rx>00000000000000000000000000000000</j0-actual-rx>
+                    <vc-ctp>FTP=/shelf=1/slot=3/port=301/CTP=10001</vc-ctp>
+                </sdh-ftp-pac>
+            </ftp>
+            <ftp>
+                <name>FTP=/shelf=1/slot=1/port=702</name>
+                <state-pac>
+                    <operational-state>up</operational-state>
+                    <admin-state>enabled</admin-state>
+                </state-pac>
+                <layer-protocol-name xmlns:acc-fgotn="urn:ccsa:yang:acc-fgotn">acc-fgotn:fgODUflex</layer-protocol-name>
+                <client-ctp>FTP=/shelf=1/slot=1/port=702/CTP=50001</client-ctp>
+                <server-ctp>PTP=/shelf=1/slot=1/port=1/CTP=2</server-ctp>
+                <fgotn-ftp-pac xmlns="urn:ccsa:yang:acc-fgotn">
+                    <total-tributary-slots>119</total-tributary-slots>
+                    <available-tributary-slots>115</available-tributary-slots>
+                    <ts-detail>119-F00000000000000000000000000000</ts-detail>
+                </fgotn-ftp-pac>
+                <eth-ftp-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-mtu/>
+                    <current-mtu/>
+                    <service-mapping-mode/>
+                    <mapping-type/>
+                    <vcg-parameters xmlns="urn:ccsa:yang:acc-eos">
+                        <vc-type/>
+                        <lcas/>
+                        <hold-off/>
+                        <wtr/>
+                        <tsd/>
+                        <tx-number/>
+                        <rx-number/>
+                        <so-handshake-state/>
+                    </vcg-parameters>
+                </eth-ftp-pac>
+                <sdh-ftp-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <sdh-signal-type/>
+                    <switch-capability/>
+                    <service-mapping-mode/>
+                    <j0-actual-tx/>
+                    <j0-expected-rx/>
+                    <j0-actual-rx/>
+                    <vc-ctp/>
+                </sdh-ftp-pac>
+            </ftp>
+        </ftps>
+        <ptps xmlns="urn:ccsa:yang:acc-devm">
+            <ptp>
+                <name>PTP=/shelf=1/slot=1/port=1</name>
+                <state-pac>
+                    <operational-state>up</operational-state>
+                    <admin-state>enabled</admin-state>
+                </state-pac>
+                <layer-protocol-name xmlns:acc-otn="urn:ccsa:yang:acc-otn">acc-otn:ODU</layer-protocol-name>
+                <supported-layer-protocol-name xmlns:acc-otn="urn:ccsa:yang:acc-otn">acc-otn:ODU</supported-layer-protocol-name>
+                <peer-ip-address>141.47.27.199</peer-ip-address>
+                <peer-tcp-id>01010001</peer-tcp-id>
+                <local-tcp-id>01010001</local-tcp-id>
+                <laser-status>laser-on</laser-status>
+                <ctp>PTP=/shelf=1/slot=1/port=1/CTP=2</ctp>
+                <interface-type>NNI</interface-type>
+                <loop-back>non-loopback</loop-back>
+                <remote-ptp/>
+                <optical-power-pac>
+                    <input-power>-5.5</input-power>
+                    <output-power>-1.3</output-power>
+                    <input-power-upper-threshold>-3.0</input-power-upper-threshold>
+                    <input-power-lower-threshold>-35.2</input-power-lower-threshold>
+                </optical-power-pac>
+                <fgotn-ptp-pac xmlns="urn:ccsa:yang:acc-fgotn">
+                    <signal-type/>
+                    <adaptation-type/>
+                </fgotn-ptp-pac>
+                <eth-mapping-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-mapping-type>EoO</supported-mapping-type>
+                    <supported-mapping-type>EoS</supported-mapping-type>
+                    <supported-mapping-type>EofgOTN</supported-mapping-type>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU0</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU1</supported-odu-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</supported-sdh-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-3</supported-sdh-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-4</supported-sdh-server-switch-capability>
+                </eth-mapping-pac>
+                <eth-ptp-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-working-mode/>
+                    <current-working-mode/>
+                    <supported-mtu/>
+                    <current-mtu/>
+                    <pause-control/>
+                    <mac-address/>
+                    <ipv4-address/>
+                    <ipv6-address/>
+                    <port-type/>
+                    <lldp-enable/>
+                    <lldp-peer-chassis-id/>
+                    <lldp-peer-port-id/>
+                    <lldp-peer-system-name/>
+                </eth-ptp-pac>
+                <sdh-mapping-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-1</supported-sdh-signal-types>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-4</supported-sdh-signal-types>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-16</supported-sdh-signal-types>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-64</supported-sdh-signal-types>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:E1</supported-sdh-signal-types>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</switch-capability>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-3</switch-capability>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-4</switch-capability>
+                    <supported-adaption-type/>
+                </sdh-mapping-pac>
+                <sdh-ptp-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <current-sdh-signal-type/>
+                    <supported-sdh-signal-types/>
+                    <switch-capability/>
+                    <j0-actual-tx/>
+                    <j0-expected-rx/>
+                    <j0-actual-rx/>
+                    <pdh-ptp-pac xmlns="urn:ccsa:yang:acc-pdh">
+                        <e1-phy-type/>
+                        <e1-opcode/>
+                        <e1-frame-type/>
+                    </pdh-ptp-pac>
+                </sdh-ptp-pac>
+                <odu-ptp-pac xmlns="urn:ccsa:yang:acc-otn">
+                    <odu-capacity>2</odu-capacity>
+                    <odu-signal-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:OTU0</odu-signal-type>
+                    <odu-signal-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:OTU1</odu-signal-type>
+                    <adaptation-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:CBR-AMP</adaptation-type>
+                    <adaptation-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:CBR-BMP</adaptation-type>
+                    <adaptation-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:GFP-T</adaptation-type>
+                    <adaptation-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:GFP-F</adaptation-type>
+                    <adaptation-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:GMP</adaptation-type>
+                    <adaptation-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODUij</adaptation-type>
+                    <adaptation-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODUk</adaptation-type>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU0</switch-capability>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU1</switch-capability>
+                    <ts-detail>2-40</ts-detail>
+                    <smtrail-trace-actual-tx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</smtrail-trace-actual-tx>
+                    <smtrail-trace-actual-rx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</smtrail-trace-actual-rx>
+                    <smtrail-trace-expected-rx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</smtrail-trace-expected-rx>
+                    <pmtrail-trace-actual-tx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</pmtrail-trace-actual-tx>
+                    <pmtrail-trace-actual-rx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</pmtrail-trace-actual-rx>
+                    <pmtrail-trace-expected-rx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</pmtrail-trace-expected-rx>
+                </odu-ptp-pac>
+            </ptp>
+            <ptp>
+                <name>PTP=/shelf=1/slot=1/port=2</name>
+                <state-pac>
+                    <operational-state>up</operational-state>
+                    <admin-state>enabled</admin-state>
+                </state-pac>
+                <layer-protocol-name xmlns:acc-otn="urn:ccsa:yang:acc-otn">acc-otn:ODU</layer-protocol-name>
+                <supported-layer-protocol-name xmlns:acc-otn="urn:ccsa:yang:acc-otn">acc-otn:ODU</supported-layer-protocol-name>
+                <peer-ip-address>141.47.27.199</peer-ip-address>
+                <peer-tcp-id>01010002</peer-tcp-id>
+                <local-tcp-id>01010002</local-tcp-id>
+                <laser-status>laser-on</laser-status>
+                <ctp/>
+                <interface-type>NNI</interface-type>
+                <loop-back>non-loopback</loop-back>
+                <remote-ptp/>
+                <optical-power-pac>
+                    <input-power>-13.0</input-power>
+                    <output-power>-1.9</output-power>
+                    <input-power-upper-threshold>-3.0</input-power-upper-threshold>
+                    <input-power-lower-threshold>-35.2</input-power-lower-threshold>
+                </optical-power-pac>
+                <fgotn-ptp-pac xmlns="urn:ccsa:yang:acc-fgotn">
+                    <signal-type/>
+                    <adaptation-type/>
+                </fgotn-ptp-pac>
+                <eth-mapping-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-mapping-type>EoO</supported-mapping-type>
+                    <supported-mapping-type>EoS</supported-mapping-type>
+                    <supported-mapping-type>EofgOTN</supported-mapping-type>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU0</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU1</supported-odu-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</supported-sdh-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-3</supported-sdh-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-4</supported-sdh-server-switch-capability>
+                </eth-mapping-pac>
+                <eth-ptp-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-working-mode/>
+                    <current-working-mode/>
+                    <supported-mtu/>
+                    <current-mtu/>
+                    <pause-control/>
+                    <mac-address/>
+                    <ipv4-address/>
+                    <ipv6-address/>
+                    <port-type/>
+                    <lldp-enable/>
+                    <lldp-peer-chassis-id/>
+                    <lldp-peer-port-id/>
+                    <lldp-peer-system-name/>
+                </eth-ptp-pac>
+                <sdh-mapping-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-1</supported-sdh-signal-types>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-4</supported-sdh-signal-types>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-16</supported-sdh-signal-types>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-64</supported-sdh-signal-types>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:E1</supported-sdh-signal-types>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</switch-capability>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-3</switch-capability>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-4</switch-capability>
+                    <supported-adaption-type/>
+                </sdh-mapping-pac>
+                <sdh-ptp-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <current-sdh-signal-type/>
+                    <supported-sdh-signal-types/>
+                    <switch-capability/>
+                    <j0-actual-tx/>
+                    <j0-expected-rx/>
+                    <j0-actual-rx/>
+                    <pdh-ptp-pac xmlns="urn:ccsa:yang:acc-pdh">
+                        <e1-phy-type/>
+                        <e1-opcode/>
+                        <e1-frame-type/>
+                    </pdh-ptp-pac>
+                </sdh-ptp-pac>
+                <odu-ptp-pac xmlns="urn:ccsa:yang:acc-otn">
+                    <odu-capacity>2</odu-capacity>
+                    <odu-signal-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:OTU0</odu-signal-type>
+                    <odu-signal-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:OTU1</odu-signal-type>
+                    <adaptation-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:CBR-AMP</adaptation-type>
+                    <adaptation-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:CBR-BMP</adaptation-type>
+                    <adaptation-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:GFP-T</adaptation-type>
+                    <adaptation-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:GFP-F</adaptation-type>
+                    <adaptation-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:GMP</adaptation-type>
+                    <adaptation-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODUij</adaptation-type>
+                    <adaptation-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODUk</adaptation-type>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU0</switch-capability>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU1</switch-capability>
+                    <ts-detail>2-00</ts-detail>
+                    <smtrail-trace-actual-tx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</smtrail-trace-actual-tx>
+                    <smtrail-trace-actual-rx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</smtrail-trace-actual-rx>
+                    <smtrail-trace-expected-rx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</smtrail-trace-expected-rx>
+                    <pmtrail-trace-actual-tx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</pmtrail-trace-actual-tx>
+                    <pmtrail-trace-actual-rx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</pmtrail-trace-actual-rx>
+                    <pmtrail-trace-expected-rx>00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</pmtrail-trace-expected-rx>
+                </odu-ptp-pac>
+            </ptp>
+            <ptp>
+                <name>PTP=/shelf=1/slot=2/port=1</name>
+                <state-pac>
+                    <operational-state>up</operational-state>
+                    <admin-state>enabled</admin-state>
+                </state-pac>
+                <layer-protocol-name xmlns:acc-eth="urn:ccsa:yang:acc-eth">acc-eth:ETH</layer-protocol-name>
+                <supported-layer-protocol-name xmlns:acc-eth="urn:ccsa:yang:acc-eth">acc-eth:ETH</supported-layer-protocol-name>
+                <supported-layer-protocol-name xmlns:acc-otn="urn:ccsa:yang:acc-otn">acc-otn:ODU</supported-layer-protocol-name>
+                <peer-ip-address/>
+                <peer-tcp-id/>
+                <local-tcp-id>01020001</local-tcp-id>
+                <laser-status>laser-on</laser-status>
+                <ctp/>
+                <interface-type>UNI</interface-type>
+                <loop-back>non-loopback</loop-back>
+                <remote-ptp/>
+                <optical-power-pac>
+                    <input-power>-5.8</input-power>
+                    <output-power>-6.1</output-power>
+                    <input-power-upper-threshold>-3.0</input-power-upper-threshold>
+                    <input-power-lower-threshold>-35.2</input-power-lower-threshold>
+                </optical-power-pac>
+                <fgotn-ptp-pac xmlns="urn:ccsa:yang:acc-fgotn">
+                    <signal-type/>
+                    <adaptation-type/>
+                </fgotn-ptp-pac>
+                <eth-mapping-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-mapping-type>EoO</supported-mapping-type>
+                    <supported-mapping-type>EoS</supported-mapping-type>
+                    <supported-mapping-type>EofgOTN</supported-mapping-type>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU0</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU1</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU2</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODUflex-GFP</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:fgODUflex</supported-odu-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</supported-sdh-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-3</supported-sdh-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-4</supported-sdh-server-switch-capability>
+                </eth-mapping-pac>
+                <eth-ptp-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-working-mode>auto</supported-working-mode>
+                    <supported-working-mode>100MFullDuplex</supported-working-mode>
+                    <supported-working-mode>1000MFullDuplex</supported-working-mode>
+                    <current-working-mode>auto</current-working-mode>
+                    <supported-mtu>9600</supported-mtu>
+                    <current-mtu>9600</current-mtu>
+                    <pause-control>false</pause-control>
+                    <mac-address>00:07:30:08:fb:c2</mac-address>
+                    <ipv4-address>0.0.0.0</ipv4-address>
+                    <ipv6-address>::</ipv6-address>
+                    <port-type>optical</port-type>
+                    <lldp-enable>true</lldp-enable>
+                    <lldp-peer-chassis-id>000000000000</lldp-peer-chassis-id>
+                    <lldp-peer-port-id/>
+                    <lldp-peer-system-name/>
+                </eth-ptp-pac>
+                <sdh-mapping-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <supported-sdh-signal-types/>
+                    <switch-capability/>
+                    <supported-adaption-type/>
+                </sdh-mapping-pac>
+                <sdh-ptp-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <current-sdh-signal-type/>
+                    <supported-sdh-signal-types/>
+                    <switch-capability/>
+                    <j0-actual-tx/>
+                    <j0-expected-rx/>
+                    <j0-actual-rx/>
+                    <pdh-ptp-pac xmlns="urn:ccsa:yang:acc-pdh">
+                        <e1-phy-type/>
+                        <e1-opcode/>
+                        <e1-frame-type/>
+                    </pdh-ptp-pac>
+                </sdh-ptp-pac>
+                <odu-ptp-pac xmlns="urn:ccsa:yang:acc-otn">
+                    <odu-capacity/>
+                    <odu-signal-type/>
+                    <adaptation-type/>
+                    <switch-capability/>
+                    <ts-detail/>
+                    <smtrail-trace-actual-tx/>
+                    <smtrail-trace-actual-rx/>
+                    <smtrail-trace-expected-rx/>
+                    <pmtrail-trace-actual-tx/>
+                    <pmtrail-trace-actual-rx/>
+                    <pmtrail-trace-expected-rx/>
+                </odu-ptp-pac>
+            </ptp>
+            <ptp>
+                <name>PTP=/shelf=1/slot=2/port=2</name>
+                <state-pac>
+                    <operational-state>down</operational-state>
+                    <admin-state>enabled</admin-state>
+                </state-pac>
+                <layer-protocol-name xmlns:acc-eth="urn:ccsa:yang:acc-eth">acc-eth:ETH</layer-protocol-name>
+                <supported-layer-protocol-name xmlns:acc-eth="urn:ccsa:yang:acc-eth">acc-eth:ETH</supported-layer-protocol-name>
+                <supported-layer-protocol-name xmlns:acc-otn="urn:ccsa:yang:acc-otn">acc-otn:ODU</supported-layer-protocol-name>
+                <peer-ip-address/>
+                <peer-tcp-id/>
+                <local-tcp-id>01020002</local-tcp-id>
+                <laser-status>no-optical-module</laser-status>
+                <ctp/>
+                <interface-type>UNI</interface-type>
+                <loop-back>non-loopback</loop-back>
+                <remote-ptp/>
+                <optical-power-pac>
+                    <input-power/>
+                    <output-power/>
+                    <input-power-upper-threshold/>
+                    <input-power-lower-threshold/>
+                </optical-power-pac>
+                <fgotn-ptp-pac xmlns="urn:ccsa:yang:acc-fgotn">
+                    <signal-type/>
+                    <adaptation-type/>
+                </fgotn-ptp-pac>
+                <eth-mapping-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-mapping-type>EoO</supported-mapping-type>
+                    <supported-mapping-type>EoS</supported-mapping-type>
+                    <supported-mapping-type>EofgOTN</supported-mapping-type>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU0</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU1</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU2</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODUflex-GFP</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:fgODUflex</supported-odu-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</supported-sdh-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-3</supported-sdh-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-4</supported-sdh-server-switch-capability>
+                </eth-mapping-pac>
+                <eth-ptp-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-working-mode>auto</supported-working-mode>
+                    <supported-working-mode>100MFullDuplex</supported-working-mode>
+                    <supported-working-mode>1000MFullDuplex</supported-working-mode>
+                    <current-working-mode>auto</current-working-mode>
+                    <supported-mtu>9600</supported-mtu>
+                    <current-mtu>9600</current-mtu>
+                    <pause-control>false</pause-control>
+                    <mac-address>00:07:30:08:fb:c3</mac-address>
+                    <ipv4-address>0.0.0.0</ipv4-address>
+                    <ipv6-address>::</ipv6-address>
+                    <port-type>electrical</port-type>
+                    <lldp-enable>true</lldp-enable>
+                    <lldp-peer-chassis-id>000000000000</lldp-peer-chassis-id>
+                    <lldp-peer-port-id/>
+                    <lldp-peer-system-name/>
+                </eth-ptp-pac>
+                <sdh-mapping-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <supported-sdh-signal-types/>
+                    <switch-capability/>
+                    <supported-adaption-type/>
+                </sdh-mapping-pac>
+                <sdh-ptp-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <current-sdh-signal-type/>
+                    <supported-sdh-signal-types/>
+                    <switch-capability/>
+                    <j0-actual-tx/>
+                    <j0-expected-rx/>
+                    <j0-actual-rx/>
+                    <pdh-ptp-pac xmlns="urn:ccsa:yang:acc-pdh">
+                        <e1-phy-type/>
+                        <e1-opcode/>
+                        <e1-frame-type/>
+                    </pdh-ptp-pac>
+                </sdh-ptp-pac>
+                <odu-ptp-pac xmlns="urn:ccsa:yang:acc-otn">
+                    <odu-capacity/>
+                    <odu-signal-type/>
+                    <adaptation-type/>
+                    <switch-capability/>
+                    <ts-detail/>
+                    <smtrail-trace-actual-tx/>
+                    <smtrail-trace-actual-rx/>
+                    <smtrail-trace-expected-rx/>
+                    <pmtrail-trace-actual-tx/>
+                    <pmtrail-trace-actual-rx/>
+                    <pmtrail-trace-expected-rx/>
+                </odu-ptp-pac>
+            </ptp>
+            <ptp>
+                <name>PTP=/shelf=1/slot=2/port=3</name>
+                <state-pac>
+                    <operational-state>down</operational-state>
+                    <admin-state>enabled</admin-state>
+                </state-pac>
+                <layer-protocol-name xmlns:acc-eth="urn:ccsa:yang:acc-eth">acc-eth:ETH</layer-protocol-name>
+                <supported-layer-protocol-name xmlns:acc-eth="urn:ccsa:yang:acc-eth">acc-eth:ETH</supported-layer-protocol-name>
+                <supported-layer-protocol-name xmlns:acc-otn="urn:ccsa:yang:acc-otn">acc-otn:ODU</supported-layer-protocol-name>
+                <peer-ip-address/>
+                <peer-tcp-id/>
+                <local-tcp-id>01020003</local-tcp-id>
+                <laser-status>no-optical-module</laser-status>
+                <ctp/>
+                <interface-type>UNI</interface-type>
+                <loop-back>non-loopback</loop-back>
+                <remote-ptp/>
+                <optical-power-pac>
+                    <input-power/>
+                    <output-power/>
+                    <input-power-upper-threshold/>
+                    <input-power-lower-threshold/>
+                </optical-power-pac>
+                <fgotn-ptp-pac xmlns="urn:ccsa:yang:acc-fgotn">
+                    <signal-type/>
+                    <adaptation-type/>
+                </fgotn-ptp-pac>
+                <eth-mapping-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-mapping-type>EoO</supported-mapping-type>
+                    <supported-mapping-type>EoS</supported-mapping-type>
+                    <supported-mapping-type>EofgOTN</supported-mapping-type>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU0</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU1</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU2</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODUflex-GFP</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:fgODUflex</supported-odu-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</supported-sdh-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-3</supported-sdh-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-4</supported-sdh-server-switch-capability>
+                </eth-mapping-pac>
+                <eth-ptp-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-working-mode>auto</supported-working-mode>
+                    <supported-working-mode>100MFullDuplex</supported-working-mode>
+                    <supported-working-mode>1000MFullDuplex</supported-working-mode>
+                    <current-working-mode>auto</current-working-mode>
+                    <supported-mtu>9600</supported-mtu>
+                    <current-mtu>9600</current-mtu>
+                    <pause-control>false</pause-control>
+                    <mac-address>00:07:30:08:fb:c4</mac-address>
+                    <ipv4-address>0.0.0.0</ipv4-address>
+                    <ipv6-address>::</ipv6-address>
+                    <port-type>electrical</port-type>
+                    <lldp-enable>true</lldp-enable>
+                    <lldp-peer-chassis-id>000000000000</lldp-peer-chassis-id>
+                    <lldp-peer-port-id/>
+                    <lldp-peer-system-name/>
+                </eth-ptp-pac>
+                <sdh-mapping-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <supported-sdh-signal-types/>
+                    <switch-capability/>
+                    <supported-adaption-type/>
+                </sdh-mapping-pac>
+                <sdh-ptp-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <current-sdh-signal-type/>
+                    <supported-sdh-signal-types/>
+                    <switch-capability/>
+                    <j0-actual-tx/>
+                    <j0-expected-rx/>
+                    <j0-actual-rx/>
+                    <pdh-ptp-pac xmlns="urn:ccsa:yang:acc-pdh">
+                        <e1-phy-type/>
+                        <e1-opcode/>
+                        <e1-frame-type/>
+                    </pdh-ptp-pac>
+                </sdh-ptp-pac>
+                <odu-ptp-pac xmlns="urn:ccsa:yang:acc-otn">
+                    <odu-capacity/>
+                    <odu-signal-type/>
+                    <adaptation-type/>
+                    <switch-capability/>
+                    <ts-detail/>
+                    <smtrail-trace-actual-tx/>
+                    <smtrail-trace-actual-rx/>
+                    <smtrail-trace-expected-rx/>
+                    <pmtrail-trace-actual-tx/>
+                    <pmtrail-trace-actual-rx/>
+                    <pmtrail-trace-expected-rx/>
+                </odu-ptp-pac>
+            </ptp>
+            <ptp>
+                <name>PTP=/shelf=1/slot=2/port=4</name>
+                <state-pac>
+                    <operational-state>down</operational-state>
+                    <admin-state>enabled</admin-state>
+                </state-pac>
+                <layer-protocol-name xmlns:acc-eth="urn:ccsa:yang:acc-eth">acc-eth:ETH</layer-protocol-name>
+                <supported-layer-protocol-name xmlns:acc-eth="urn:ccsa:yang:acc-eth">acc-eth:ETH</supported-layer-protocol-name>
+                <supported-layer-protocol-name xmlns:acc-otn="urn:ccsa:yang:acc-otn">acc-otn:ODU</supported-layer-protocol-name>
+                <peer-ip-address/>
+                <peer-tcp-id/>
+                <local-tcp-id>01020004</local-tcp-id>
+                <laser-status>no-optical-module</laser-status>
+                <ctp/>
+                <interface-type>UNI</interface-type>
+                <loop-back>non-loopback</loop-back>
+                <remote-ptp/>
+                <optical-power-pac>
+                    <input-power/>
+                    <output-power/>
+                    <input-power-upper-threshold/>
+                    <input-power-lower-threshold/>
+                </optical-power-pac>
+                <fgotn-ptp-pac xmlns="urn:ccsa:yang:acc-fgotn">
+                    <signal-type/>
+                    <adaptation-type/>
+                </fgotn-ptp-pac>
+                <eth-mapping-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-mapping-type>EoO</supported-mapping-type>
+                    <supported-mapping-type>EoS</supported-mapping-type>
+                    <supported-mapping-type>EofgOTN</supported-mapping-type>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU0</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU1</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODU2</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:ODUflex-GFP</supported-odu-server-switch-capability>
+                    <supported-odu-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:fgODUflex</supported-odu-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</supported-sdh-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-3</supported-sdh-server-switch-capability>
+                    <supported-sdh-server-switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-4</supported-sdh-server-switch-capability>
+                </eth-mapping-pac>
+                <eth-ptp-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-working-mode>auto</supported-working-mode>
+                    <supported-working-mode>100MFullDuplex</supported-working-mode>
+                    <supported-working-mode>1000MFullDuplex</supported-working-mode>
+                    <current-working-mode>auto</current-working-mode>
+                    <supported-mtu>9600</supported-mtu>
+                    <current-mtu>9600</current-mtu>
+                    <pause-control>false</pause-control>
+                    <mac-address>00:07:30:08:fb:c5</mac-address>
+                    <ipv4-address>0.0.0.0</ipv4-address>
+                    <ipv6-address>::</ipv6-address>
+                    <port-type>electrical</port-type>
+                    <lldp-enable>true</lldp-enable>
+                    <lldp-peer-chassis-id>000000000000</lldp-peer-chassis-id>
+                    <lldp-peer-port-id/>
+                    <lldp-peer-system-name/>
+                </eth-ptp-pac>
+                <sdh-mapping-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <supported-sdh-signal-types/>
+                    <switch-capability/>
+                    <supported-adaption-type/>
+                </sdh-mapping-pac>
+                <sdh-ptp-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <current-sdh-signal-type/>
+                    <supported-sdh-signal-types/>
+                    <switch-capability/>
+                    <j0-actual-tx/>
+                    <j0-expected-rx/>
+                    <j0-actual-rx/>
+                    <pdh-ptp-pac xmlns="urn:ccsa:yang:acc-pdh">
+                        <e1-phy-type/>
+                        <e1-opcode/>
+                        <e1-frame-type/>
+                    </pdh-ptp-pac>
+                </sdh-ptp-pac>
+                <odu-ptp-pac xmlns="urn:ccsa:yang:acc-otn">
+                    <odu-capacity/>
+                    <odu-signal-type/>
+                    <adaptation-type/>
+                    <switch-capability/>
+                    <ts-detail/>
+                    <smtrail-trace-actual-tx/>
+                    <smtrail-trace-actual-rx/>
+                    <smtrail-trace-expected-rx/>
+                    <pmtrail-trace-actual-tx/>
+                    <pmtrail-trace-actual-rx/>
+                    <pmtrail-trace-expected-rx/>
+                </odu-ptp-pac>
+            </ptp>
+            <ptp>
+                <name>PTP=/shelf=1/slot=3/port=1</name>
+                <state-pac>
+                    <operational-state>down</operational-state>
+                    <admin-state>enabled</admin-state>
+                </state-pac>
+                <layer-protocol-name xmlns:acc-sdh="urn:ccsa:yang:acc-sdh">acc-sdh:SDH</layer-protocol-name>
+                <supported-layer-protocol-name xmlns:acc-sdh="urn:ccsa:yang:acc-sdh">acc-sdh:SDH</supported-layer-protocol-name>
+                <peer-ip-address/>
+                <peer-tcp-id/>
+                <local-tcp-id>01030001</local-tcp-id>
+                <laser-status>no-optical-module</laser-status>
+                <ctp>PTP=/shelf=1/slot=3/port=1/CTP=10001</ctp>
+                <interface-type>UNI</interface-type>
+                <loop-back>non-loopback</loop-back>
+                <remote-ptp/>
+                <optical-power-pac>
+                    <input-power/>
+                    <output-power/>
+                    <input-power-upper-threshold/>
+                    <input-power-lower-threshold/>
+                </optical-power-pac>
+                <fgotn-ptp-pac xmlns="urn:ccsa:yang:acc-fgotn">
+                    <signal-type/>
+                    <adaptation-type/>
+                </fgotn-ptp-pac>
+                <eth-mapping-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-mapping-type/>
+                    <supported-odu-server-switch-capability/>
+                    <supported-sdh-server-switch-capability/>
+                </eth-mapping-pac>
+                <eth-ptp-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-working-mode/>
+                    <current-working-mode/>
+                    <supported-mtu/>
+                    <current-mtu/>
+                    <pause-control/>
+                    <mac-address/>
+                    <ipv4-address/>
+                    <ipv6-address/>
+                    <port-type/>
+                    <lldp-enable/>
+                    <lldp-peer-chassis-id/>
+                    <lldp-peer-port-id/>
+                    <lldp-peer-system-name/>
+                </eth-ptp-pac>
+                <sdh-mapping-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-1</supported-sdh-signal-types>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-4</supported-sdh-signal-types>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-16</supported-sdh-signal-types>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</switch-capability>
+                    <supported-adaption-type/>
+                </sdh-mapping-pac>
+                <sdh-ptp-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <current-sdh-signal-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:E1</current-sdh-signal-type>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:E1</supported-sdh-signal-types>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</switch-capability>
+                    <j0-actual-tx/>
+                    <j0-expected-rx/>
+                    <j0-actual-rx/>
+                    <pdh-ptp-pac xmlns="urn:ccsa:yang:acc-pdh">
+                        <e1-phy-type>75o</e1-phy-type>
+                        <e1-opcode>HDB3</e1-opcode>
+                        <e1-frame-type>unframe</e1-frame-type>
+                    </pdh-ptp-pac>
+                </sdh-ptp-pac>
+                <odu-ptp-pac xmlns="urn:ccsa:yang:acc-otn">
+                    <odu-capacity/>
+                    <odu-signal-type/>
+                    <adaptation-type/>
+                    <switch-capability/>
+                    <ts-detail/>
+                    <smtrail-trace-actual-tx/>
+                    <smtrail-trace-actual-rx/>
+                    <smtrail-trace-expected-rx/>
+                    <pmtrail-trace-actual-tx/>
+                    <pmtrail-trace-actual-rx/>
+                    <pmtrail-trace-expected-rx/>
+                </odu-ptp-pac>
+            </ptp>
+            <ptp>
+                <name>PTP=/shelf=1/slot=3/port=2</name>
+                <state-pac>
+                    <operational-state>down</operational-state>
+                    <admin-state>enabled</admin-state>
+                </state-pac>
+                <layer-protocol-name xmlns:acc-sdh="urn:ccsa:yang:acc-sdh">acc-sdh:SDH</layer-protocol-name>
+                <supported-layer-protocol-name xmlns:acc-sdh="urn:ccsa:yang:acc-sdh">acc-sdh:SDH</supported-layer-protocol-name>
+                <peer-ip-address/>
+                <peer-tcp-id/>
+                <local-tcp-id>01030002</local-tcp-id>
+                <laser-status>no-optical-module</laser-status>
+                <ctp/>
+                <interface-type>UNI</interface-type>
+                <loop-back>non-loopback</loop-back>
+                <remote-ptp/>
+                <optical-power-pac>
+                    <input-power/>
+                    <output-power/>
+                    <input-power-upper-threshold/>
+                    <input-power-lower-threshold/>
+                </optical-power-pac>
+                <fgotn-ptp-pac xmlns="urn:ccsa:yang:acc-fgotn">
+                    <signal-type/>
+                    <adaptation-type/>
+                </fgotn-ptp-pac>
+                <eth-mapping-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-mapping-type/>
+                    <supported-odu-server-switch-capability/>
+                    <supported-sdh-server-switch-capability/>
+                </eth-mapping-pac>
+                <eth-ptp-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-working-mode/>
+                    <current-working-mode/>
+                    <supported-mtu/>
+                    <current-mtu/>
+                    <pause-control/>
+                    <mac-address/>
+                    <ipv4-address/>
+                    <ipv6-address/>
+                    <port-type/>
+                    <lldp-enable/>
+                    <lldp-peer-chassis-id/>
+                    <lldp-peer-port-id/>
+                    <lldp-peer-system-name/>
+                </eth-ptp-pac>
+                <sdh-mapping-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-1</supported-sdh-signal-types>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-4</supported-sdh-signal-types>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-16</supported-sdh-signal-types>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</switch-capability>
+                    <supported-adaption-type/>
+                </sdh-mapping-pac>
+                <sdh-ptp-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <current-sdh-signal-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:E1</current-sdh-signal-type>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:E1</supported-sdh-signal-types>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</switch-capability>
+                    <j0-actual-tx/>
+                    <j0-expected-rx/>
+                    <j0-actual-rx/>
+                    <pdh-ptp-pac xmlns="urn:ccsa:yang:acc-pdh">
+                        <e1-phy-type>75o</e1-phy-type>
+                        <e1-opcode>HDB3</e1-opcode>
+                        <e1-frame-type>unframe</e1-frame-type>
+                    </pdh-ptp-pac>
+                </sdh-ptp-pac>
+                <odu-ptp-pac xmlns="urn:ccsa:yang:acc-otn">
+                    <odu-capacity/>
+                    <odu-signal-type/>
+                    <adaptation-type/>
+                    <switch-capability/>
+                    <ts-detail/>
+                    <smtrail-trace-actual-tx/>
+                    <smtrail-trace-actual-rx/>
+                    <smtrail-trace-expected-rx/>
+                    <pmtrail-trace-actual-tx/>
+                    <pmtrail-trace-actual-rx/>
+                    <pmtrail-trace-expected-rx/>
+                </odu-ptp-pac>
+            </ptp>
+            <ptp>
+                <name>PTP=/shelf=1/slot=3/port=3</name>
+                <state-pac>
+                    <operational-state>down</operational-state>
+                    <admin-state>enabled</admin-state>
+                </state-pac>
+                <layer-protocol-name xmlns:acc-sdh="urn:ccsa:yang:acc-sdh">acc-sdh:SDH</layer-protocol-name>
+                <supported-layer-protocol-name xmlns:acc-sdh="urn:ccsa:yang:acc-sdh">acc-sdh:SDH</supported-layer-protocol-name>
+                <peer-ip-address/>
+                <peer-tcp-id/>
+                <local-tcp-id>01030003</local-tcp-id>
+                <laser-status>no-optical-module</laser-status>
+                <ctp/>
+                <interface-type>UNI</interface-type>
+                <loop-back>non-loopback</loop-back>
+                <remote-ptp/>
+                <optical-power-pac>
+                    <input-power/>
+                    <output-power/>
+                    <input-power-upper-threshold/>
+                    <input-power-lower-threshold/>
+                </optical-power-pac>
+                <fgotn-ptp-pac xmlns="urn:ccsa:yang:acc-fgotn">
+                    <signal-type/>
+                    <adaptation-type/>
+                </fgotn-ptp-pac>
+                <eth-mapping-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-mapping-type/>
+                    <supported-odu-server-switch-capability/>
+                    <supported-sdh-server-switch-capability/>
+                </eth-mapping-pac>
+                <eth-ptp-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-working-mode/>
+                    <current-working-mode/>
+                    <supported-mtu/>
+                    <current-mtu/>
+                    <pause-control/>
+                    <mac-address/>
+                    <ipv4-address/>
+                    <ipv6-address/>
+                    <port-type/>
+                    <lldp-enable/>
+                    <lldp-peer-chassis-id/>
+                    <lldp-peer-port-id/>
+                    <lldp-peer-system-name/>
+                </eth-ptp-pac>
+                <sdh-mapping-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-1</supported-sdh-signal-types>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-4</supported-sdh-signal-types>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-16</supported-sdh-signal-types>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</switch-capability>
+                    <supported-adaption-type/>
+                </sdh-mapping-pac>
+                <sdh-ptp-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <current-sdh-signal-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:E1</current-sdh-signal-type>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:E1</supported-sdh-signal-types>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</switch-capability>
+                    <j0-actual-tx/>
+                    <j0-expected-rx/>
+                    <j0-actual-rx/>
+                    <pdh-ptp-pac xmlns="urn:ccsa:yang:acc-pdh">
+                        <e1-phy-type>75o</e1-phy-type>
+                        <e1-opcode>HDB3</e1-opcode>
+                        <e1-frame-type>unframe</e1-frame-type>
+                    </pdh-ptp-pac>
+                </sdh-ptp-pac>
+                <odu-ptp-pac xmlns="urn:ccsa:yang:acc-otn">
+                    <odu-capacity/>
+                    <odu-signal-type/>
+                    <adaptation-type/>
+                    <switch-capability/>
+                    <ts-detail/>
+                    <smtrail-trace-actual-tx/>
+                    <smtrail-trace-actual-rx/>
+                    <smtrail-trace-expected-rx/>
+                    <pmtrail-trace-actual-tx/>
+                    <pmtrail-trace-actual-rx/>
+                    <pmtrail-trace-expected-rx/>
+                </odu-ptp-pac>
+            </ptp>
+            <ptp>
+                <name>PTP=/shelf=1/slot=3/port=4</name>
+                <state-pac>
+                    <operational-state>down</operational-state>
+                    <admin-state>enabled</admin-state>
+                </state-pac>
+                <layer-protocol-name xmlns:acc-sdh="urn:ccsa:yang:acc-sdh">acc-sdh:SDH</layer-protocol-name>
+                <supported-layer-protocol-name xmlns:acc-sdh="urn:ccsa:yang:acc-sdh">acc-sdh:SDH</supported-layer-protocol-name>
+                <peer-ip-address/>
+                <peer-tcp-id/>
+                <local-tcp-id>01030004</local-tcp-id>
+                <laser-status>no-optical-module</laser-status>
+                <ctp/>
+                <interface-type>UNI</interface-type>
+                <loop-back>non-loopback</loop-back>
+                <remote-ptp/>
+                <optical-power-pac>
+                    <input-power/>
+                    <output-power/>
+                    <input-power-upper-threshold/>
+                    <input-power-lower-threshold/>
+                </optical-power-pac>
+                <fgotn-ptp-pac xmlns="urn:ccsa:yang:acc-fgotn">
+                    <signal-type/>
+                    <adaptation-type/>
+                </fgotn-ptp-pac>
+                <eth-mapping-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-mapping-type/>
+                    <supported-odu-server-switch-capability/>
+                    <supported-sdh-server-switch-capability/>
+                </eth-mapping-pac>
+                <eth-ptp-pac xmlns="urn:ccsa:yang:acc-eth">
+                    <supported-working-mode/>
+                    <current-working-mode/>
+                    <supported-mtu/>
+                    <current-mtu/>
+                    <pause-control/>
+                    <mac-address/>
+                    <ipv4-address/>
+                    <ipv6-address/>
+                    <port-type/>
+                    <lldp-enable/>
+                    <lldp-peer-chassis-id/>
+                    <lldp-peer-port-id/>
+                    <lldp-peer-system-name/>
+                </eth-ptp-pac>
+                <sdh-mapping-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-1</supported-sdh-signal-types>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-4</supported-sdh-signal-types>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:STM-16</supported-sdh-signal-types>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</switch-capability>
+                    <supported-adaption-type/>
+                </sdh-mapping-pac>
+                <sdh-ptp-pac xmlns="urn:ccsa:yang:acc-sdh">
+                    <current-sdh-signal-type xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:E1</current-sdh-signal-type>
+                    <supported-sdh-signal-types xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:E1</supported-sdh-signal-types>
+                    <switch-capability xmlns:acc-otn-types="urn:ccsa:yang:acc-otn-types">acc-otn-types:VC-12</switch-capability>
+                    <j0-actual-tx/>
+                    <j0-expected-rx/>
+                    <j0-actual-rx/>
+                    <pdh-ptp-pac xmlns="urn:ccsa:yang:acc-pdh">
+                        <e1-phy-type>75o</e1-phy-type>
+                        <e1-opcode>HDB3</e1-opcode>
+                        <e1-frame-type>unframe</e1-frame-type>
+                    </pdh-ptp-pac>
+                </sdh-ptp-pac>
+                <odu-ptp-pac xmlns="urn:ccsa:yang:acc-otn">
+                    <odu-capacity/>
+                    <odu-signal-type/>
+                    <adaptation-type/>
+                    <switch-capability/>
+                    <ts-detail/>
+                    <smtrail-trace-actual-tx/>
+                    <smtrail-trace-actual-rx/>
+                    <smtrail-trace-expected-rx/>
+                    <pmtrail-trace-actual-tx/>
+                    <pmtrail-trace-actual-rx/>
+                    <pmtrail-trace-expected-rx/>
+                </odu-ptp-pac>
+            </ptp>
+        </ptps>
+        <me xmlns="urn:ccsa:yang:acc-devm">
+            <name>mss25otn-1u</name>
+            <uuid>00073008fbc1</uuid>
+            <status>running</status>
+            <manufacturer>OPTEL</manufacturer>
+            <product-name>MssEdge 20-M2B4G2S4E(DC)</product-name>
+            <software-version>7.0.0.0</software-version>
+            <hardware-version>1.0</hardware-version>
+            <device-type>po-box</device-type>
+            <layer-protocol-name xmlns:acc-eth="urn:ccsa:yang:acc-eth">acc-eth:ETH</layer-protocol-name>
+            <layer-protocol-name xmlns:acc-sdh="urn:ccsa:yang:acc-sdh">acc-sdh:SDH</layer-protocol-name>
+            <layer-protocol-name xmlns:acc-otn="urn:ccsa:yang:acc-otn">acc-otn:ODU</layer-protocol-name>
+            <layer-protocol-name xmlns:acc-fgotn="urn:ccsa:yang:acc-fgotn">acc-fgotn:fgODUflex</layer-protocol-name>
+            <ip-address>141.8.251.248</ip-address>
+            <mask>255.255.255.255</mask>
+            <ntp-enable>true</ntp-enable>
+            <ntp-state>NSET</ntp-state>
+            <ntp-servers/>
+            <gate-way1>0.0.0.0</gate-way1>
+            <gate-way2>0.0.0.0</gate-way2>
+            <eq>EH=/shelf=1/slot=1/EQ=LO1_02</eq>
+            <eq>EH=/shelf=1/slot=2/EQ=TE1_04</eq>
+            <eq>EH=/shelf=1/slot=3/EQ=TP0_04</eq>
+            <eq>EH=/shelf=1/slot=4/EQ=TS1_02</eq>
+            <eq>EH=/shelf=1/slot=9/EQ=A1M_01</eq>
+            <eq>EH=/shelf=1/slot=12/EQ=DC_A1</eq>
+            <eq>EH=/shelf=1/slot=13/EQ=DC_A1</eq>
+            <mc-port>RJ45_1</mc-port>
+            <mc-port>Serial_1</mc-port>
+        </me>
+    </data>
+
+</rpc-reply>

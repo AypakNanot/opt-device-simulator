@@ -1,0 +1,522 @@
+module openconfig-if-ethernet {
+
+  yang-version "1";
+
+  // namespace
+  namespace "http://openconfig.net/yang/interfaces/ethernet";
+
+  prefix "oc-eth";
+
+  // import some basic types
+  import openconfig-interfaces { prefix oc-if;revision-date "2019-11-19"; }
+  import openconfig-yang-types { prefix oc-yang;revision-date "2018-11-21";  }
+  import openconfig-extensions { prefix oc-ext;revision-date "2018-10-17";  }
+
+  // meta
+  organization "OpenConfig working group";
+
+  contact
+    "OpenConfig working group
+    netopenconfig@googlegroups.com";
+
+  description
+    "Model for managing Ethernet interfaces -- augments the OpenConfig
+    model for interface configuration and state.";
+
+  oc-ext:openconfig-version "2.8.1";
+  revision "2020-06-30" {
+    description
+      "Initial release for DCI Box.";
+    reference "2.8.2";
+  }
+  
+  revision "2020-05-06" {
+    description
+      "Minor formatting fix.";
+    reference "2.8.1";
+  }
+
+  revision "2020-05-06" {
+    description
+      "Add 200G, 400G, 600G and 800G Ethernet speeds.";
+    reference "2.8.0";
+  }
+
+  revision "2020-05-05" {
+    description
+      "Fix when statement checks to use rw paths when
+      from a rw context.";
+    reference "2.7.3";
+  }
+
+  revision "2019-04-16" {
+    description
+      "Update import prefix for iana-if-type module";
+    reference "2.7.2";
+  }
+
+  revision "2018-11-21" {
+    description
+      "Add OpenConfig module metadata extensions.";
+    reference "2.6.2";
+  }
+
+  revision "2018-09-04" {
+    description
+      "Remove in-crc-align-errors as it is a duplicate of
+      in-crc-errors";
+    reference "2.6.1";
+  }
+
+  revision "2018-08-28" {
+    description
+      "Add Ethernet counter in-block-errors";
+    reference "2.6.0";
+  }
+
+  revision "2018-07-02" {
+    description
+      "Add new ethernet counters of in-undersize-frames,
+      in-crc-align-errors and the distribution container";
+    reference "2.5.0";
+  }
+
+  revision "2018-04-10" {
+    description
+      "Add identities for 2.5 and 5 Gbps.";
+    reference "2.4.0";
+  }
+
+  revision "2018-01-05" {
+    description
+      "Add logical loopback to interface.";
+    reference "2.3.0";
+  }
+
+  revision "2017-12-21" {
+    description
+      "Added IPv6 router advertisement configuration.";
+    reference "2.1.0";
+  }
+
+  revision "2017-07-14" {
+    description
+      "Added Ethernet/IP state data; Add dhcp-client;
+      migrate to OpenConfig types modules; Removed or
+      renamed opstate values";
+    reference "2.0.0";
+  }
+
+  revision "2016-12-22" {
+    description
+      "Fixes to Ethernet interfaces model";
+    reference "1.1.0";
+  }
+
+  // OpenConfig specific extensions for module metadata.
+  oc-ext:regexp-posix;
+  oc-ext:catalog-organization "openconfig";
+  oc-ext:origin "openconfig";
+
+  // identity statements
+
+  identity ETHERNET_SPEED {
+    description "base type to specify available Ethernet link
+    speeds";
+  }
+
+  identity SPEED_10MB {
+    base ETHERNET_SPEED;
+    description "10 Mbps Ethernet";
+  }
+
+  identity SPEED_100MB {
+    base ETHERNET_SPEED;
+    description "100 Mbps Ethernet";
+  }
+
+  identity SPEED_1GB {
+    base ETHERNET_SPEED;
+    description "1 Gbps Ethernet";
+  }
+
+  identity SPEED_2500MB {
+    base ETHERNET_SPEED;
+    description "2.5 Gbps Ethernet";
+  }
+
+  identity SPEED_5GB {
+    base ETHERNET_SPEED;
+    description "5 Gbps Ethernet";
+  }
+
+  identity SPEED_10GB {
+    base ETHERNET_SPEED;
+    description "10 Gbps Ethernet";
+  }
+
+  identity SPEED_25GB {
+    base ETHERNET_SPEED;
+    description "25 Gbps Ethernet";
+  }
+
+  identity SPEED_40GB {
+    base ETHERNET_SPEED;
+    description "40 Gbps Ethernet";
+  }
+
+  identity SPEED_50GB {
+    base ETHERNET_SPEED;
+    description "50 Gbps Ethernet";
+  }
+
+  identity SPEED_100GB {
+    base ETHERNET_SPEED;
+    description "100 Gbps Ethernet";
+  }
+
+  identity SPEED_200GB {
+    base ETHERNET_SPEED;
+    description "200 Gbps Ethernet";
+  }
+
+  identity SPEED_400GB {
+    base ETHERNET_SPEED;
+    description "400 Gbps Ethernet";
+  }
+
+  identity SPEED_600GB {
+    base ETHERNET_SPEED;
+    description "600 Gbps Ethernet";
+  }
+
+  identity SPEED_800GB {
+    base ETHERNET_SPEED;
+    description "800 Gbps Ethernet";
+  }
+
+  identity SPEED_UNKNOWN {
+    base ETHERNET_SPEED;
+    description
+      "Interface speed is unknown.  Systems may report
+      speed UNKNOWN when an interface is down or unpopuplated (e.g.,
+      pluggable not present).";
+  }
+
+  // typedef statements
+
+
+  // grouping statements
+
+  grouping ethernet-interface-config {
+    description "Configuration items for Ethernet interfaces";
+
+    leaf mac-address {
+      type oc-yang:mac-address;
+      description
+        "Assigns a MAC address to the Ethernet interface.  If not
+        specified, the corresponding operational state leaf is
+        expected to show the system-assigned MAC address.";
+    }
+
+    leaf auto-negotiate {
+      type boolean;
+      description
+        "Set to TRUE to request the interface to auto-negotiate
+        transmission parameters with its peer interface.  When
+        set to FALSE, the transmission parameters are specified
+        manually.";
+      reference
+        "IEEE 802.3-2012 auto-negotiation transmission parameters";
+    }
+
+    leaf duplex-mode {
+      type enumeration {
+        enum FULL {
+          description "Full duplex mode";
+        }
+        enum HALF {
+          description "Half duplex mode";
+        }
+      }
+      description
+        "When auto-negotiate is TRUE, this optionally sets the
+        duplex mode that will be advertised to the peer.  If
+        unspecified, the interface should negotiate the duplex mode
+        directly (typically full-duplex).  When auto-negotiate is
+        FALSE, this sets the duplex mode on the interface directly.";
+    }
+
+    leaf port-speed {
+      type identityref {
+        base ETHERNET_SPEED;
+      }
+      description
+        "When auto-negotiate is TRUE, this optionally sets the
+        port-speed mode that will be advertised to the peer for
+        negotiation.  If unspecified, it is expected that the
+        interface will select the highest speed available based on
+        negotiation.  When auto-negotiate is set to FALSE, sets the
+        link speed to a fixed value -- supported values are defined
+        by ETHERNET_SPEED identities";
+    }
+
+    leaf enable-flow-control {
+      type boolean;
+      description
+        "Enable or disable flow control for this interface.
+        Ethernet flow control is a mechanism by which a receiver
+        may send PAUSE frames to a sender to stop transmission for
+        a specified time.
+
+        This setting should override auto-negotiated flow control
+        settings.  If left unspecified, and auto-negotiate is TRUE,
+        flow control mode is negotiated with the peer interface.";
+      reference
+        "IEEE 802.3x";
+    }    
+     
+  }
+
+  grouping ethernet-interface-state-counters {
+    description
+      "Ethernet-specific counters and statistics.
+	  All counters are newly defined,old counters are removed";
+
+	leaf rx-pkts {
+      type oc-yang:counter64;
+      description
+        "Number of packages received on the interface";
+    }
+	
+	leaf tx-pkts {
+      type oc-yang:counter64;
+      description
+        "Number of packages sent on the interface";
+    }
+    leaf rx-bytes{
+      type oc-yang:counter64;
+      description
+        "Number of bytes sent on the interface";
+    }
+    leaf tx-bytes {
+      type oc-yang:counter64;
+      description
+        "Number of bytes sent on the interface";
+    }
+	
+   ///  leaf rx-pkt-sum {
+   ///   type oc-yang:counter64;
+   ///   description
+  ///      "Number of packages received on the interface";
+  ///  }
+	
+///	leaf tx-pkt-sum {
+ ///     type oc-yang:counter64;
+ ///     description
+  ///      "Number of packages sent on the interface";
+  ///  }
+	
+	leaf rx-crc-err-sum {
+//	  mandatory ture;
+          type oc-yang:counter64;
+          description
+            "Number of crc error received on the interface";
+        }	
+        
+	leaf rx-stat-osz {
+          type oc-yang:counter64;
+          description
+            "Number of oversize packages received on the interface";
+       }
+	
+	leaf tx-crc-err-sum {
+          type oc-yang:counter64;
+          description
+            "Number of oversize packages transmit on the interface";
+       }
+	
+	leaf tx-stat-osz {
+          type oc-yang:counter64;
+           description
+            "Number of oversize packages sent on the interface";
+        }
+	
+	leaf rx-stat-usz {
+           type oc-yang:counter64;
+           description
+              "Number undersize packages received on the interface";
+        }
+	
+	leaf tx-stat-usz {
+          type oc-yang:counter64;
+          description
+           "Number of undersize packages sent on the interface";
+        }
+	
+	leaf rx-pkts-64Octets {
+          type oc-yang:counter64;
+          description
+           "Number of 64 octects packages received on the interface";
+         }
+	
+	leaf rx-pkts-65to127Octets {
+         type oc-yang:counter64;
+         description
+           "Number of 65-127 octects packages received on the interface";
+        }
+	
+	leaf rx-pkts-128to255Octets {
+          type oc-yang:counter64;
+          description
+           "Number of 128-255 octects packages received on the interface";
+        }
+	
+	leaf rx-pkts-256to511Octets {
+          type oc-yang:counter64;
+          description
+           "Number of 256-511 octects packages received on the interface";
+        }
+	
+	leaf rx-pkts-512to1023Octets {
+          type oc-yang:counter64;
+          description
+           "Number of 512-1023 octects packages received on the interface";
+        }
+	
+	leaf rx-pkts-1024to1518Octets {
+          type oc-yang:counter64;
+          description
+           "Number of 1024-1518 octects packages received on the interface";
+        }
+	
+	leaf tx-pkts-64Octets {
+          type oc-yang:counter64;
+          description
+           "Number of 64 octects packages sent on the interface";
+        }
+	
+	leaf tx-pkts-65to127Octets {
+         type oc-yang:counter64;
+         description
+          "Number of 65-127 octects packages sent on the interface";
+       }
+	
+	leaf tx-pkts-128to255Octets {
+          type oc-yang:counter64;
+          description
+           "Number of 128-255 octects packages sent on the interface";
+        }
+	
+	leaf tx-pkts-256to511Octets {
+          type oc-yang:counter64;
+          description
+            "Number of 256-511 octects packages sent on the interface";
+        }
+	
+	leaf tx-pkts-512to1023Octets {
+          type oc-yang:counter64;
+          description
+            "Number of 512-1023 octects packages sent on the interface";
+        }
+	
+	leaf tx-pkts-1024to1518Octets {
+           type oc-yang:counter64;
+           description
+            "Number of 1024-1518 octects packages sent on the interface";
+        }
+  leaf rx-err-sum {
+            type  oc-yang:counter64;
+            description
+              "Number of bad packets received by interface" ;
+  }      
+	// leaf rx-pkts-err {
+	//        type oc-yang:counter64;
+  //          description
+  //           "Number of rx err packages on the interface";
+	//     }
+  }
+
+  grouping ethernet-interface-state {
+    description
+      "Grouping for defining Ethernet-specific operational state";
+
+    leaf hw-mac-address {
+      type oc-yang:mac-address;
+      description
+        "Represenets the 'burned-in',  or system-assigned, MAC
+        address for the Ethernet interface.";
+    }
+
+    leaf negotiated-duplex-mode {
+      type enumeration {
+        enum FULL {
+          description "Full duplex mode";
+        }
+        enum HALF {
+          description "Half duplex mode";
+        }
+      }
+      description
+        "When auto-negotiate is set to TRUE, and the interface has
+        completed auto-negotiation with the remote peer, this value
+        shows the duplex mode that has been negotiated.";
+    }
+
+    leaf negotiated-port-speed {
+      type identityref {
+        base ETHERNET_SPEED;
+      }
+      description
+        "When auto-negotiate is set to TRUE, and the interface has
+        completed auto-negotiation with the remote peer, this value
+        shows the interface speed that has been negotiated.";
+    }
+
+    container counters {
+      description "Ethernet interface counters";
+
+      uses ethernet-interface-state-counters;
+
+    }
+
+  }
+
+  // data definition statements
+
+  grouping ethernet-top {
+    description "top-level Ethernet config and state containers";
+
+    container ethernet {
+      description
+        "Top-level container for ethernet configuration
+        and state";
+
+      container config {
+        description "Configuration data for ethernet interfaces";
+
+        uses ethernet-interface-config;
+
+      }
+
+      container state {
+
+        config false;
+        description "State variables for Ethernet interfaces";
+
+        uses ethernet-interface-config;
+        uses ethernet-interface-state;
+
+      }
+
+    }
+  }
+
+  // augment statements
+
+
+  // rpc statements
+
+  // notification statements
+
+}

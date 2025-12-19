@@ -1,0 +1,223 @@
+module "acc-clock" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-clock";
+  prefix "acc-clock";
+  revision "2021-08-20" {
+    description
+      "clock management";
+  }
+
+  typedef "QL" {
+    type "enumeration" {
+      enum "QL-PRC" {
+        value "0";
+      }
+
+      enum "QL-SSU-A" {
+        value "1";
+      }
+
+      enum "QL-SSU-B" {
+        value "2";
+      }
+
+      enum "QL-SEC" {
+        value "3";
+      }
+
+      enum "QL-DNU" {
+        value "4";
+      }
+
+      enum "QL-EEC2" {
+        value "5";
+      }
+
+      enum "QL-PRTC" {
+        value "6";
+      }
+
+      enum "QL-ePRTC" {
+        value "7";
+      }
+
+      enum "QL-eEEC" {
+        value "8";
+      }
+
+      enum "QL-NONE" {
+        value "9";
+      }
+
+    }
+
+    description
+      "Use the clock quality levels listed in section 5.4.1 of G.781 (08/2017). The corresponding SSM codes and enhanced SSM codes for SyncE refer to table 11-7 and table 11-8 of G.8264 (08/2017)";
+  }
+
+  typedef "ssm-mode" {
+    type "enumeration" {
+      enum "auto" {
+        value "0";
+      }
+
+      enum "force" {
+        value "1";
+      }
+
+    }
+
+  }
+
+  typedef "pll-state" {
+    type "enumeration" {
+      enum "lock" {
+        value "0";
+      }
+
+      enum "accquire" {
+        value "1";
+      }
+
+      enum "holdover" {
+        value "2";
+      }
+
+      enum "free-running" {
+        value "3";
+      }
+
+    }
+
+  }
+
+  typedef "clk-2m-type" {
+    type "enumeration" {
+      enum "2Mbits" {
+        value "0";
+      }
+
+      enum "2MHz" {
+        value "1";
+      }
+
+    }
+
+  }
+
+  grouping "sync-clock-source" {
+    leaf "name" {
+      mandatory "true";
+      type "string";
+    }
+
+    leaf "priority" {
+      mandatory "true";
+      type "uint16";
+    }
+
+    leaf "rx-ql" {
+      mandatory "true";
+      config "false";
+      type "QL";
+    }
+
+    leaf "ssm-mode" {
+      type "ssm-mode";
+    }
+
+    leaf "ssm-force-ql" {
+      type "QL";
+      description
+        "若ssm-mode出现，则必须有此字段";
+    }
+
+  }
+
+  container "sync-clock-sources" {
+    list "sync-clock-source" {
+      key "name";
+      uses "sync-clock-source";
+    }
+
+  }
+
+  grouping "ext-2m-clock" {
+    leaf "name" {
+      mandatory "true";
+      type "string";
+    }
+
+    leaf "clk-2m-type" {
+      mandatory "true";
+      type "clk-2m-type";
+    }
+
+    leaf "sa-tx-bit" {
+      type "uint16";
+      description
+        "4~8  default value:4";
+    }
+
+    leaf "sa-rx-bit" {
+      type "uint16";
+      description
+        "4~8  default value:4";
+    }
+
+    leaf "ql-limit" {
+      type "QL";
+    }
+
+  }
+
+  container "ext-2m-clocks" {
+    list "ext-2m-clock" {
+      key "name";
+      uses "ext-2m-clock";
+    }
+
+  }
+
+  container "global-ssm" {
+    leaf "ssm-enable" {
+      mandatory "true";
+      type "boolean";
+    }
+
+    leaf "wtr" {
+      type "uint16";
+      description
+        "default 5  i.e.  5 minutes";
+    }
+
+  }
+
+  container "current-sync-clock" {
+    leaf "name" {
+      mandatory "true";
+      type "string";
+      config "false";
+      description
+        "one of the syncClockSources";
+    }
+
+    leaf "pll-state" {
+      mandatory "true";
+      type "pll-state";
+      config "false";
+      description
+        "current clock-source lock state ";
+    }
+
+    leaf "current-ql" {
+      mandatory "true";
+      type "QL";
+      config "false";
+      description
+        "clock source rx QL";
+    }
+
+  }
+
+}

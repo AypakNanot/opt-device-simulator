@@ -1,0 +1,366 @@
+module "acc-file" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-file";
+  prefix "acc-file";
+  import "ietf-yang-types" {
+    prefix "yang";
+  }
+
+  revision "2021-03-12" {
+    description
+      "config file and upgrade file management";
+  }
+
+  typedef "file-type" {
+    type "enumeration" {
+      enum "data" {
+        value "0";
+      }
+
+      enum "upgrade" {
+        value "1";
+      }
+
+    }
+
+  }
+
+  typedef "fail-reason" {
+    type "enumeration" {
+      enum "socket-fail" {
+        value "0";
+        description
+          "连接失败";
+      }
+
+      enum "auth-fail" {
+        value "1";
+        description
+          "认证失败";
+      }
+
+      enum "timeout" {
+        value "2";
+        description
+          "操作超时";
+      }
+
+      enum "file-not-exist" {
+        value "3";
+        description
+          "给定的文件不存在";
+      }
+
+      enum "file-type-mismatch" {
+        value "4";
+        description
+          "给定的文件与类型不匹配";
+      }
+
+      enum "upgrade-in-progress" {
+        value "5";
+        description
+          "升级过程中";
+      }
+
+      enum "data-in-generating" {
+        value "6";
+        description
+          "配置文件正在生成过程中";
+      }
+
+      enum "validate-fail" {
+        value "7";
+        description
+          "校验失败";
+      }
+
+    }
+
+  }
+
+  typedef "active-status" {
+    type "enumeration" {
+      enum "fail" {
+        value "0";
+      }
+
+      enum "success" {
+        value "1";
+      }
+
+      enum "activing" {
+        value "2";
+      }
+
+    }
+
+  }
+
+  typedef "download-status" {
+    type "enumeration" {
+      enum "fail" {
+        value "0";
+      }
+
+      enum "downloading" {
+        value "1";
+      }
+
+      enum "downloaded" {
+        value "2";
+      }
+
+      enum "validating" {
+        value "3";
+      }
+
+      enum "validated" {
+        value "4";
+      }
+
+    }
+
+  }
+
+  rpc "download-file" {
+    input {
+      leaf "file-type" {
+        mandatory "true";
+        type "file-type";
+      }
+
+      leaf "file-name" {
+        mandatory "true";
+        type "string";
+      }
+
+      leaf "file-size" {
+        mandatory "true";
+        type "uint32";
+        description
+          "对于配置文件，管控使用设备上传配置文件时候报的filesize的值进行下发，如果设备未返回filesize，那么下载的时候就不要进行校验了";
+      }
+
+      leaf "path" {
+        mandatory "true";
+        type "string";
+        description
+          "it is fullpath e.g. sftp://ip:port/path/.....";
+      }
+
+      leaf "username" {
+        mandatory "true";
+        type "string";
+      }
+
+      leaf "password" {
+        mandatory "true";
+        type "string";
+      }
+
+    }
+
+  }
+
+  rpc "upload-file" {
+    input {
+      leaf "file-type" {
+        mandatory "true";
+        type "file-type";
+      }
+
+      leaf "file-name" {
+        type "string";
+        description
+          "如果无此参数，或者参数的值为空值，说明是第一次上传，设备需按文件名生成规则生成文件上传并在接口里返回实际上传的文件名；如果不为空，表明需要重传指定文件";
+      }
+
+      leaf "path" {
+        mandatory "true";
+        type "string";
+        description
+          "it is fullpath e.g. sftp://ip:port/path/.....";
+      }
+
+      leaf "username" {
+        mandatory "true";
+        type "string";
+      }
+
+      leaf "password" {
+        mandatory "true";
+        type "string";
+      }
+
+    }
+
+    output {
+      leaf "file-name" {
+        mandatory "true";
+        type "string";
+        description
+          "真正上传的文件名";
+      }
+
+      leaf "md5" {
+        mandatory "true";
+        type "string";
+      }
+
+      leaf "file-size" {
+        type "uint32";
+        description
+          "可选，有能力的话，返回文件大小，字节为单位。";
+      }
+
+    }
+
+    description
+      "此上传接口仅仅针对配置文件同步上传，要求总时长不超过50秒。升级文件不通过接口上传";
+  }
+
+  rpc "get-file-list" {
+    input {
+      leaf "file-type" {
+        type "string";
+        description
+          "data, upgrade, all  如果是all则返回所有类型";
+      }
+
+    }
+
+    output {
+      container "files" {
+        list "file" {
+          key "file-name";
+          leaf "file-name" {
+            type "string";
+          }
+
+          leaf "file-type" {
+            type "file-type";
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  rpc "delete-file" {
+    input {
+      leaf "file-type" {
+        mandatory "true";
+        type "file-type";
+      }
+
+      leaf "file-name" {
+        type "string";
+        mandatory "true";
+        description
+          "设备判断下发的文件类型和文件名是否匹配，如果不匹配返回错误";
+      }
+
+    }
+
+  }
+
+  rpc "active-file" {
+    input {
+      leaf "file-type" {
+        mandatory "true";
+        type "file-type";
+      }
+
+      leaf "file-name" {
+        type "string";
+        mandatory "true";
+        description
+          "设备判断下发的文件类型和文件名是否匹配，如果不匹配返回错误";
+      }
+
+    }
+
+  }
+
+  rpc "get-active-status" {
+    input {
+      leaf "file-type" {
+        mandatory "true";
+        type "file-type";
+      }
+
+    }
+
+    output {
+      leaf "file-name" {
+        mandatory "true";
+        type "string";
+        description
+          "执行的文件名，方便管控验证是否操作的文件正确";
+      }
+
+      leaf "active-time" {
+        type "yang:date-and-time";
+        description
+          "最终执行active操作后的时间,无论成功还是失败";
+      }
+
+      leaf "status" {
+        mandatory "true";
+        type "active-status";
+      }
+
+      leaf "fail-reason" {
+        type "fail-reason";
+        description
+          "socket-fail, auth-fail,file-not-exist,timeout,validate-fail,upgrade-in-progress,file-type-mismatch";
+      }
+
+    }
+
+  }
+
+  rpc "get-download-status" {
+    input {
+      leaf "file-type" {
+        mandatory "true";
+        type "file-type";
+      }
+
+      leaf "file-name" {
+        type "string";
+        mandatory "true";
+        description
+          "设备判断下发的文件类型和文件名是否匹配，如果不匹配返回错误";
+      }
+
+    }
+
+    output {
+      leaf "download-bytes" {
+        mandatory "true";
+        type "uint32";
+        description
+          "已经下载的字节数量";
+      }
+
+      leaf "status" {
+        mandatory "true";
+        type "download-status";
+      }
+
+      leaf "fail-reason" {
+        type "fail-reason";
+        description
+          "socket-fail, auth-fail,file-not-exist,timeout,validate-fail,file-type-mismatch";
+      }
+
+    }
+
+  }
+
+}

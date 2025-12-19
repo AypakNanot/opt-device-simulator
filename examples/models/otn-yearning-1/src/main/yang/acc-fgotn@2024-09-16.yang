@@ -1,0 +1,560 @@
+module "acc-fgotn" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-fgotn";
+  prefix "acc-fgotn";
+  import "acc-otn-types" {
+    prefix "acc-otn-types";
+  }
+
+  import "acc-devm" {
+    prefix "acc-devm";
+  }
+
+  import "acc-connection" {
+    prefix "acc-con";
+  }
+
+  import "acc-yang-types" {
+    prefix "acc-type";
+  }
+
+  import "acc-protection-group" {
+    prefix "acc-pg";
+  }
+
+  import "acc-otn" {
+    prefix "acc-otn";
+  }
+
+  revision "2024-09-16" {
+    description
+      "Initial revision";
+    reference
+      "CCSA接入型OTN接口技术要求";
+  }
+
+  identity "fgODUflex" {
+    base "acc-type:layer-protocol-name";
+  }
+
+  typedef "bw-adjustment-status" {
+    type "enumeration" {
+      enum "idle" {
+        value "0";
+        description
+          "Idle status.";
+      }
+
+      enum "adjusting" {
+        value "1";
+        description
+          "Bandwidth is being adjusted.";
+      }
+
+    }
+
+  }
+
+  typedef "bw-adjustment-result" {
+    type "enumeration" {
+      enum "success" {
+        value "0";
+        description
+          "Success.";
+      }
+
+      enum "failure" {
+        value "1";
+        description
+          "Failure.";
+      }
+
+    }
+
+  }
+
+  typedef "tcm-mode-type" {
+    type "enumeration" {
+      enum "operation" {
+        value "0";
+        description
+          "TCM is enabled";
+      }
+
+      enum "monitoring" {
+        value "1";
+        description
+          "TCM overhead is being monitored.";
+      }
+
+      enum "transparency" {
+        value "2";
+        description
+          "TCM is disabled.";
+      }
+
+    }
+
+  }
+
+  typedef "adjust-type" {
+    type "enumeration" {
+      enum "lossless-type" {
+        value "0";
+        description
+          "lossless";
+      }
+
+      enum "lossy-type" {
+        value "1";
+        description
+          "lossy";
+      }
+
+    }
+
+  }
+
+  typedef "direction-type" {
+    type "enumeration" {
+      enum "up" {
+        value "0";
+        description
+          "UNI->NNI";
+      }
+
+      enum "down" {
+        value "1";
+        description
+          "NNI->UNI";
+      }
+
+    }
+
+  }
+
+  grouping "fgodu-nni" {
+    uses "acc-otn:nni";
+    leaf "number-of-tributary-slots" {
+      type "uint64";
+      description
+        "2025.10 Modify";
+    }
+
+    leaf "ts-detail" {
+      type "string" {
+        length "1..952";
+      }
+
+      description
+        "2025.08 Modify";
+    }
+
+    leaf "fgodu-ctp" {
+      type "leafref" {
+        path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+      }
+
+    }
+
+    leaf "tpid" {
+      type "uint64";
+      description
+        "channel id 2025.08 Modify";
+    }
+
+  }
+
+  augment "/acc-devm:ptps/acc-devm:ptp" {
+    when "acc-devm:layer-protocol-name = 'acc-fgotn:fgODUflex'";
+    container "fgotn-ptp-pac" {
+      leaf-list "signal-type" {
+        min-elements "1";
+        type "identityref" {
+          base "acc-otn-types:client-signal-type";
+        }
+
+        config "false";
+        description
+          "The client signal type.";
+      }
+
+      leaf-list "adaptation-type" {
+        min-elements "1";
+        type "identityref" {
+          base "acc-otn-types:adaptation-type";
+        }
+
+        config "false";
+        description
+          "The adaptation type.";
+      }
+
+    }
+
+  }
+
+  augment "/acc-devm:ftps/acc-devm:ftp" {
+    when "acc-devm:layer-protocol-name = 'acc-fgotn:fgODUflex'";
+    container "fgotn-ftp-pac" {
+      leaf "total-tributary-slots" {
+        type "uint64";
+        config "false";
+        description
+          "标识端口可支持的fgTS个数";
+      }
+
+      leaf "available-tributary-slots" {
+        type "uint64";
+        config "false";
+        description
+          "标识端口未使用fgTS个数";
+      }
+
+      leaf "ts-detail" {
+        type "string" {
+          length "1..952";
+        }
+
+        description
+          "2025.08 Modify";
+      }
+
+    }
+
+  }
+
+  augment "/acc-devm:ctps/acc-devm:ctp" {
+    when "acc-devm:layer-protocol-name = 'acc-fgotn:fgODUflex'";
+    container "fgotn-ctp-pac" {
+      leaf "client-signal-type" {
+        type "identityref" {
+          base "acc-otn-types:client-signal-type";
+        }
+
+        description
+          "Client signal type";
+      }
+
+      leaf "adaptation-type" {
+        type "identityref" {
+          base "acc-otn-types:adaptation-type";
+        }
+
+        description
+          "Adaptation type";
+      }
+
+      leaf "signal-capability" {
+        mandatory "true";
+        type "identityref" {
+          base "acc-otn-types:switch-type";
+        }
+
+        description
+          "Switch capability";
+      }
+
+      leaf "ts-detail" {
+        mandatory "true";
+        type "string" {
+          length "1..952";
+        }
+
+        description
+          "2025.08 Modify";
+      }
+
+      leaf-list "current-number-of-tributary-slots" {
+        type "uint64";
+        description
+          "p in fgODUflex(p).";
+      }
+
+      leaf "pmtrail-trace-actual-tx" {
+        type "string" {
+          length "1..128";
+        }
+
+        config "false";
+        description
+          "The fgODU PM trail trace identifier(TTI) transmitted.";
+      }
+
+      leaf "pmtrail-trace-actual-rx" {
+        type "string" {
+          length "1..128";
+        }
+
+        config "false";
+        description
+          "The fgODU PM trail trace identifier(TTI) received.";
+      }
+
+      leaf "pmtrail-trace-expected-rx" {
+        type "string" {
+          length "1..128";
+        }
+
+        description
+          "The fgODU PM trail trace identifier(TTI) expected.";
+      }
+
+      leaf "bw-adjust-status" {
+        type "bw-adjustment-status";
+        config "false";
+        description
+          "The status of bandwith adjustment";
+      }
+
+      leaf "tcm1-mode" {
+        type "tcm-mode-type";
+      }
+
+      leaf "tcm2-mode" {
+        type "tcm-mode-type";
+      }
+
+      leaf "tpid" {
+        type "uint64";
+        description
+          "channel id 2025.08 Modify";
+      }
+
+    }
+
+  }
+
+  rpc "create-fgoduflex-connection" {
+    input {
+      uses "acc-con:create-connection";
+      leaf "nni-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      leaf "nni-tcm" {
+        type "uint16";
+        description
+          "when nni-protection-type = 'snc-s', needs to be issued to
+present the nni tcm of both work path and protection path.";
+      }
+
+      leaf "nni2-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      leaf "nni2-tcm" {
+        type "uint16";
+        description
+          "when nni-protection-type = 'snc-s', needs to be issued to
+present the nni tcm of both work path and protection path.";
+      }
+
+      container "client-side-uni" {
+        leaf "uni-ptp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf "odu-signal-type" {
+          type "identityref" {
+            base "acc-otn-types:client-signal-type";
+          }
+
+        }
+
+        leaf "adaptation-type" {
+          type "identityref" {
+            base "acc-otn-types:adaptation-type";
+          }
+
+        }
+
+        description
+          "client side uni, only for UNI-NNI";
+      }
+
+      container "primary-nni" {
+        uses "fgodu-nni";
+        description
+          "primary nni, mandatory true";
+      }
+
+      container "secondary-nni" {
+        uses "fgodu-nni";
+        description
+          "only for service with protection. Optional";
+      }
+
+      container "primary-nni2" {
+        uses "fgodu-nni";
+        description
+          "only NNI2NNI mode, optional!";
+      }
+
+      container "secondary-nni2" {
+        uses "fgodu-nni";
+        description
+          "only NNI2NNI mode and with protection. optional";
+      }
+
+    }
+
+    output {
+      container "connection" {
+        uses "acc-con:connection";
+      }
+
+      container "create-component" {
+        leaf-list "fgodu-connection-name" {
+          type "string";
+          min-elements "0";
+        }
+
+        leaf-list "ftp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf-list "ctp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  rpc "modify-fgoduflex-connection-capacity" {
+    input {
+      leaf "fgoduflex-ctp-name" {
+        mandatory "true";
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "The name of fgODUflex CTP.";
+      }
+
+      leaf "action" {
+        type "acc-otn:modify-action";
+        description
+          "The Action of the modification.";
+      }
+
+      leaf "target-number-of-tributary-slots" {
+        type "uint64";
+      }
+
+      leaf "ts-detail" {
+        type "string";
+        description
+          "used tributary slots.";
+      }
+
+      leaf "timeout" {
+        mandatory "true";
+        type "uint64";
+        description
+          "Rpc time out count in seconds.";
+      }
+
+      leaf "type" {
+        type "adjust-type";
+        description
+          "Modify fgoduflex connection capacity type.";
+      }
+
+      leaf "direction" {
+        type "direction-type";
+        description
+          "Modify fgoduflex connection capacity direction.";
+      }
+
+    }
+
+  }
+
+  notification "fgoduflex-notification" {
+    leaf "fgoduflex-adjustment-serial-no" {
+      mandatory "true";
+      type "uint64";
+      description
+        "fgoduflex adjustment serial No.";
+    }
+
+    leaf "ctp-name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    leaf "modify-result" {
+      mandatory "true";
+      type "bw-adjustment-result";
+    }
+
+    leaf "ts-details" {
+      mandatory "true";
+      type "string";
+      description
+        "used tributary slots after successful bandwidth adjustment.";
+    }
+
+    leaf "fail-reason" {
+      type "string";
+      description
+        "Modify fgoduflex connection capacity failed reason.";
+    }
+
+  }
+
+  rpc "send-fgoduflex-notification" {
+    input {
+      leaf "fgoduflex-adjustment-serial-no" {
+        mandatory "true";
+        type "uint64";
+        description
+          "fgoduflex adjustment serial No.";
+      }
+
+      leaf "ctp-name" {
+        mandatory "true";
+        type "string" {
+          length "1..64";
+        }
+
+      }
+
+      leaf "modify-result" {
+        mandatory "true";
+        type "bw-adjustment-result";
+      }
+
+      leaf "ts-details" {
+        mandatory "true";
+        type "string";
+        description
+          "used tributary slots after successful bandwidth adjustment.";
+      }
+
+      leaf "fail-reason" {
+        type "string";
+        description
+          "Modify fgoduflex connection capacity failed reason.";
+      }
+    }
+  }
+
+}

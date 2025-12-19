@@ -1,0 +1,110 @@
+module openconfig-alarms-mask {
+
+  yang-version "1";
+
+  // namespace
+  namespace "http://openconfig.net/yang/alarms/mask";
+
+  prefix "oc-alarms-mask";
+
+  // import some basic types
+  import openconfig-alarm-mask-types { prefix oc-alarm-mask-types; }
+  
+  //import openconfig-alarm-types { prefix oc-alarm-types; }
+
+  // meta
+  organization "OpenConfig working group";
+
+  contact
+    "OpenConfig working group
+    www.openconfig.net";
+
+  description
+    "This module defines configuration and operational state data
+    for the alarms mask.";
+
+  revision "2020-06-30" {
+    description
+    "Initial revision";
+    reference "1.0.0";
+  }
+
+  // grouping statements
+
+    grouping alarm-mask-config {
+        description
+            "Configuration data for device alarms mask";
+            
+        leaf index {
+            type string;
+            description
+            "Unique ID for an alarms mask rule";
+        }
+        
+        leaf object-range {
+            mandatory true;
+            type oc-alarm-mask-types:alarm-object-type;
+            description
+                "range for the object, can be CHASSIS, CARD, PORT.";
+        }
+        
+        leaf object-name {
+            mandatory true;
+            type string;
+            description
+                "card name or port name of device. this
+                 can be null";
+        }
+    }
+
+    grouping alarm-mask-state {
+        description
+            "Operational state data for device alarms mask";
+		uses alarm-mask-config;
+    }
+    
+    grouping alarms-mask-top {
+        description
+            "Top-level grouping for device alarms mask";
+        
+        container alarms-mask {
+            description
+                "Top-level container for device alarms mask";
+            list alarm-mask {
+                key "index";
+                description
+                    "List of alarms mask, keyed by a unique id";
+                
+                leaf index {
+                    type leafref {
+                        path "../config/index";
+                    }
+
+                    description
+                        "References the unique alarm mask id";
+                }
+           
+                container config {
+                    description
+                        "Configuration data for each device alarms mask";
+
+                    uses alarm-mask-config;
+                }
+
+                container state {
+                    config false;
+                    description
+                        "Operational state data for each component";
+            
+                    //uses alarm-mask-config;
+                    uses alarm-mask-state;
+                }
+            }
+        }
+    }
+    
+    // data definition statements
+
+    uses alarms-mask-top;
+
+}

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+        <eq-pgs xmlns="urn:ccsa:yang:acc-protection-group">
+            <eq-pg>
+                <pg-id>2</pg-id>
+                <protection-type>power-1-plus-1</protection-type>
+                <switch-reason>no-switch</switch-reason>
+                <protection-direction>to-primary</protection-direction>
+                <primary-eq>EH=/shelf=1/slot=12/EQ=DC_A1</primary-eq>
+                <secondary-eq>EH=/shelf=1/slot=13/EQ=DC_A1</secondary-eq>
+                <selected-eq>EH=/shelf=1/slot=12/EQ=DC_A1</selected-eq>
+            </eq-pg>
+        </eq-pgs>
+        <pgs xmlns="urn:ccsa:yang:acc-protection-group">
+            <pg/>
+        </pgs>
+    </data>
+
+</rpc-reply>

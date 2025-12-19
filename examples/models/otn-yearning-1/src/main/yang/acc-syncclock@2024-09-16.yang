@@ -1,0 +1,254 @@
+module "acc-syncclock" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-syncclock";
+  prefix "acc-syncclock";
+  organization
+    "xxx";
+  contact
+    "xxx";
+  description
+    "xxx";
+  revision "2024-09-16" {
+    description
+      "add Synchronization clock";
+    reference
+      "xxx";
+  }
+
+  typedef "ssm-quality-level" {
+    type "enumeration" {
+      enum "QL-PRC" {
+        value "0";
+        description
+          "基准参考时钟，第一级时钟";
+      }
+
+      enum "QL-SSU-A" {
+        value "1";
+        description
+          "转接局从时钟，第二级时钟";
+      }
+
+      enum "QL-SSU-B" {
+        value "2";
+        description
+          "本地局从时钟，第三级时钟";
+      }
+
+      enum "QL-SEC" {
+        value "3";
+        description
+          "同步设备时钟，第四级时钟";
+      }
+
+      enum "QL-DNU" {
+        value "4";
+        description
+          "不应作为同步时钟";
+      }
+
+    }
+
+  }
+
+  typedef "ssm-mode" {
+    type "enumeration" {
+      enum "Auto" {
+        value "0";
+        description
+          "SSM等级为自动";
+      }
+
+      enum "Force" {
+        value "1";
+        description
+          "SSM等级为强制";
+      }
+
+    }
+
+    default "Auto";
+  }
+
+  typedef "clk-2m-type" {
+    type "enumeration" {
+      enum "2Mbits" {
+        value "0";
+        description
+          "2Mbits";
+      }
+
+      enum "2MHz" {
+        value "1";
+        description
+          "2MHz";
+      }
+
+    }
+
+  }
+
+  typedef "syncclock-state" {
+    type "enumeration" {
+      enum "locked" {
+        value "0";
+        description
+          "锁定状态";
+      }
+
+      enum "accquiring" {
+        value "1";
+        description
+          "时钟瞬态";
+      }
+
+      enum "holdstate" {
+        value "2";
+        description
+          "时钟源丢失时，可进入保持状态";
+      }
+
+      enum "free-running" {
+        value "3";
+        description
+          "自由振荡状态";
+      }
+
+    }
+
+    description
+      "网元时钟的工作状态";
+  }
+
+  grouping "syncclock-source" {
+    leaf "name" {
+      mandatory "true";
+      type "string";
+      description
+        "定时源端口名称：−外部时钟源为所在OTN PTP或SDH FTP端口名称。−2M定时源端口名称为所属EQ名称+序号。";
+    }
+
+    leaf "priority-id" {
+      type "uint16";
+      default "0";
+      description
+        "时钟优先级";
+    }
+
+    leaf "rx-ssm-ql" {
+      mandatory "true";
+      config "false";
+      type "ssm-quality-level";
+      description
+        "时钟源接收质量等级";
+    }
+
+    leaf "ssm-mode" {
+      type "ssm-mode";
+      description
+        "ssmql是否被手动修改，默认为false，不修改";
+    }
+
+    leaf "ssm-force-ql" {
+      when "ssm-mode = 'Force'";
+      mandatory "true";
+      type "ssm-quality-level";
+      description
+        "时钟源强制质量等级";
+    }
+
+    description
+      "none";
+  }
+
+  container "syncclock-sources" {
+    list "syncclock-source" {
+      key "name";
+      uses "syncclock-source";
+      description
+        "网元上的时钟源列表";
+    }
+
+  }
+
+  container "ext-clock-2m" {
+    leaf "name" {
+      mandatory "true";
+      type "string";
+      description
+        "2M定时源端口名称";
+    }
+
+    leaf "clk-2m-type" {
+      mandatory "true";
+      type "clk-2m-type";
+      description
+        "2M时钟源类型";
+    }
+
+    leaf "sa-tx-bit" {
+      type "uint16";
+      default "4";
+      description
+        "2Mbits时需要指定发送Sa字节bit位置，4~8";
+    }
+
+    leaf "sa-rx-bit" {
+      type "uint16";
+      default "4";
+      description
+        "2Mbits时需要指定接收Sa字节bit位置，4~8";
+    }
+
+    leaf "ql-limit" {
+      type "ssm-quality-level";
+      description
+        "时钟源发送质量等级下限，当输出质量低于该阈值时外时钟端口2Mbits插入AIS或关闭输出，2MHz关闭输出。";
+    }
+
+  }
+
+  container "global-ssm" {
+    leaf "ssm-enable" {
+      mandatory "true";
+      type "boolean";
+      description
+        "SSM使能状态";
+    }
+
+    leaf "wtr" {
+      type "uint16";
+      default "5";
+      description
+        "单位：分钟";
+    }
+
+  }
+
+  container "current-syncclock" {
+    leaf "name" {
+      mandatory "true";
+      config "false";
+      type "string";
+      description
+        "定时源端口名称；内部时钟源名称：LocalClock";
+    }
+
+    leaf "pll-state" {
+      mandatory "true";
+      config "false";
+      type "syncclock-state";
+      description
+        "时钟源锁定状态";
+    }
+
+    leaf "current-ql" {
+      config "false";
+      type "ssm-quality-level";
+      description
+        "时钟源锁定状态";
+    }
+
+  }
+
+}

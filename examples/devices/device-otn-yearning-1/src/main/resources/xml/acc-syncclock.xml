@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+        <current-syncclock xmlns="urn:ccsa:yang:acc-syncclock">
+            <name>LocalClock</name>
+            <pll-state>locked</pll-state>
+            <current-ql>QL-SEC</current-ql>
+        </current-syncclock>
+        <global-ssm xmlns="urn:ccsa:yang:acc-syncclock">
+            <ssm-enable>true</ssm-enable>
+            <wtr>5</wtr>
+        </global-ssm>
+        <ext-2m-clock xmlns="urn:ccsa:yang:acc-syncclock">
+            <name>EH=/shelf=1/slot=9/EQ=A1M_0102</name>
+            <clk-2m-type>2Mbits</clk-2m-type>
+            <sa-tx-bit>4</sa-tx-bit>
+            <sa-rx-bit>4</sa-rx-bit>
+            <ql-limit>QL-SEC</ql-limit>
+        </ext-2m-clock>
+        <syncclock-sources xmlns="urn:ccsa:yang:acc-syncclock"/>
+    </data>
+
+</rpc-reply>

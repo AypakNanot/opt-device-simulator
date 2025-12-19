@@ -1,0 +1,549 @@
+module "acc-otn" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-otn";
+  prefix "acc-otn";
+  import "acc-otn-types" {
+    prefix "acc-otn-types";
+  }
+
+  import "acc-devm" {
+    prefix "acc-devm";
+  }
+
+  import "acc-connection" {
+    prefix "acc-con";
+  }
+
+  import "acc-yang-types" {
+    prefix "acc-type";
+  }
+
+  import "acc-protection-group" {
+    prefix "acc-pg";
+  }
+
+  organization
+    "xxx";
+  contact
+    "xxx";
+  description
+    "xxx";
+  revision "2020-07-08" {
+    description
+      "Final revision";
+    reference
+      "CCSA接入型OTN接口技术要求";
+  }
+
+  identity "ODU" {
+    base "acc-type:layer-protocol-name";
+  }
+
+  typedef "channel-sate" {
+    type "enumeration" {
+      enum "sf" {
+        value "0";
+        description
+          "SF";
+      }
+
+      enum "sd" {
+        value "1";
+        description
+          "SD";
+      }
+
+      enum "normal" {
+        value "2";
+        description
+          "Normal";
+      }
+
+    }
+
+    description
+      "channel sate";
+  }
+
+  typedef "odu-position" {
+    type "enumeration" {
+      enum "client-odu" {
+        value "0";
+        description
+          "The client side of odu.";
+      }
+
+      enum "line-odu" {
+        value "1";
+        description
+          "The line side of odu.";
+      }
+
+    }
+
+  }
+
+  typedef "modify-action" {
+    type "enumeration" {
+      enum "add-action" {
+        value "0";
+        description
+          "Add";
+      }
+
+      enum "delete-action" {
+        value "1";
+        description
+          "Delete";
+      }
+
+      enum "abort-action" {
+        value "2";
+        description
+          "Abort";
+      }
+
+    }
+
+  }
+
+  typedef "g-hao-status" {
+    type "enumeration" {
+      enum "idle" {
+        value "0";
+        description
+          "Idle status.";
+      }
+
+      enum "lcr-inc" {
+        value "1";
+        description
+          "LCR increasing.";
+      }
+
+      enum "bwr-inc" {
+        value "2";
+        description
+          "BWR increasing.";
+      }
+
+      enum "lcr-handshake" {
+        value "3";
+        description
+          "LCR hand shake.";
+      }
+
+      enum "bwr-dec" {
+        value "4";
+        description
+          "BWR decreasing.";
+      }
+
+      enum "lcr-dec" {
+        value "5";
+        description
+          "LCR decreasing.";
+      }
+
+    }
+
+  }
+
+  typedef "g-hao-modify-result" {
+    type "enumeration" {
+      enum "success" {
+        value "0";
+        description
+          "Success.";
+      }
+
+      enum "failure" {
+        value "1";
+        description
+          "Failure.";
+      }
+
+      enum "abort" {
+        value "2";
+        description
+          "Abort.";
+      }
+
+    }
+
+  }
+
+  notification "oduflex-notification" {
+    leaf "oduflex-adjust-serial-no" {
+      mandatory "true";
+      type "uint64";
+      description
+        "g.hao adjust serial No.";
+    }
+
+    leaf "ctp-name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    leaf "modify-result" {
+      mandatory "true";
+      type "g-hao-modify-result";
+    }
+
+  }
+
+  grouping "nni" {
+    leaf "nni-ptp-name" {
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    leaf "nni-ts-detail" {
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    leaf "adaptation-type" {
+      type "identityref" {
+        base "acc-otn-types:adaptation-type";
+      }
+
+    }
+
+    leaf "odu-signal-type" {
+      type "identityref" {
+        base "acc-otn-types:client-signal-type";
+      }
+
+      description
+        "all signal type move to acc-num:client-signal-type";
+    }
+
+    leaf "switch-capability" {
+      type "identityref" {
+        base "acc-otn-types:switch-type";
+      }
+
+      description
+        "Switch capability";
+    }
+
+    description
+      "本来nni结构里面的属性都必选，但如果加上mandatory为true，同时放在secondary-nni里又因子属性必选引起父容器也跟着必选，就与secondary-nni可空矛盾了";
+  }
+
+  augment "/acc-devm:ptps/acc-devm:ptp" {
+    when "acc-devm:layer-protocol-name = 'acc-otn:ODU'";
+    container "odu-ptp-pac" {
+      leaf "odu-capacity" {
+        mandatory "true";
+        type "uint64";
+        config "false";
+        description
+          "The ODU capacity expressed as the number of tributary slot with a bandwidth of approximately 1.25 Gbit/s.";
+      }
+
+      leaf-list "odu-signal-type" {
+        min-elements "1";
+        type "identityref" {
+          base "acc-otn-types:client-signal-type";
+        }
+
+        config "false";
+        description
+          "The client signal type.";
+      }
+
+      leaf-list "adaptation-type" {
+        min-elements "1";
+        type "identityref" {
+          base "acc-otn-types:adaptation-type";
+        }
+
+        config "false";
+        description
+          "The adaptation type.";
+      }
+
+      leaf-list "switch-capability" {
+        min-elements "1";
+        type "identityref" {
+          base "acc-otn-types:switch-type";
+        }
+
+        config "false";
+        description
+          "The switch capability";
+      }
+
+      leaf "ts-detail" {
+        mandatory "true";
+        type "string";
+      }
+
+      leaf "smtrail-trace-actual-tx" {
+        type "string" {
+          length "1..128";
+        }
+
+        description
+          "The OTU SM trail trace identifier(TTI) transmitted.";
+      }
+
+      leaf "smtrail-trace-actual-rx" {
+        type "string" {
+          length "1..128";
+        }
+
+        config "false";
+        description
+          "The OTU SM trail trace identifier(TTI) received.";
+      }
+
+      leaf "smtrail-trace-expected-rx" {
+        type "string" {
+          length "1..128";
+        }
+
+        description
+          "The OTU SM trail trace identifier(TTI) expected.";
+      }
+
+      leaf "pmtrail-trace-actual-tx" {
+        type "string" {
+          length "1..128";
+        }
+
+        description
+          "The ODU PM trail trace identifier(TTI) transmitted.";
+      }
+
+      leaf "pmtrail-trace-actual-rx" {
+        type "string" {
+          length "1..128";
+        }
+
+        config "false";
+        description
+          "The ODU PM trail trace identifier(TTI) received.";
+      }
+
+      leaf "pmtrail-trace-expected-rx" {
+        type "string" {
+          length "1..128";
+        }
+
+        description
+          "The ODU PM trail trace identifier(TTI) expected.";
+      }
+
+    }
+
+  }
+
+  augment "/acc-devm:ctps/acc-devm:ctp" {
+    when "acc-devm:layer-protocol-name = 'acc-otn:ODU'";
+    container "odu-ctp-pac" {
+      leaf "odu-signal-type" {
+        mandatory "true";
+        type "identityref" {
+          base "acc-otn-types:client-signal-type";
+        }
+
+        description
+          "Client signal type";
+      }
+
+      leaf "adaptation-type" {
+        mandatory "true";
+        type "identityref" {
+          base "acc-otn-types:adaptation-type";
+        }
+
+        description
+          "Adaptation type";
+      }
+
+      leaf "switch-capability" {
+        mandatory "true";
+        type "identityref" {
+          base "acc-otn-types:switch-type";
+        }
+
+        config "false";
+        description
+          "Switch capability";
+      }
+
+      leaf "ts-detail" {
+        mandatory "true";
+        type "string" {
+          length "1..64";
+        }
+
+      }
+
+      leaf-list "current-number-of-tributary-slots" {
+        type "uint64";
+        config "false";
+        description
+          "Number of tributary slots.";
+      }
+
+      leaf "pmtrail-trace-actual-tx" {
+        type "string" {
+          length "1..128";
+        }
+
+        config "false";
+        description
+          "The ODU PM trail trace identifier(TTI) transmitted.";
+      }
+
+      leaf "pmtrail-trace-actual-rx" {
+        type "string" {
+          length "1..128";
+        }
+
+        config "false";
+        description
+          "The ODU PM trail trace identifier(TTI) received.";
+      }
+
+      leaf "pmtrail-trace-expected-rx" {
+        type "string" {
+          length "1..128";
+        }
+
+        description
+          "The ODU PM trail trace identifier(TTI) expected.";
+      }
+
+      leaf "g-hao-status" {
+        type "g-hao-status";
+        config "false";
+        description
+          "The status of G.HAO";
+      }
+
+    }
+
+  }
+
+  rpc "create-odu-connection" {
+    input {
+      uses "acc-con:create-connection";
+      leaf "nni-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      leaf "nni-tcm" {
+        type "uint16";
+        description
+          "when nni-protection-type = 'snc-s', needs to be issued to present the nni tcm of both work path and protection path";
+      }
+
+      leaf "nni2-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      leaf "nni2-tcm" {
+        type "uint16";
+        description
+          "when nni-protection-type = 'snc-s', needs to be issued to present the nni2 tcm of both work path and protection path";
+      }
+
+      container "client-side-nni" {
+        uses "nni";
+        description
+          "client side nni, only for UNI-NNI";
+      }
+
+      container "primary-nni" {
+        uses "nni";
+        description
+          "primary nni, mandatory true";
+      }
+
+      container "secondary-nni" {
+        uses "nni";
+        description
+          "only for service with protection. Optional";
+      }
+
+      container "primary-nni2" {
+        uses "nni";
+        description
+          "only NNI2NNI mode, optional!";
+      }
+
+      container "secondary-nni2" {
+        uses "nni";
+        description
+          "only NNI2NNI mode and with protection. optional";
+      }
+
+    }
+
+    output {
+      container "connection" {
+        uses "acc-con:connection";
+      }
+
+    }
+
+  }
+
+  rpc "modify-odu-connection-capacity" {
+    input {
+      leaf "odu-ctp-name" {
+        mandatory "true";
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "The name of ODU CTP.";
+      }
+
+      leaf "position" {
+        mandatory "true";
+        type "odu-position";
+        description
+          "The position.";
+      }
+
+      leaf "action" {
+        type "modify-action";
+        description
+          "The Action of the modification.";
+      }
+
+      leaf "current-number-of-tributary-slots" {
+        type "uint64";
+      }
+
+      leaf "ts-detail" {
+        type "string";
+      }
+
+      leaf "timeout" {
+        mandatory "true";
+        type "uint64";
+        description
+          "Rpc time out count, unit: second.";
+      }
+
+    }
+
+  }
+
+}

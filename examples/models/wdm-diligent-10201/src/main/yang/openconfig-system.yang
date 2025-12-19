@@ -1,0 +1,211 @@
+module openconfig-system {
+
+  yang-version "1";
+
+  // namespace
+  namespace "http://openconfig.net/yang/system";
+
+  prefix "oc-sys";
+
+  // import some basic types
+  import openconfig-alarms { prefix oc-alarms; }
+  import ietf-yang-types { prefix yang; }
+  import openconfig-alarm-types { prefix oc-alarm-types;revision-date "2020-06-30"; }
+
+  // meta
+  organization "OpenConfig working group";
+
+  contact
+    "OpenConfig working group
+    netopenconfig@googlegroups.com";
+
+  description
+    "Model for managing system-wide services and functions on
+    network devices.
+
+    Portions of this code were derived from IETF RFC 7317.
+    Please reproduce this note if possible.
+
+    IETF code is subject to the following copyright and license:
+    Copyright (c) IETF Trust and the persons identified as authors of
+    the code.
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, is permitted pursuant to, and subject to the license
+    terms contained in, the Simplified BSD License set forth in
+    Section 4.c of the IETF Trust's Legal Provisions Relating
+    to IETF Documents (http://trustee.ietf.org/license-info).";
+
+  revision "2020-06-30" {
+    description
+      "Initial release for DCI Box.";
+    reference "0.9.2";
+  }
+  
+  revision "2020-03-25" {
+    description
+      "Fix typo in description statement for ipv4-address
+      list.";
+    reference "0.9.1";
+  }
+
+  revision "2020-01-07" {
+    description
+      "Add import of license management model.";
+    reference "0.9.0";
+  }
+
+  revision "2019-03-15" {
+    description
+      "Update boot time to be nanoseconds since epoch.";
+    reference "0.8.0";
+  }
+
+  revision "2019-01-29" {
+    description
+      "Add messages module to the system model";
+    reference "0.7.0";
+  }
+
+  revision "2018-11-21" {
+    description
+      "Add OpenConfig module metadata extensions.";
+    reference "0.6.1";
+  }
+
+  revision "2018-07-17" {
+    description
+      "Add gRPC server data";
+    reference "0.6.0";
+  }
+
+  revision "2018-01-21" {
+    description
+      "Add cpu utilization data";
+    reference "0.5.0";
+  }
+
+  revision "2017-12-15" {
+    description
+      "Add alarms to the system model";
+    reference "0.4.0";
+  }
+
+  revision "2017-09-18" {
+    description
+      "Updated to use OpenConfig types modules";
+    reference "0.3.0";
+  }
+
+  revision "2017-07-06" {
+    description
+      "Move to oc-inet types, add IETF attribution, add RADIUS
+      counters, changed password leaf names to indicate hashed";
+    reference "0.2.0";
+  }
+
+  revision "2017-01-29" {
+    description
+      "Initial public release";
+    reference "0.1.0";
+  }
+
+  identity NTP_AUTH_TYPE {
+    description
+      "Base identity for encryption schemes supported for NTP
+      authentication keys";
+  }
+
+  identity NTP_AUTH_MD5 {
+    base NTP_AUTH_TYPE;
+    description
+      "MD5 encryption method";
+  }
+
+   //兼容II型机，告警查询时，结果未带域名空间
+    identity UNKNOWN {
+      base oc-alarm-types:OPENCONFIG_ALARM_SEVERITY;
+      description
+        "Indicates that the severity level could not be determined.
+        This level SHOULD be avoided.";
+    }
+
+    identity MINOR {
+      base oc-alarm-types:OPENCONFIG_ALARM_SEVERITY;
+      description
+        "Indicates the existence of a non-service affecting fault
+        condition and that corrective action should be taken in
+        order to prevent a more serious (for example, service
+        affecting) fault. Such a severity can be reported, for
+        example, when the detected alarm condition is not currently
+        degrading the capacity of the resource";
+    }
+
+    identity WARNING {
+      base oc-alarm-types:OPENCONFIG_ALARM_SEVERITY;
+      description
+        "Indicates the detection of a potential or impending service
+        affecting fault, before any significant effects have been felt.
+        Action should be taken to further diagnose (if necessary) and
+        correct the problem in order to prevent it from becoming a more
+        serious service affecting fault.";
+    }
+
+    identity MAJOR {
+      base oc-alarm-types:OPENCONFIG_ALARM_SEVERITY;
+      description
+        "Indicates that a service affecting condition has developed
+        and an urgent corrective action is required. Such a severity
+        can be reported, for example, when there is a severe
+        degradation in the capability of the resource and its full
+        capability must be restored.";
+    }
+
+    identity CRITICAL {
+      base oc-alarm-types:OPENCONFIG_ALARM_SEVERITY;
+      description
+        "Indicates that a service affecting condition has occurred
+        and an immediate corrective action is required. Such a
+        severity can be reported, for example, when a resource becomes
+        totally out of service and its capability must be restored.";
+    }
+
+  // typedef statements
+
+  typedef timezone-name-type {
+    type string;
+    description
+      "A time zone name as used by the Time Zone Database,
+       sometimes referred to as the 'Olson Database'.
+
+       The exact set of valid values is an implementation-specific
+       matter.  Client discovery of the exact set of time zone names
+       for a particular server is out of scope.";
+    reference
+      "BCP 175: Procedures for Maintaining the Time Zone Database";
+   }
+
+   rpc triggerAlarmNotification {
+       input {
+          leaf type {
+              type string;
+              mandatory true;
+          }
+          leaf interval {
+              type uint16;
+          }
+       }
+   }
+
+  //notification
+   notification alarms-notification {
+
+    container update {
+      uses oc-alarms:alarms-top;
+    }
+    container delete {
+      uses oc-alarms:alarms-top;
+    }
+  }
+}

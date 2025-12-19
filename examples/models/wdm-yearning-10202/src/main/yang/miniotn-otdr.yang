@@ -1,0 +1,533 @@
+module miniotn-otdr {
+
+  yang-version "1";
+
+  // namespace
+  namespace "urn:cmcc:yang:otdr";  
+
+  prefix "mo-otdr";
+
+  // import some basic types
+  import openconfig-yang-types { prefix oc-yang;revision-date "2018-11-21"; }
+  import openconfig-platform { prefix oc-platform;revision-date "2023-04-26"; }
+  import openconfig-extensions { prefix oc-ext;revision-date "2018-10-17"; }
+  import ietf-yang-types { prefix yang; }
+
+  // meta
+  organization "Cmcc minOTN working group";
+
+  contact
+    "";
+
+  description
+    "This model is used for OTDR.";
+  
+  oc-ext:openconfig-version "0.12.2";
+
+  revision "2023-04-26" {
+    description
+      "Initial release for MinOTN.";
+    reference "1.0.0";
+  }
+
+  // typedef statements
+  
+  typedef action-result {
+    type enumeration {
+      enum SUCCESS {
+        description
+        "The RPC action is success";
+      }
+      enum FAIL {
+        description
+        "The RPC action is fail";
+      }     
+    }    
+  }
+  
+  typedef otdr-file-format-type {         
+      type enumeration {
+        enum SR-4731 {
+          description
+            "OTDR file format is SR-4731";
+        }
+        enum GR-196 {
+          description
+            "OTDR file format is GR-196";
+        }
+        enum OTHER {
+          description
+            "OTDR file format in other format";
+        }
+      }
+      description
+        "otdr trace data saved in the specific format file";
+    }    
+
+
+  // grouping statements
+
+  grouping otdr-result-event {
+    description
+      "Top-level grouping for OTDR result event";
+
+    container events {
+      description
+        "Enclosing container for otdr result event list";
+
+      list event {
+        min-elements 1;
+        key "event-index";
+        description
+          "List of otdr result";
+ 
+        leaf event-index {
+          type uint32;
+          description
+            "Index of event";
+        }
+       
+        leaf distance {
+          type decimal64 {
+            fraction-digits 2;
+          }
+          units km;
+          description
+          "the distance of the event";
+        }
+        
+        leaf splice-loss {
+          type decimal64 {
+            fraction-digits 2;
+          }
+          units dB;
+          description
+          "splice loss of the odtr event";
+        }
+        
+        leaf return-loss {
+          type decimal64 {
+            fraction-digits 2;
+          }
+          units dB;
+          description
+          "return loss of the odtr event";
+        }
+
+        leaf cumulate-loss {
+          type decimal64 {
+            fraction-digits 2;
+          }
+          units dB;
+          description
+          "cumulate loss of the current odtr event";
+        }
+    
+        leaf event-type {
+          type enumeration {
+            enum POSITIVE-SPLICE-LOSS {
+              description
+                "event is positive splice loss";
+            }
+            enum NEGATIVE-SPLICE-LOSS {
+              description
+                "event is negative splice los";
+            }
+            enum REFLECTION {
+              description
+                "event is reflection";
+            }
+            enum BENDING-LOSS {
+              description
+                "event is bending loss";
+            }  
+            enum END-OF-FIBER {
+              description
+                "event is fiber end";
+            }                   
+          }
+          description
+          "event type of the odtr event";
+        }
+      }
+    }
+  }
+  
+  grouping otdr-result-top {
+    description
+      "Top-level grouping for OTDR result";
+
+    container results {
+      
+      config false;
+
+      description
+        "Enclosing container for otdr result list";
+
+      list result {
+        key "monitor-port index";
+    min-elements 1;
+        description
+          "List of otdr result, keyed by monitor-port and index";
+
+        leaf monitor-port {
+          type leafref {
+          path "/oc-platform:components/oc-platform:component/" +
+           "oc-platform:name";
+         }
+          description
+        "Reference to system-supplied name of the port that the
+        otdr is physically connected to. This port is a tap off of the
+        monitored-port and would be in the same card as the
+        monitored port. If this port is embedded in another card
+        (i.e. an amplifier card) the device should still define
+        a port representing the monitor port if it is internal
+        and not physically present on the faceplate of the card";
+        }
+
+        leaf index {
+          type uint32;
+          description
+            "Index of odtr results, 0 represent the latest OTDR measurement,
+             index of other results are increased by 1 at each detection action";
+        }
+
+        leaf detect-time {
+          type yang:date-and-time;
+          description
+            "the detect time for the specific result";
+        }
+
+        leaf measure-mode {         
+          type enumeration {
+            enum MANUAL {
+              description
+                "OTDR is set to manual mode";
+            }
+            enum AUTO {
+              description
+                "System will automatically detect the fiber with the default configuration";
+            }
+            enum OFFLINE {
+              description
+                "OTDR is set to offline mode";
+            }            
+          }
+          default AUTO;
+          description
+            "generally, otdr support auto and manual mode";
+        }
+      
+        leaf pulse-width {
+          type uint32;
+          units nanoseconds;
+          //default 20000;
+          description
+            "pulse width of otdr laser 
+            default 20000";
+        }
+      
+        leaf measuring-range {
+          type uint32;
+          units kilometers;
+          default 100;
+          description
+            "measuring range ";
+        }
+      
+        leaf measuring-time {
+          type uint32;
+          units seconds;
+          default 120;
+          description
+            "measuring time";
+        } 
+
+        leaf measuring-resolution {
+          type decimal64 {
+            fraction-digits 2;
+          }
+          units m;
+          description
+            "measuring resolution is generally decided by pulse-width";
+        }  
+
+        leaf fiber-length {
+          type decimal64 {
+            fraction-digits 3;
+          }
+          units km;
+          description
+          "overall length of the measured fiber";
+        }
+        
+        leaf total-loss {
+          type decimal64 {
+            fraction-digits 2;
+          }
+          units dB;
+          description
+          "total loss of the measured fiber";
+        }
+      
+        leaf fiber-attenuation {
+          type decimal64 {
+            fraction-digits 2;
+          }
+          units dB/km;
+          description
+          "attenuation of the measured fiber";
+        }
+
+        leaf trace-data {
+          type binary;
+          description
+          "the trace data for the otdr measurement result";
+        }    
+
+        leaf otdr-file-type {
+          type otdr-file-format-type;
+          description
+            "otdr trace data saved in the specific format file";            
+        }    
+        uses otdr-result-event;
+      }
+    }
+  }
+
+
+  grouping otdr-config {
+    description
+      "Configuration data for otdr monitor definitions";
+ 
+
+    leaf name {
+      mandatory true;
+      type leafref {
+        path "/oc-platform:components/oc-platform:component/" +
+          "oc-platform:name";
+      }
+     description  "OTDR name";
+    }
+
+    leaf monitor-port {
+      mandatory true;
+      type leafref {
+        path "/oc-platform:components/oc-platform:component/" +
+          "oc-platform:name";
+      }
+     description
+      "monitor(Line) port";
+    }
+    
+    leaf active-local-port {
+      type leafref {
+        path "/oc-platform:components/oc-platform:component/" +
+          "oc-platform:name";
+      }
+      description
+        "Indicates the port on which monitoring is being performed. 
+        For example, if the OCM has eight monitoring ports, you 
+        need to switch the optical switch to this port to perform 
+        OCM scanning.This parameter is required only for independent 
+        OCM linecards";
+    }
+
+    leaf fiber-refractive-index  {
+      mandatory true;
+      type decimal64 {
+        fraction-digits 4;
+      }
+      description
+        "depend on the type of fiber, default is G.652";
+    }
+  }
+
+  grouping otdr-state {
+    description
+      "Operational state data for media channels ";
+  
+    leaf measuring-state {
+      mandatory true;
+      type enumeration {
+        enum RUNNING {
+          description
+          "OTDR is on running";
+        }      
+        enum FINISHED {
+          description
+          "OTDR measurement has completed";
+        }     
+        enum FAIL {
+          description
+          "OTDR measurement has failed";
+        }  
+      }    
+    }
+
+    leaf otdr-wavelength {
+      mandatory true;
+      type string; 
+      description
+        "the wavelength of the OTDR laser, example 1610nm";
+    }  
+  }
+
+
+  
+  grouping otdr-top {
+    description
+      "Top-level grouping";
+
+    container otdrs {
+      description
+        "Top-level container for optical time domain reflectometry(i.e. OTDR) monitors";
+
+      list otdr {
+        key "name";
+        description
+          "List of otdrs, keyed by otdr monitor name";
+
+        leaf name {
+          type leafref {
+            path "../config/name";
+          }
+          description
+            "Reference to otdr monitor name";
+        }
+
+        container config {
+          description
+            "Configuration data ";
+
+          uses otdr-config;
+        }
+
+        container state {
+
+          config false;
+
+          description
+            "Operational state data ";
+
+          uses otdr-config;
+          uses otdr-state;      
+        } 
+
+          uses otdr-result-top;
+      }
+    }
+  }
+ 
+
+  // data definition statements
+
+  uses otdr-top;
+
+  // augment statements
+
+  // rpc statements
+
+  rpc start-otdr {
+    description 
+       "start the specific otdr and get the result file";
+      input {
+        leaf name {
+          type leafref {
+            path "/oc-platform:components/oc-platform:component/" +
+             "oc-platform:name";
+          }
+          description
+             "target otdr name";
+        }  
+      
+        leaf measure-mode {         
+          type enumeration {
+            enum MANUAL {
+              description
+                "OTDR is set to manual mode";
+            }
+            enum AUTO {
+              description
+                "System will automatically detect the fiber with the default configuration";
+            }
+          }
+          default AUTO;
+          description
+            "generally, otdr support auto and manual mode";
+        }
+      
+        leaf pulse-width {
+          type uint32;
+          units nanoseconds;
+          default 20000;
+          description
+            "pulse width of otdr laser";
+        }
+      
+        leaf measuring-range {
+          type uint32;
+          units kilometers;
+          default 100;
+          description
+            "measuring range ";
+        }
+      
+        leaf measuring-time {
+          type uint32;
+          units seconds;
+          default 120;
+          description
+            "measuring time";
+        } 
+
+      }
+
+      output {
+        leaf start-otdr-result {
+          type action-result;
+          description 
+            "Result of the start otdr operation";
+        }  
+
+        leaf otdr-file-type {         
+          type otdr-file-format-type;
+          description
+            "Otdr trace data saved in the specific format file";
+        }  
+
+        leaf index {         
+          type uint32;
+          description
+            "Otdr trace result index. Reference to results/result";
+        }       
+      }
+  }
+
+  rpc stop-otdr {
+    description 
+       "stop the specific otdr and get the result file";
+      input {
+        leaf name {
+          type leafref {
+            path "/oc-platform:components/oc-platform:component/" +
+             "oc-platform:name";
+          }
+          description
+             "target otdr name";
+        }  
+      }
+
+      output {
+        leaf stop-otdr-result {
+          type action-result;
+          description 
+            "Result of the stop otdr operation";
+        }
+      }
+  }
+  
+
+  // notification statements
+
+}

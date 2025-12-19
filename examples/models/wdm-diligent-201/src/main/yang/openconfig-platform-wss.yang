@@ -1,0 +1,94 @@
+
+ module openconfig-platform-wss {
+
+  yang-version "1";
+
+  // namespace
+  namespace "http://openconfig.net/yang/platform/wss";
+
+  prefix "oc-wss";
+
+  import openconfig-platform { prefix oc-platform;revision-date "2020-06-30"; }
+  import openconfig-platform-types { prefix oc-platform-types;revision-date "2020-06-30"; }
+  import openconfig-extensions { prefix oc-ext;revision-date "2018-10-17"; }
+  import openconfig-transport-types { prefix oc-opt-types;revision-date "2020-06-30"; }
+  import openconfig-platform-mux { prefix oc-mux;revision-date "2020-06-30"; }
+
+  // meta
+  organization " working group";
+
+  contact
+    "working group";
+
+  description
+    "This module defines data related to wss components in
+    the openconfig-platform model";
+
+  oc-ext:openconfig-version "0.1.0";
+ 
+  revision "2020-06-30" {
+    description
+      "Initial revision";
+    reference "0.1.0";
+  }
+
+
+  grouping wss-config {
+    uses oc-mux:frequency-config;
+  }
+
+  grouping wss-state {
+    description 
+        "Wss state";
+    uses oc-mux:frequency-state;  
+    leaf min-flexible-grid  {
+      type decimal64{
+        fraction-digits 2;
+      }
+      description
+         "Minimum grid supported by WSS";
+    }
+
+    leaf max-degree {
+      //TODO: mandatory true;
+      type uint32;
+      description
+         "The largest dimension of WSS";
+    }
+    leaf lower-frequency {
+      type oc-opt-types:frequency-type;
+      description
+        "The frequency in MHz of the individual physical channel
+        (e.g. ITU C50 - 195.0THz and would be reported as
+        195,000,000 MHz in this model). This attribute is not
+        configurable on most client ports.";
+    }
+
+    leaf upper-frequency {
+      type oc-opt-types:frequency-type;
+      description
+        "The frequency in MHz of the individual physical channel
+        (e.g. ITU C50 - 195.0THz and would be reported as
+        195,000,000 MHz in this model). This attribute is not
+        configurable on most client ports.";
+    }
+  }
+ 
+  augment "/oc-platform:components/oc-platform:component/oc-platform:wss/oc-platform:config" {
+    description
+      "Adding wss config data";
+
+    uses wss-config;
+  }
+  augment "/oc-platform:components/oc-platform:component/oc-platform:wss/oc-platform:state" {
+    description
+      "Adding wss state data";
+
+    uses wss-state;
+  }
+
+  // rpc statements
+  
+  // notification statements
+
+}

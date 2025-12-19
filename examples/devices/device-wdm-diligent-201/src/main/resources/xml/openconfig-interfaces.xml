@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+        <interfaces xmlns="http://openconfig.net/yang/interfaces">
+            <interface>
+                <name>INTERFACE-1-1-C1</name>
+                <config>
+                    <name>INTERFACE-1-1-C1</name>
+                </config>
+                <state>
+                    <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:ClientInterface</type>
+                    <name>INTERFACE-1-1-C1</name>
+                    <transceiver xmlns="http://openconfig.net/yang/platform/transceiver">TRANSCEIVER-1-1-C1</transceiver>
+                    <hardware-port xmlns="http://openconfig.net/yang/platform/port">PORT-1-1-C1</hardware-port>
+                </state>
+                <ethernet xmlns="http://openconfig.net/yang/interfaces/ethernet">
+                    <config>
+                        <client-als xmlns="http://openconfig.net/yang/terminal-device">ETHERNET</client-als>
+                        <client-fec xmlns="http://openconfig.net/yang/terminal-device">DISABLED</client-fec>
+                    </config>
+                    <state>
+                        <port-speed>SPEED_10GB</port-speed>
+                        <client-als xmlns="http://openconfig.net/yang/terminal-device">ETHERNET</client-als>
+                        <client-fec xmlns="http://openconfig.net/yang/terminal-device">DISABLED</client-fec>
+                    </state>
+                </ethernet>
+            </interface>
+            <interface>
+                <name>INTERFACE-1-1-C11</name>
+                <config>
+                    <name>INTERFACE-1-1-C11</name>
+                </config>
+                <state>
+                    <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:ClientInterface</type>
+                    <name>INTERFACE-1-1-C11</name>
+                    <transceiver xmlns="http://openconfig.net/yang/platform/transceiver">TRANSCEIVER-1-1-C11</transceiver>
+                    <hardware-port xmlns="http://openconfig.net/yang/platform/port">PORT-1-1-C11</hardware-port>
+                </state>
+                <ethernet xmlns="http://openconfig.net/yang/interfaces/ethernet">
+                    <config>
+                        <client-als xmlns="http://openconfig.net/yang/terminal-device">ETHERNET</client-als>
+                        <client-fec xmlns="http://openconfig.net/yang/terminal-device">DISABLED</client-fec>
+                    </config>
+                    <state>
+                        <port-speed>SPEED_100GB</port-speed>
+                        <client-als xmlns="http://openconfig.net/yang/terminal-device">ETHERNET</client-als>
+                        <client-fec xmlns="http://openconfig.net/yang/terminal-device">DISABLED</client-fec>
+                    </state>
+                </ethernet>
+            </interface>
+            <interface>
+                <name>INTERFACE-1-6-C1</name>
+                <config>
+                    <name>INTERFACE-1-6-C1</name>
+                </config>
+                <state>
+                    <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:ClientInterface</type>
+                    <name>INTERFACE-1-6-C1</name>
+                    <transceiver xmlns="http://openconfig.net/yang/platform/transceiver">TRANSCEIVER-1-6-C1</transceiver>
+                    <hardware-port xmlns="http://openconfig.net/yang/platform/port">PORT-1-6-C1</hardware-port>
+                </state>
+                <ethernet xmlns="http://openconfig.net/yang/interfaces/ethernet">
+                    <config>
+                        <client-als xmlns="http://openconfig.net/yang/terminal-device">ETHERNET</client-als>
+                        <client-fec xmlns="http://openconfig.net/yang/terminal-device">DISABLED</client-fec>
+                    </config>
+                    <state>
+                        <port-speed>SPEED_100GB</port-speed>
+                        <client-als xmlns="http://openconfig.net/yang/terminal-device">ETHERNET</client-als>
+                        <client-fec xmlns="http://openconfig.net/yang/terminal-device">DISABLED</client-fec>
+                    </state>
+                </ethernet>
+            </interface>
+            <interface>
+                <name>INTERFACE-1-6-C2</name>
+                <config>
+                    <name>INTERFACE-1-6-C2</name>
+                </config>
+                <state>
+                    <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:ClientInterface</type>
+                    <name>INTERFACE-1-6-C2</name>
+                    <transceiver xmlns="http://openconfig.net/yang/platform/transceiver">TRANSCEIVER-1-6-C2</transceiver>
+                    <hardware-port xmlns="http://openconfig.net/yang/platform/port">PORT-1-6-C2</hardware-port>
+                </state>
+                <ethernet xmlns="http://openconfig.net/yang/interfaces/ethernet">
+                    <config>
+                        <client-als xmlns="http://openconfig.net/yang/terminal-device">ETHERNET</client-als>
+                        <client-fec xmlns="http://openconfig.net/yang/terminal-device">DISABLED</client-fec>
+                    </config>
+                    <state>
+                        <port-speed>SPEED_100GB</port-speed>
+                        <client-als xmlns="http://openconfig.net/yang/terminal-device">ETHERNET</client-als>
+                        <client-fec xmlns="http://openconfig.net/yang/terminal-device">DISABLED</client-fec>
+                    </state>
+                </ethernet>
+            </interface>
+            <interface>
+                <name>INTERFACE-1-7-OSC</name>
+                <config>
+                    <name>INTERFACE-1-7-OSC</name>
+                    <ospf-enabled>true</ospf-enabled>
+                </config>
+                <state>
+                    <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:OSCInterface</type>
+                    <name>INTERFACE-1-7-OSC</name>
+                    <ospf-enabled>true</ospf-enabled>
+                    <transceiver xmlns="http://openconfig.net/yang/platform/transceiver">TRANSCEIVER-1-7-OSC</transceiver>
+                    <hardware-port xmlns="http://openconfig.net/yang/platform/port">PORT-1-7-OSC</hardware-port>
+                </state>
+                <subinterfaces>
+                    <subinterface>
+                        <index>0</index>
+                        <config>
+                            <index>0</index>
+                        </config>
+                        <state>
+                            <index>0</index>
+                        </state>
+                        <ipv4 xmlns="http://openconfig.net/yang/interfaces/ip">
+                            <addresses>
+                                <address>
+                                    <ip>30.30.1.1</ip>
+                                    <config>
+                                        <ip>30.30.1.1</ip>
+                                        <prefix-length>24</prefix-length>
+                                        <gateway/>
+                                    </config>
+                                    <state>
+                                        <ip>30.30.1.1</ip>
+                                        <prefix-length>24</prefix-length>
+                                        <gateway/>
+                                    </state>
+                                </address>
+                            </addresses>
+                        </ipv4>
+                    </subinterface>
+                </subinterfaces>
+                <ethernet xmlns="http://openconfig.net/yang/interfaces/ethernet">
+                    <state>
+                        <mac-address>00:07:30:03:09:01</mac-address>
+                        <duplex-mode>FULL</duplex-mode>
+                        <port-speed>SPEED_1GB</port-speed>
+                    </state>
+                </ethernet>
+            </interface>
+            <interface>
+                <name>INTERFACE-1-40-NM1</name>
+                <config>
+                    <name>INTERFACE-1-40-NM1</name>
+                    <ospf-enabled>true</ospf-enabled>
+                </config>
+                <state>
+                    <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:NMInterface</type>
+                    <name>INTERFACE-1-40-NM1</name>
+                    <ospf-enabled>true</ospf-enabled>
+                    <hardware-port xmlns="http://openconfig.net/yang/platform/port">PORT-1-40-NM1</hardware-port>
+                </state>
+                <subinterfaces>
+                    <subinterface>
+                        <index>0</index>
+                        <config>
+                            <index>0</index>
+                        </config>
+                        <state>
+                            <index>0</index>
+                        </state>
+                        <ipv4 xmlns="http://openconfig.net/yang/interfaces/ip">
+                            <addresses>
+                                <address>
+                                    <ip>192.100.2.2</ip>
+                                    <config>
+                                        <ip>192.100.2.2</ip>
+                                        <prefix-length>24</prefix-length>
+                                        <gateway/>
+                                    </config>
+                                    <state>
+                                        <ip>192.100.2.2</ip>
+                                        <prefix-length>24</prefix-length>
+                                        <gateway/>
+                                    </state>
+                                </address>
+                            </addresses>
+                        </ipv4>
+                    </subinterface>
+                </subinterfaces>
+                <ethernet xmlns="http://openconfig.net/yang/interfaces/ethernet">
+                    <state>
+                        <mac-address>00:07:30:03:09:01</mac-address>
+                        <duplex-mode>FULL</duplex-mode>
+                        <port-speed>SPEED_1GB</port-speed>
+                    </state>
+                </ethernet>
+            </interface>
+            <interface>
+                <name>INTERFACE-1-40-NM2</name>
+                <config>
+                    <name>INTERFACE-1-40-NM2</name>
+                    <ospf-enabled>true</ospf-enabled>
+                </config>
+                <state>
+                    <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:NMInterface</type>
+                    <name>INTERFACE-1-40-NM2</name>
+                    <ospf-enabled>true</ospf-enabled>
+                    <hardware-port xmlns="http://openconfig.net/yang/platform/port">PORT-1-40-NM2</hardware-port>
+                </state>
+                <subinterfaces>
+                    <subinterface>
+                        <index>0</index>
+                        <config>
+                            <index>0</index>
+                        </config>
+                        <state>
+                            <index>0</index>
+                        </state>
+                        <ipv4 xmlns="http://openconfig.net/yang/interfaces/ip">
+                            <addresses>
+                                <address>
+                                    <ip>0.0.0.0</ip>
+                                    <config>
+                                        <ip>0.0.0.0</ip>
+                                        <prefix-length>32</prefix-length>
+                                        <gateway/>
+                                    </config>
+                                    <state>
+                                        <ip>0.0.0.0</ip>
+                                        <prefix-length>32</prefix-length>
+                                        <gateway/>
+                                    </state>
+                                </address>
+                            </addresses>
+                        </ipv4>
+                    </subinterface>
+                </subinterfaces>
+                <ethernet xmlns="http://openconfig.net/yang/interfaces/ethernet">
+                    <state>
+                        <mac-address>00:07:30:03:09:01</mac-address>
+                        <duplex-mode>FULL</duplex-mode>
+                        <port-speed>SPEED_1GB</port-speed>
+                    </state>
+                </ethernet>
+            </interface>
+            <interface>
+                <name>INTERFACE-1-40-LOOPBACK</name>
+                <config>
+                    <name>INTERFACE-1-40-LOOPBACK</name>
+                </config>
+                <state>
+                    <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:softwareLoopback</type>
+                    <name>INTERFACE-1-40-LOOPBACK</name>
+                </state>
+                <subinterfaces>
+                    <subinterface>
+                        <index>0</index>
+                        <config>
+                            <index>0</index>
+                        </config>
+                        <state>
+                            <index>0</index>
+                        </state>
+                        <ipv4 xmlns="http://openconfig.net/yang/interfaces/ip">
+                            <addresses>
+                                <address>
+                                    <ip>7.1.1.31</ip>
+                                    <config>
+                                        <ip>7.1.1.31</ip>
+                                        <prefix-length>32</prefix-length>
+                                        <gateway/>
+                                    </config>
+                                    <state>
+                                        <ip>7.1.1.31</ip>
+                                        <prefix-length>32</prefix-length>
+                                        <gateway/>
+                                    </state>
+                                </address>
+                            </addresses>
+                        </ipv4>
+                    </subinterface>
+                </subinterfaces>
+            </interface>
+        </interfaces>
+    </data>
+
+</rpc-reply>

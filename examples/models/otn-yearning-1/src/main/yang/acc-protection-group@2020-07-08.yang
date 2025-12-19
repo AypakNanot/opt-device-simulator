@@ -1,0 +1,426 @@
+module "acc-protection-group" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-protection-group";
+  prefix "acc-pg";
+  revision "2020-07-08" {
+    description
+      "Final revision";
+    reference
+      "CCSA接入型OTN接口技术要求";
+  }
+
+  typedef "protection-type" {
+    type "enumeration" {
+      enum "odu-sncp-i" {
+        value "0";
+      }
+
+      enum "odu-sncp-s" {
+        value "1";
+      }
+
+      enum "odu-sncp-n" {
+        value "2";
+      }
+
+      enum "vc-sncp" {
+        value "3";
+      }
+
+      enum "och-1-plus-1" {
+        value "4";
+        description
+          "OTU port 1+1 protection";
+      }
+
+      enum "msp-1-plus-1" {
+        value "5";
+      }
+
+      enum "lag-1-to-1" {
+        value "6";
+        description
+          "ETH layer 1:1 manual & static LAG protection";
+      }
+
+      enum "no-protection" {
+        value "7";
+      }
+
+      enum "lag-load-blancing" {
+        value "8";
+        description
+          "ETH layer LAG load blancing";
+      }
+
+      enum "fgodu-sncp-s" {
+        value "9";
+        description
+          "2025 suggestion, 2025.08 Modify";
+      }
+
+      enum "fgodu-sncp-i" {
+        value "10";
+        description
+          "2025 suggestion, 2025.08 Modify";
+      }
+
+      enum "fgodu-sncp-n" {
+        value "11";
+        description
+          "2025 suggestion, 2025.08 Modify";
+      }
+
+    }
+
+  }
+
+  typedef "protection-type-eq-pg" {
+    type "enumeration" {
+      enum "control-1-plus-1" {
+        value "0";
+        description
+          "control-1-plus-1";
+      }
+
+      enum "cross-connect-1-plus-1" {
+        value "1";
+        description
+          "cross connect 1-plus-1";
+      }
+
+      enum "control-cross-connect-1-plus-1" {
+        value "2";
+        description
+          "control cross connect-1-plus-1";
+      }
+
+      enum "power-1-plus-1" {
+        value "3";
+        description
+          "power-1-plus-1";
+      }
+
+    }
+
+  }
+
+  typedef "switch-direction" {
+    type "enumeration" {
+      enum "uni-switch" {
+        value "0";
+      }
+
+      enum "bi-switch" {
+        value "1";
+      }
+
+    }
+
+    description
+      "switch direction";
+  }
+
+  typedef "sd-trigger" {
+    type "enumeration" {
+      enum "enabled" {
+        value "0";
+      }
+
+      enum "disabled" {
+        value "1";
+      }
+
+    }
+
+    description
+      "sd-trigger";
+  }
+
+  typedef "protection-direction" {
+    type "enumeration" {
+      enum "to-primary" {
+        value "0";
+      }
+
+      enum "to-secondary" {
+        value "1";
+      }
+
+    }
+
+  }
+
+  typedef "reversion-mode" {
+    type "enumeration" {
+      enum "revertive" {
+        value "0";
+      }
+
+      enum "non-revertive" {
+        value "1";
+      }
+
+    }
+
+  }
+
+  typedef "switch-reason" {
+    type "enumeration" {
+      enum "no-switch" {
+        value "0";
+      }
+
+      enum "sf-switch" {
+        value "1";
+      }
+
+      enum "sd-switch" {
+        value "2";
+      }
+
+      enum "manual-switch" {
+        value "3";
+      }
+
+      enum "force-switch" {
+        value "4";
+      }
+
+      enum "cleared" {
+        value "5";
+      }
+
+      enum "wait-for-restore" {
+        value "6";
+        description
+          "WTR";
+      }
+
+      enum "lockout" {
+        value "7";
+        description
+          "lockout of protection";
+      }
+
+    }
+
+  }
+
+  grouping "pg" {
+    leaf "pg-id" {
+      mandatory "true";
+      type "uint16";
+    }
+
+    leaf "protection-type" {
+      mandatory "true";
+      type "protection-type";
+    }
+
+    leaf "reversion-mode" {
+      mandatory "true";
+      type "reversion-mode";
+    }
+
+    leaf "tcm" {
+      type "uint16";
+      default "1";
+    }
+
+    leaf "switch-direction" {
+      mandatory "true";
+      type "switch-direction";
+    }
+
+    leaf "switch-reason" {
+      type "switch-reason";
+      config "false";
+      description
+        "switch reason, default NO SWITCH";
+    }
+
+    leaf "protection-direction" {
+      type "protection-direction";
+      config "false";
+      description
+        "switch command, when the service is in primary path, report'toPrimary'.";
+    }
+
+    leaf "hold-off" {
+      type "uint32";
+      units "ms";
+      default "0";
+      description
+        "hold off time";
+    }
+
+    leaf "wait-to-restore-time" {
+      mandatory "true";
+      type "uint64";
+      units "seconds";
+      description
+        "wait to restore time";
+    }
+
+    leaf "sd-trigger" {
+      type "sd-trigger";
+      description
+        "sd protection";
+    }
+
+    leaf "primary-port" {
+      mandatory "true";
+      type "string";
+      description
+        "primary port CTP/FTP/PTP, different ports type for different services";
+    }
+
+    leaf "secondary-port" {
+      mandatory "true";
+      type "string";
+      description
+        "secondary port PTP/FTP/CTP, different ports type for different services";
+    }
+
+    leaf "selected-port" {
+      mandatory "true";
+      type "string";
+      config "false";
+      description
+        "selected port PTP/FTP/CTP, different ports type for different services";
+    }
+
+  }
+
+  grouping "eq-pg" {
+    description
+      "eq-pg";
+    leaf "pg-id" {
+      mandatory "true";
+      type "uint16";
+    }
+
+    leaf "protection-type" {
+      mandatory "true";
+      type "protection-type-eq-pg";
+    }
+
+    leaf "switch-reason" {
+      type "switch-reason";
+    }
+
+    leaf "protection-direction" {
+      mandatory "true";
+      type "protection-direction";
+    }
+
+    leaf "primary-eq" {
+      mandatory "true";
+      config "false";
+      type "string";
+    }
+
+    leaf "secondary-eq" {
+      mandatory "true";
+      config "false";
+      type "string";
+    }
+
+    leaf "selected-eq" {
+      mandatory "true";
+      config "false";
+      type "string";
+    }
+
+  }
+
+  container "pgs" {
+    list "pg" {
+      key "pg-id";
+      uses "pg";
+      description
+        "pg";
+    }
+
+    description
+      "pgs";
+  }
+
+  container "eq-pgs" {
+    list "eq-pg" {
+      key "pg-id";
+      uses "eq-pg";
+    }
+
+    description
+      "eq-pgs";
+  }
+
+  notification "protection-switch-notification" {
+    leaf "protection-switch-serial-no" {
+      mandatory "true";
+      type "uint64";
+    }
+
+    container "pg" {
+      uses "pg";
+    }
+
+    description
+      "protection switch notification";
+  }
+
+  rpc "perform-protection-command" {
+    description
+      "protection";
+    input {
+      leaf "pg-id" {
+        mandatory "true";
+        type "uint64";
+      }
+
+      leaf "protection-command" {
+        mandatory "true";
+        type "switch-reason";
+      }
+
+      leaf "protection-direction" {
+        mandatory "true";
+        type "protection-direction";
+      }
+
+    }
+
+  }
+
+  rpc "perform-eq-protection-command" {
+    description
+      "eq-protection";
+    input {
+      leaf "pg-id" {
+        mandatory "true";
+        type "uint64";
+        description
+          "eqpg-id";
+      }
+
+      leaf "protection-command" {
+        mandatory "true";
+        type "switch-reason";
+        description
+          "eq protection command";
+      }
+
+      leaf "protection-direction" {
+        mandatory "true";
+        type "protection-direction";
+        description
+          "eq protection direction";
+      }
+
+    }
+
+  }
+
+}

@@ -1,0 +1,123 @@
+
+ module openconfig-platform-tff {
+
+  yang-version "1";
+
+  // namespace
+  namespace "http://openconfig.net/yang/platform/tff";
+
+  prefix "oc-tff";
+
+  import openconfig-platform { prefix oc-platform;revision-date "2020-06-30"; }
+  import openconfig-platform-types { prefix oc-platform-types;revision-date "2020-06-30"; }
+  import openconfig-extensions { prefix oc-ext; revision-date "2018-10-17";}
+  import openconfig-platform-mux { prefix oc-mux;revision-date "2020-06-30"; }
+
+
+  // meta
+  organization " working group";
+
+  contact
+    "  working group";
+
+  description
+    "This module defines data related to tff components in
+    the openconfig-platform model";
+
+  oc-ext:openconfig-version "0.1.0";
+ 
+  revision "2020-06-30" {
+    description
+      "Initial revision";
+    reference "0.1.0";
+  }
+
+
+  grouping tff-config {
+    uses tff-pac-config;
+  }
+
+  grouping tff-state {
+    description
+      "Operational state data for mux components";
+    uses tff-pac-state;
+  }
+
+   grouping passthrough-adddrop-channels-config {
+     container pass-through-channels {
+      uses oc-mux:frequency-config;
+    }
+    container add-drop-channels {
+      uses oc-mux:frequency-config;
+    }
+  }
+  grouping passthrough-adddrop-channels-state {
+     container pass-through-channels {
+      uses oc-mux:frequency-state;  
+    }
+    container add-drop-channels {
+      uses oc-mux:frequency-state;  
+    }
+  }
+
+  grouping tff-pac-target-voa-attenuation-config {
+    leaf target-voa-attenuation {
+      type decimal64 {
+        fraction-digits 2;
+      }
+      description
+        "The target attenuation of adjustable 
+        light attenuation is 0.1dB"; 
+    }
+  }
+
+  grouping tff-pac-config {
+    uses tff-pac-target-voa-attenuation-config;
+    uses passthrough-adddrop-channels-config;
+  }
+
+  grouping tff-pac-state {
+     uses tff-pac-target-voa-attenuation-config;
+    uses passthrough-adddrop-channels-state;
+    leaf channel-interval  {
+      //TODO: mandatory true;
+      type oc-platform-types:channel-interval-type;
+      description
+         "channel interval, 50/75/100GHz";
+    }
+    leaf add-drop-channel-num  {
+      //TODO: mandatory true;
+      type uint32;
+      description
+         "channel interval, 50/75/100GHz";
+    }
+      
+    leaf actual-voa-attenuation {
+      type decimal64 {
+        fraction-digits 2;
+      }
+      description
+        "The actual attenuation of adjustable 
+        light attenuation is 0.1dB"; 
+    }
+  }
+
+  // data definition statements
+
+  // augment statements
+ 
+  augment "/oc-platform:components/oc-platform:component/oc-platform:tff/oc-platform:config" {
+    description
+      "Adding tff state data";
+
+    uses tff-config;
+  }
+  augment "/oc-platform:components/oc-platform:component/oc-platform:tff/oc-platform:state" {
+    description
+      "Adding tff state data";
+
+    uses tff-state;
+  }
+
+}
+

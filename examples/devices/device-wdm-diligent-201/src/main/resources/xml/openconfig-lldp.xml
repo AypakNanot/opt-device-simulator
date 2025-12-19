@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+        <lldp xmlns="http://openconfig.net/yang/lldp">
+            <config>
+                <enabled>true</enabled>
+            </config>
+            <state>
+                <enabled>true</enabled>
+            </state>
+            <interfaces>
+                <interface>
+                    <name>INTERFACE-1-1-C1</name>
+                    <config>
+                        <name>INTERFACE-1-1-C1</name>
+                        <enabled>true</enabled>
+                    </config>
+                    <state>
+                        <name>INTERFACE-1-1-C1</name>
+                        <enabled>true</enabled>
+                    </state>
+                    <neighbors>
+                        <neighbor>
+                            <id>Ingress</id>
+                            <state>
+                                <system-name>Switch</system-name>
+                                <system-description>OptelOS software, BroadEdge, Version 7.4.12
+                                    Copyright (C) CHONGQING OPTEL TELECOM TECHNOLOGY CO ,LTD.  All Rights Reserved.</system-description>
+                                <chassis-id>00:07:30:9D:A6:A8</chassis-id>
+                                <id>Ingress</id>
+                                <ttl>120</ttl>
+                                <port-id>eth-0-23</port-id>
+                                <port-description>eth-0-23</port-description>
+                                <management-address>00 07 30 9d a6 a8</management-address>
+                            </state>
+                        </neighbor>
+                    </neighbors>
+                </interface>
+                <interface>
+                    <name>INTERFACE-1-1-C11</name>
+                    <config>
+                        <name>INTERFACE-1-1-C11</name>
+                        <enabled>true</enabled>
+                    </config>
+                    <state>
+                        <name>INTERFACE-1-1-C11</name>
+                        <enabled>true</enabled>
+                    </state>
+                    <neighbors>
+                        <neighbor>
+                            <id>Ingress</id>
+                            <state>
+                                <system-name>Switch</system-name>
+                                <system-description>OptelOS software, BroadEdge, Version 7.4.12
+                                    Copyright (C) CHONGQING OPTEL TELECOM TECHNOLOGY CO ,LTD.  All Rights Reserved.</system-description>
+                                <chassis-id>00:07:30:9D:A6:A8</chassis-id>
+                                <id>Ingress</id>
+                                <ttl>120</ttl>
+                                <port-id>eth-0-49</port-id>
+                                <port-description>eth-0-49</port-description>
+                                <management-address>00 07 30 9d a6 a8</management-address>
+                            </state>
+                        </neighbor>
+                    </neighbors>
+                </interface>
+                <interface>
+                    <name>INTERFACE-1-6-C1</name>
+                    <config>
+                        <name>INTERFACE-1-6-C1</name>
+                        <enabled>true</enabled>
+                    </config>
+                    <state>
+                        <name>INTERFACE-1-6-C1</name>
+                        <enabled>true</enabled>
+                    </state>
+                </interface>
+                <interface>
+                    <name>INTERFACE-1-6-C2</name>
+                    <config>
+                        <name>INTERFACE-1-6-C2</name>
+                        <enabled>true</enabled>
+                    </config>
+                    <state>
+                        <name>INTERFACE-1-6-C2</name>
+                        <enabled>true</enabled>
+                    </state>
+                </interface>
+                <interface>
+                    <name>INTERFACE-1-7-OSC</name>
+                    <config>
+                        <name>INTERFACE-1-7-OSC</name>
+                        <enabled>true</enabled>
+                    </config>
+                    <state>
+                        <name>INTERFACE-1-7-OSC</name>
+                        <enabled>true</enabled>
+                    </state>
+                    <neighbors>
+                        <neighbor>
+                            <id>Ingress</id>
+                            <state>
+                                <system-name>mss25dci-35</system-name>
+                                <system-description>OPTEL MssEdge 25-D2, V1.1.68.6. Copyright (C) 1998 OPTEL INFORMATION, CO.LTD.</system-description>
+                                <chassis-id>00:07:30:03:04:C1</chassis-id>
+                                <id>Ingress</id>
+                                <ttl>120</ttl>
+                                <port-id>INTERFACE-1-7-OSC</port-id>
+                                <port-description>OSC 0/7/1</port-description>
+                                <management-address>7.1.1.35</management-address>
+                            </state>
+                        </neighbor>
+                    </neighbors>
+                </interface>
+                <interface>
+                    <name>INTERFACE-1-40-NM1</name>
+                    <config>
+                        <name>INTERFACE-1-40-NM1</name>
+                        <enabled>true</enabled>
+                    </config>
+                    <state>
+                        <name>INTERFACE-1-40-NM1</name>
+                        <enabled>true</enabled>
+                    </state>
+                    <neighbors>
+                        <neighbor>
+                            <id>Ingress</id>
+                            <state>
+                                <system-name>mss25dci-38</system-name>
+                                <system-description>OPTEL MssEdge 25-D2, V1.1.68.6. Copyright (C) 1998 OPTEL INFORMATION, CO.LTD.</system-description>
+                                <chassis-id>00:07:30:03:05:61</chassis-id>
+                                <id>Ingress</id>
+                                <ttl>120</ttl>
+                                <port-id>INTERFACE-1-40-NM1</port-id>
+                                <port-description>nm1</port-description>
+                                <management-address>7.1.1.38</management-address>
+                            </state>
+                        </neighbor>
+                    </neighbors>
+                </interface>
+                <interface>
+                    <name>INTERFACE-1-40-NM2</name>
+                    <config>
+                        <name>INTERFACE-1-40-NM2</name>
+                        <enabled>true</enabled>
+                    </config>
+                    <state>
+                        <name>INTERFACE-1-40-NM2</name>
+                        <enabled>true</enabled>
+                    </state>
+                </interface>
+            </interfaces>
+        </lldp>
+    </data>
+
+</rpc-reply>

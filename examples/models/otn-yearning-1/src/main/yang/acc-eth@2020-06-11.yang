@@ -1,0 +1,942 @@
+module "acc-eth" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-eth";
+  prefix "acc-eth";
+  import "ietf-yang-types" {
+    prefix "yang";
+  }
+
+  import "ietf-inet-types" {
+    prefix "inet";
+  }
+
+  import "acc-yang-types" {
+    prefix "acc-type";
+  }
+
+  import "acc-devm" {
+    prefix "acc-devm";
+  }
+
+  import "acc-connection" {
+    prefix "acc-con";
+  }
+
+  import "acc-otn" {
+    prefix "acc-otn";
+  }
+
+  import "acc-otn-types" {
+    prefix "acc-otn-types";
+  }
+
+  import "acc-protection-group" {
+    prefix "acc-pg";
+  }
+
+  revision "2020-06-11" {
+    description
+      "add vcg-parameters in eth-ftp-pac";
+  }
+
+  identity "ETH" {
+    base "acc-type:layer-protocol-name";
+  }
+
+  typedef "oam-transmit-interval" {
+    type "enumeration" {
+      enum "interval-3ms33" {
+        value "1";
+        description
+          "3.33ms";
+      }
+
+      enum "interval-10ms" {
+        value "2";
+        description
+          "10ms";
+      }
+
+      enum "interval-100ms" {
+        value "3";
+        description
+          "100ms";
+      }
+
+      enum "interval-1s" {
+        value "4";
+        description
+          "1s";
+      }
+
+      enum "interval-10s" {
+        value "5";
+        description
+          "10s";
+      }
+
+      enum "interval-1min" {
+        value "6";
+        description
+          "1min";
+      }
+
+    }
+
+    description
+      "oam transmit interval";
+  }
+
+  typedef "port-type" {
+    type "enumeration" {
+      enum "electrical" {
+        value "0";
+      }
+
+      enum "optical" {
+        value "1";
+      }
+
+    }
+
+    description
+      "none";
+  }
+
+  typedef "working-mode" {
+    type "enumeration" {
+      enum "auto" {
+        value "0";
+      }
+
+      enum "100MFullDuplex" {
+        value "1";
+      }
+
+      enum "1000MFullDuplex" {
+        value "2";
+      }
+
+      enum "10GEFullDuplex" {
+        value "3";
+      }
+
+    }
+
+  }
+
+  typedef "eth-mapping-type" {
+    type "enumeration" {
+      enum "EoO" {
+        value "0";
+        description
+          "Ethernet over OTN.";
+      }
+
+      enum "EoS" {
+        value "1";
+        description
+          "Ethernet over SDH.";
+      }
+
+      enum "EofgOTN" {
+        value "2";
+        description
+          "Ethernet over fgOTN.";
+      }
+
+    }
+
+  }
+
+  typedef "tpid-difinition" {
+    type "enumeration" {
+      enum "0x8100" {
+        description
+          "0x8100";
+      }
+
+      enum "0x88a8" {
+        description
+          "0x88a8";
+      }
+
+      enum "0x9100" {
+        description
+          "0x9100";
+      }
+
+      enum "0x9200" {
+        description
+          "0x9200";
+      }
+
+    }
+
+  }
+
+  grouping "eth-ftp-pac" {
+    leaf "supported-mtu" {
+      mandatory "true";
+      type "uint64";
+      config "false";
+    }
+
+    leaf "current-mtu" {
+      mandatory "true";
+      type "uint64";
+    }
+
+    leaf "service-mapping-mode" {
+      mandatory "true";
+      type "identityref" {
+        base "acc-otn-types:adaptation-type";
+      }
+
+    }
+
+    leaf "mapping-type" {
+      mandatory "true";
+      type "eth-mapping-type";
+    }
+
+  }
+
+  grouping "connect-spec" {
+    description
+      "Routing entry";
+    leaf "destination" {
+      type "inet:ip-prefix";
+      description
+        "LAN prefixes.";
+    }
+
+    leaf "next-hop" {
+      type "inet:ip-address";
+      description
+        "The next hop that is to be used for the static route.
+This may be specified as an IP address or a predefined
+next-hop type (e.g., 'local-interface' or 'discard').";
+    }
+
+  }
+
+  grouping "address-mapping-spec" {
+    description
+      "Service flow address mapping entry";
+    leaf "source-ip-prefix" {
+      type "inet:ip-prefix";
+      description
+        "Source LAN prefixes.";
+    }
+
+    leaf "dest-ip-prefix" {
+      type "inet:ip-prefix";
+      description
+        "Destination LAN prefixes.";
+    }
+
+    leaf "source-mac-address" {
+      type "yang:mac-address";
+      description
+        "Source MAC prefixes.";
+    }
+
+    leaf "dest-mac-address" {
+      type "yang:mac-address";
+      description
+        "Destination MAC prefixes.";
+    }
+
+  }
+
+  grouping "opn-nni" {
+    uses "acc-otn:nni";
+    list "address-mapping-specs" {
+      key "index";
+      leaf "index" {
+        type "uint32";
+        mandatory "true";
+        description
+          "The entry index, and it must be unique";
+      }
+
+      uses "address-mapping-spec";
+    }
+
+  }
+
+  grouping "opn-nni-group" {
+    container "primary-nni" {
+      uses "opn-nni";
+    }
+
+    container "secondary-nni" {
+      uses "opn-nni";
+    }
+
+    container "primary-nni2" {
+      uses "opn-nni";
+    }
+
+    container "secondary-nni2" {
+      uses "opn-nni";
+    }
+
+  }
+
+  augment "/acc-devm:ptps/acc-devm:ptp" {
+    container "eth-mapping-pac" {
+      leaf-list "supported-mapping-type" {
+        config "false";
+        type "eth-mapping-type";
+        description
+          "EoO,EoS  1..*";
+      }
+
+      leaf-list "supported-odu-server-switch-capability" {
+        config "false";
+        type "identityref" {
+          base "acc-otn-types:switch-type";
+        }
+
+        description
+          "ODU能力上报，支持什么就上报什么";
+      }
+
+      leaf-list "supported-sdh-server-switch-capability" {
+        config "false";
+        type "identityref" {
+          base "acc-otn-types:switch-type";
+        }
+
+        description
+          "SDH能力上报，支持什么就上报什么";
+      }
+
+    }
+
+  }
+
+  augment "/acc-devm:ptps/acc-devm:ptp" {
+    when "acc-devm:layer-protocol-name = 'acc-eth:ETH'";
+    container "eth-ptp-pac" {
+      leaf-list "supported-working-mode" {
+        type "working-mode";
+        config "false";
+      }
+
+      leaf "current-working-mode" {
+        mandatory "true";
+        type "working-mode";
+      }
+
+      leaf "supported-mtu" {
+        mandatory "true";
+        type "uint64";
+        config "false";
+      }
+
+      leaf "current-mtu" {
+        mandatory "true";
+        type "uint64";
+      }
+
+      leaf "pause-control" {
+        mandatory "true";
+        type "boolean";
+      }
+
+      leaf "mac-address" {
+        type "yang:mac-address";
+      }
+
+      leaf "ipv4-address" {
+        type "inet:ipv4-address";
+      }
+
+      leaf "ipv6-address" {
+        type "inet:ipv6-address";
+      }
+
+      leaf "port-type" {
+        mandatory "true";
+        type "port-type";
+        config "false";
+      }
+
+      leaf "lldp-enable" {
+        type "boolean";
+      }
+
+      leaf "lldp-peer-chassis-id" {
+        config "false";
+        type "string" {
+          length "1..255";
+        }
+
+      }
+
+      leaf "lldp-peer-port-id" {
+        config "false";
+        type "string" {
+          length "1..255";
+        }
+
+        description
+          "hex ascii number without 0x，not normal string";
+      }
+
+      leaf "lldp-peer-system-name" {
+        config "false";
+        type "string" {
+          length "1..64";
+        }
+
+      }
+
+    }
+
+  }
+
+  augment "/acc-devm:ftps/acc-devm:ftp" {
+    when "acc-devm:layer-protocol-name = 'acc-eth:ETH'";
+    container "eth-ftp-pac" {
+      uses "eth-ftp-pac";
+    }
+
+  }
+
+  augment "/acc-devm:ctps/acc-devm:ctp" {
+    when "acc-devm:layer-protocol-name = 'acc-eth:ETH'";
+    container "eth-ctp-pac" {
+      container "vlan-spec" {
+        uses "acc-con:vlan-spec";
+        description
+          "vlan spec, UNI port vlan.";
+      }
+
+      list "connect-specs" {
+        key "destination next-hop";
+        uses "connect-spec";
+      }
+
+      container "client-vlan-spec" {
+        uses "acc-con:vlan-spec";
+        description
+          "client vlan spec, client service vlan.";
+      }
+
+      container "performance" {
+        leaf "delay" {
+          mandatory "true";
+          type "uint64";
+          description
+            "delay";
+        }
+
+        leaf "near-packet-loss-rate" {
+          mandatory "true";
+          type "acc-type:real";
+          description
+            "near packet loss rate";
+        }
+
+        leaf "far-packet-loss-rate" {
+          mandatory "true";
+          type "acc-type:real";
+          description
+            "far packet loss rate";
+        }
+
+        leaf "tx-bytes" {
+          mandatory "true";
+          type "uint64";
+          description
+            "tx bytes";
+        }
+
+        leaf "rx-bytes" {
+          mandatory "true";
+          type "uint64";
+          description
+            "rx bytes";
+        }
+
+        config "false";
+      }
+
+      container "oam-state-pac" {
+        leaf "dm-state" {
+          mandatory "true";
+          type "boolean";
+          description
+            "dm state";
+        }
+
+        leaf "tm-state" {
+          mandatory "true";
+          type "boolean";
+          description
+            "tm state";
+        }
+
+        leaf "lm-state" {
+          mandatory "true";
+          type "boolean";
+          description
+            "lm state";
+        }
+
+        leaf "cc-state" {
+          mandatory "true";
+          type "boolean";
+          description
+            "cc state";
+        }
+
+        description
+          "802.1ag test state";
+      }
+
+      container "oam-config" {
+        leaf "mep-id" {
+          mandatory "true";
+          type "uint16" {
+            range "1..8191";
+          }
+
+        }
+
+        leaf "remote-mep-id" {
+          mandatory "true";
+          type "uint16" {
+            range "1..8191";
+          }
+
+        }
+
+        leaf "meg-id" {
+          mandatory "true";
+          type "string";
+        }
+
+        leaf "md-name" {
+          mandatory "true";
+          type "string" {
+            length "1..43";
+          }
+
+        }
+
+        leaf "mel" {
+          mandatory "true";
+          type "uint8" {
+            range "0..7";
+          }
+
+        }
+
+        leaf "mdl" {
+          type "uint8" {
+            range "0..7";
+          }
+
+        }
+
+        leaf "cc-interval" {
+          mandatory "true";
+          type "oam-transmit-interval";
+          description
+            "cv transmit period :3.33ms/10ms/100ms/1s/10s/1min";
+        }
+
+        leaf "lm-interval" {
+          mandatory "true";
+          type "oam-transmit-interval";
+          description
+            "lm transmit period :1s/10s/1min";
+        }
+
+        leaf "dm-interval" {
+          mandatory "true";
+          type "oam-transmit-interval";
+          description
+            "dm transmit period :1s/10s/1min";
+        }
+
+        description
+          "ethernet oam parameters: mep id, meg id, mel, cc interval, etc";
+      }
+
+      leaf "ipv4-address" {
+        type "inet:ipv4-address";
+      }
+
+      leaf "ipv6-address" {
+        type "inet:ipv6-address";
+      }
+
+      list "address-mapping-specs" {
+        key "index";
+        leaf "index" {
+          type "uint32";
+          mandatory "true";
+          description
+            "The entry index, and it must be unique";
+        }
+
+        uses "address-mapping-spec";
+      }
+
+    }
+
+  }
+
+  notification "lldp-change-notification" {
+    leaf "ptp-name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "PTP name.";
+    }
+
+    leaf "lldp-peer-chassis-id" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    leaf "lldp-peer-port-id" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    leaf "lldp-peer-system-name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    description
+      "LLDP change notification";
+  }
+
+  rpc "create-eth-connection" {
+    input {
+      uses "acc-con:create-connection";
+      leaf "service-mapping-mode" {
+        type "identityref" {
+          base "acc-otn-types:adaptation-type";
+        }
+
+      }
+
+      leaf "uni-protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "default lag";
+      }
+
+      leaf "nni-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      leaf "nni-tcm" {
+        type "uint16";
+        description
+          "when nni-protection-type = 'snc-s', needs to be issued to present the nni tcm of both work path and protection path";
+      }
+
+      leaf "nni2-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      leaf "nni2-tcm" {
+        type "uint16";
+        description
+          "when nni-protection-type = 'snc-s', needs to be issued to present the nni2 tcm of both work path and protection path";
+      }
+
+      container "eth-uni" {
+        leaf "uni-ptp-name" {
+          type "string";
+        }
+
+        leaf "second-uni-ptp-name" {
+          type "string";
+        }
+
+        container "client-vlan-spec" {
+          when "../../service-type = 'EVPL'";
+          uses "acc-con:vlan-spec";
+          description
+            "只适用于EVPL，指定C-VLAN，用于客户Vlan与运营商Vlan的匹配，无需携带accessAction。不携带该参数时表示端口匹配";
+        }
+
+        container "uni-vlan-spec" {
+          when "../../service-type = 'EVPL'";
+          uses "acc-con:vlan-spec";
+          description
+            "用于在客户VLAN交换的情况下，指定C-VLAN的交换值，类型为C-TAG，可选.";
+        }
+
+      }
+
+      container "eth-nni" {
+        leaf "nni-ptp-name" {
+          type "string";
+        }
+
+        leaf "second-nni-ptp-name" {
+          type "string";
+          description
+            "LAG protection PTP name";
+        }
+
+        container "ftp-client-vlan-spec" {
+          uses "acc-con:vlan-spec";
+          description
+            "";
+        }
+
+        container "ftp-vlan-spec" {
+          uses "acc-con:vlan-spec";
+          description
+            "EVPL必须下发，当剥离添加或转换S-Vlan时，指定S-VLAN的值，accessAction = push_pop或accessAction = exchange";
+        }
+
+        description
+          "仅用于建立ethUNI到ethNNI太网业务";
+      }
+
+      container "primary-nni" {
+        uses "acc-otn:nni";
+        container "ftp-client-vlan-spec" {
+          uses "acc-con:vlan-spec";
+          description
+            "";
+        }
+
+        container "ftp-vlan-spec" {
+          uses "acc-con:vlan-spec";
+          description
+            "EVPL必须下发，对于其它业务可选。对于UNI-NNI业务， accessAction=PUSH_POP， 对于NNI-NNI则 pushpop or exchange";
+        }
+
+        leaf "tpid" {
+          type "tpid-difinition";
+        }
+
+        description
+          "primary nni,必选";
+      }
+
+      container "secondary-nni" {
+        uses "acc-otn:nni";
+        container "ftp-client-vlan-spec" {
+          uses "acc-con:vlan-spec";
+          description
+            "";
+        }
+
+        container "ftp-vlan-spec" {
+          uses "acc-con:vlan-spec";
+          description
+            "EVPL必须下发，对于其它业务可选,对于UNI-NNI业务， accessAction=PUSH_POP";
+        }
+
+        description
+          "ETH带保护模式，可选";
+      }
+
+      container "primary-nni2" {
+        uses "acc-otn:nni";
+        container "ftp-vlan-spec" {
+          uses "acc-con:vlan-spec";
+          description
+            "EVPL必须下发，对于其它业务可选。对于NNI-NNI业务，accessAction=KEEP或EXCHANGE";
+        }
+
+        leaf "tpid" {
+          type "tpid-difinition";
+        }
+
+        description
+          "NNI-NNI不带保护，可选";
+      }
+
+      container "secondary-nni2" {
+        uses "acc-otn:nni";
+        container "ftp-vlan-spec" {
+          uses "acc-con:vlan-spec";
+          description
+            "EVPL必须下发，对于其它业务可选,对于NNI-NNI业务，accessAction=KEEP或EXCHANGE";
+        }
+
+        description
+          "NNI-NNI带保护，可选";
+      }
+
+    }
+
+    output {
+      container "connection" {
+        uses "acc-con:connection";
+      }
+
+      container "create-component" {
+        leaf-list "ftp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf-list "ctp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  rpc "create-mp2mp-eth-connection" {
+    input {
+      uses "acc-con:create-connection";
+      leaf "opn-protocol-type" {
+        mandatory "true";
+        type "acc-devm:opn-protocol-type";
+        description
+          "OPN业务协议类型";
+      }
+
+      leaf "opn-service-id" {
+        mandatory "true";
+        type "uint32";
+        description
+          "OPN业务ID，需要保证全网的一致性和唯一性";
+      }
+
+      leaf "service-mapping-mode" {
+        type "identityref" {
+          base "acc-otn-types:adaptation-type";
+        }
+
+      }
+
+      leaf "uni-protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "default lag";
+      }
+
+      leaf "nni-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      leaf "nni-tcm" {
+        type "uint16";
+        description
+          "when nni-protection-type = 'snc-s', needs to be issued to present the nni tcm of both work path and protection path";
+      }
+
+      leaf "nni2-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      leaf "nni2-tcm" {
+        type "uint16";
+        description
+          "when nni-protection-type = 'snc-s', needs to be issued to present the nni2 tcm of both work path and protection path";
+      }
+
+      list "eth-unis" {
+        key "uni-index";
+        leaf "uni-index" {
+          mandatory "true";
+          type "uint32";
+        }
+
+        leaf "uni-ptp-name" {
+          type "string";
+        }
+
+        leaf "second-uni-ptp-name" {
+          type "string";
+        }
+
+        container "client-vlan-spec" {
+          when "../../service-type = 'OPN'";
+          uses "acc-con:vlan-spec";
+          description
+            "适用于OPN，指定C-VLAN，用于客户Vlan与运营商Vlan的匹配，无需携带accessAction。不携带该参数时表示端口匹配";
+        }
+
+        leaf "client-ip-spec" {
+          type "inet:ip-address";
+          description
+            "适用于OPN，指定UNI端口的IP地址";
+        }
+
+        list "client-connect-specs" {
+          key "destination next-hop";
+          uses "connect-spec";
+        }
+
+      }
+
+      list "nni-list" {
+        key "nni-group-index";
+        leaf "nni-group-index" {
+          mandatory "true";
+          type "uint32";
+        }
+
+        uses "opn-nni-group";
+      }
+
+    }
+
+    output {
+      container "connection" {
+        uses "acc-con:connection";
+      }
+
+      container "create-component" {
+        leaf-list "ftp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf-list "ctp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+}

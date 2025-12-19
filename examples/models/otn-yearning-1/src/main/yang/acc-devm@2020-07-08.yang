@@ -1,0 +1,1050 @@
+module "acc-devm" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-devm";
+  prefix "acc-devm";
+  import "ietf-yang-types" {
+    prefix "yang";
+  }
+
+  import "acc-yang-types" {
+    prefix "acc-type";
+  }
+
+  import "ietf-inet-types" {
+    prefix "inet";
+  }
+
+  revision "2020-07-08" {
+    description
+      "final version";
+  }
+
+  typedef "operational-state" {
+    type "enumeration" {
+      enum "up" {
+        value "0";
+      }
+
+      enum "down" {
+        value "1";
+      }
+
+    }
+
+  }
+
+  typedef "admin-state" {
+    type "enumeration" {
+      enum "enabled" {
+        value "0";
+      }
+
+      enum "disabled" {
+        value "1";
+      }
+
+    }
+
+  }
+
+  typedef "laser-status" {
+    type "enumeration" {
+      enum "laser-on" {
+        value "0";
+      }
+
+      enum "laser-off" {
+        value "1";
+      }
+
+      enum "no-optical-module" {
+        value "2";
+      }
+
+    }
+
+  }
+
+  typedef "loopback-type" {
+    type "enumeration" {
+      enum "facility-loopback" {
+        value "0";
+      }
+
+      enum "terminal-loopback" {
+        value "1";
+      }
+
+      enum "non-loopback" {
+        value "2";
+      }
+
+    }
+
+  }
+
+  typedef "interface-type" {
+    type "enumeration" {
+      enum "UNI" {
+        value "0";
+      }
+
+      enum "NNI" {
+        value "1";
+      }
+
+    }
+
+  }
+
+  typedef "service-type" {
+    type "enumeration" {
+      enum "ODU" {
+        value "0";
+      }
+
+      enum "SDH" {
+        value "1";
+      }
+
+      enum "EPL" {
+        value "2";
+      }
+
+      enum "EVPL" {
+        value "3";
+      }
+
+      enum "fgODUflex" {
+        value "4";
+      }
+
+      enum "OPN" {
+        value "5";
+      }
+
+      enum "ELAN" {
+        value "6";
+      }
+
+      enum "ETREE" {
+        value "7";
+      }
+
+      enum "EEPL" {
+        value "8";
+      }
+
+      enum "EEVPL" {
+        value "9";
+      }
+
+    }
+
+  }
+
+  typedef "opn-protocol-type" {
+    type "enumeration" {
+      enum "ipv4" {
+        value "0";
+      }
+
+      enum "ipv6" {
+        value "1";
+      }
+
+    }
+
+  }
+
+  typedef "me-status" {
+    type "enumeration" {
+      enum "installing" {
+        value "0";
+      }
+
+      enum "running" {
+        value "1";
+      }
+
+      enum "maintenance" {
+        value "2";
+      }
+
+    }
+
+  }
+
+  typedef "ntp-state" {
+    type "enumeration" {
+      enum "NSET" {
+        value "0";
+        description
+          "clock never set";
+      }
+
+      enum "FSET" {
+        value "1";
+        description
+          "frequency set from file";
+      }
+
+      enum "SPIK" {
+        value "2";
+        description
+          "spike detected";
+      }
+
+      enum "FREQ" {
+        value "3";
+        description
+          "frequency mode";
+      }
+
+      enum "SYNC" {
+        value "4";
+        description
+          "clock synchronized";
+      }
+
+    }
+
+    description
+      "rfc 5905";
+  }
+
+  typedef "reset-type" {
+    type "enumeration" {
+      enum "soft-reset" {
+        value "0";
+      }
+
+      enum "hard-reset" {
+        value "1";
+      }
+
+    }
+
+    description
+      "soft-reset doesn't affect service";
+  }
+
+  typedef "device-type" {
+    type "enumeration" {
+      enum "otm-box" {
+        value "0";
+        description
+          "固定盒式，终端复用设备";
+      }
+
+      enum "po-box" {
+        value "1";
+        description
+          "固定盒式，分组增强型OTN设备";
+      }
+
+      enum "otm-pnp" {
+        value "2";
+        description
+          "插板式，终端复用设备";
+      }
+
+      enum "po-pnp" {
+        value "3";
+        description
+          "插板式，分组增强型OTN设备";
+      }
+
+    }
+
+  }
+
+  typedef "port-role" {
+    type "enumeration" {
+      enum "symmetric" {
+        value "0";
+      }
+
+      enum "root" {
+        value "1";
+      }
+
+      enum "leaf" {
+        value "2";
+      }
+
+    }
+
+  }
+
+  typedef "protect-role" {
+    type "enumeration" {
+      enum "null" {
+        value "0";
+      }
+
+      enum "protected" {
+        value "1";
+      }
+
+      enum "primary" {
+        value "2";
+      }
+
+      enum "secondary" {
+        value "3";
+      }
+
+    }
+
+  }
+
+  typedef "eq-type" {
+    type "enumeration" {
+      enum "power" {
+        value "0";
+      }
+
+      enum "fan" {
+        value "1";
+      }
+
+      enum "service" {
+        value "2";
+      }
+
+      enum "system-control" {
+        value "3";
+      }
+
+      enum "cross-connect" {
+        value "4";
+      }
+
+      enum "clock" {
+        value "5";
+      }
+
+    }
+
+  }
+
+  typedef "working-state" {
+    type "enumeration" {
+      enum "normal" {
+        value "0";
+      }
+
+      enum "backup" {
+        value "1";
+      }
+
+    }
+
+  }
+
+  grouping "state-pac" {
+    leaf "operational-state" {
+      mandatory "true";
+      type "operational-state";
+      config "false";
+    }
+
+    leaf "admin-state" {
+      mandatory "true";
+      type "admin-state";
+    }
+
+  }
+
+  grouping "ftp" {
+    leaf "name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    container "state-pac" {
+      uses "state-pac";
+    }
+
+    leaf "layer-protocol-name" {
+      mandatory "true";
+      type "identityref" {
+        base "acc-type:layer-protocol-name";
+      }
+
+    }
+
+    leaf-list "client-ctp" {
+      type "leafref" {
+        path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+      }
+
+    }
+
+    leaf-list "server-ctp" {
+      type "leafref" {
+        path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+      }
+
+    }
+
+  }
+
+  grouping "ctp" {
+    leaf "name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "Name of ctp";
+    }
+
+    container "state-pac" {
+      uses "state-pac";
+      description
+        "State of ctp";
+    }
+
+    leaf "layer-protocol-name" {
+      mandatory "true";
+      type "identityref" {
+        base "acc-type:layer-protocol-name";
+      }
+
+    }
+
+    leaf "port-role" {
+      type "port-role";
+      default "symmetric";
+      config "false";
+    }
+
+    leaf "protect-role" {
+      mandatory "true";
+      type "protect-role";
+      config "false";
+    }
+
+    leaf "server-tp" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "parent PTP/FTP name";
+    }
+
+    leaf "loop-back" {
+      mandatory "true";
+      type "loopback-type";
+      description
+        "Loop back type of ctp,default non-loopback";
+    }
+
+    leaf "remote-node-id" {
+      type "yang:dotted-quad";
+      description
+        "The remote node identifier, which is represented as
+       4 octets in dotted-quad notation.";
+    }
+
+  }
+
+  grouping "mc-port" {
+    leaf "name" {
+      mandatory "true";
+      type "string";
+      description
+        "命名规则：端口类型加序号，如：RJ45_1, USB_1, Serial_1";
+    }
+
+    leaf "mac-address" {
+      type "string";
+      config "false";
+    }
+
+    leaf "operational-state" {
+      mandatory "true";
+      type "operational-state";
+      config "false";
+    }
+
+    leaf "admin-state" {
+      mandatory "true";
+      type "admin-state";
+    }
+
+  }
+
+  container "me" {
+    leaf "name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "for UMS, it's a label";
+    }
+
+    leaf "uuid" {
+      mandatory "true";
+      type "string";
+      config "false";
+      description
+        "Universal unique identifier, MAC address is suggested. for UMS,it's real name";
+    }
+
+    leaf "status" {
+      mandatory "true";
+      type "me-status";
+    }
+
+    leaf "manufacturer" {
+      mandatory "true";
+      type "string" {
+        length "1..32";
+      }
+
+      config "false";
+      description
+        "Manufacturer";
+    }
+
+    leaf "product-name" {
+      mandatory "true";
+      type "string" {
+        length "1..32";
+      }
+
+      config "false";
+      description
+        "Product name";
+    }
+
+    leaf "software-version" {
+      mandatory "true";
+      type "string" {
+        length "1..32";
+      }
+
+      config "false";
+      description
+        "Software version";
+    }
+
+    leaf "hardware-version" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+      config "false";
+      description
+        "Hardware version";
+    }
+
+    leaf "device-type" {
+      mandatory "true";
+      type "device-type";
+      config "false";
+      description
+        "Device type";
+    }
+
+    leaf-list "layer-protocol-name" {
+      type "identityref" {
+        base "acc-type:layer-protocol-name";
+      }
+
+      min-elements "1";
+      config "false";
+      description
+        "Layer protocol name";
+    }
+
+    leaf "ip-address" {
+      mandatory "true";
+      type "inet:ipv4-address";
+      description
+        "Ip address(ipv4)";
+    }
+
+    leaf "mask" {
+      mandatory "true";
+      type "yang:dotted-quad";
+      description
+        "Mask";
+    }
+
+    leaf "ntp-enable" {
+      mandatory "true";
+      type "boolean";
+      description
+        "Support ntp or not.";
+    }
+
+    leaf "ntp-state" {
+      type "ntp-state";
+      config "false";
+      description
+        "ntpState提到这里，当ntpEnable使能后,代表网元与ntpServer同步的最终结果";
+    }
+
+    container "ntp-servers" {
+      list "ntp-server" {
+        key "name";
+        leaf "name" {
+          type "string" {
+            length "1..32";
+          }
+
+          description
+            "Name of ntp server.";
+        }
+
+        leaf "ip-address" {
+          mandatory "true";
+          type "inet:ipv4-address";
+          description
+            "Ip address of ntp";
+        }
+
+        leaf "port" {
+          type "inet:port-number";
+          default "123";
+          description
+            "Port number of ntp";
+        }
+
+        leaf "ntp-version" {
+          type "string" {
+            length "1..64";
+          }
+
+          description
+            "Ntp version value range: 1-7, default value: V3";
+        }
+
+      }
+
+    }
+
+    leaf "gate-way1" {
+      mandatory "true";
+      type "inet:ipv4-address";
+      description
+        "Gat way1(ipv4)";
+    }
+
+    leaf "gate-way2" {
+      type "inet:ipv4-address";
+      description
+        "Gat way2(ipv4)";
+    }
+
+    leaf "serial-number" {
+      type "string";
+      config "false";
+      description
+        "2025.5.20 add for NBI,device serial No for province corp.If uuid is serial No,Just repeate here";
+    }
+
+    leaf-list "eq" {
+      type "leafref" {
+        path "/acc-devm:eqs/acc-devm:eq/acc-devm:name";
+      }
+
+      min-elements "1";
+      config "false";
+      description
+        "Eq list";
+    }
+
+    leaf-list "mc-port" {
+      type "leafref" {
+        path "/acc-devm:mc-ports/acc-devm:mc-port/acc-devm:name";
+      }
+
+      min-elements "1";
+      config "false";
+    }
+
+  }
+
+  container "ptps" {
+    list "ptp" {
+      key "name";
+      min-elements "1";
+      leaf "name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "Name of ptp";
+      }
+
+      container "state-pac" {
+        uses "state-pac";
+        description
+          "State of ptp";
+      }
+
+      leaf "layer-protocol-name" {
+        mandatory "true";
+        type "identityref" {
+          base "acc-type:layer-protocol-name";
+        }
+
+        description
+          "current protocol setting value";
+      }
+
+      leaf-list "supported-layer-protocol-name" {
+        config "false";
+        type "identityref" {
+          base "acc-type:layer-protocol-name";
+        }
+
+        description
+          "all supported abilities of protocol";
+      }
+
+      leaf "peer-ip-address" {
+        type "string" {
+          length "1..16";
+        }
+
+        config "false";
+        description
+          "Peer ip address";
+      }
+
+      leaf "peer-tcp-id" {
+        type "string" {
+          length "1..64";
+        }
+
+        config "false";
+        description
+          "Peer ptp tcp-id";
+      }
+
+      leaf "local-tcp-id" {
+        type "string" {
+          length "1..64";
+        }
+
+        config "false";
+        description
+          "Local ptp tcp-id";
+      }
+
+      leaf "laser-status" {
+        type "laser-status";
+        description
+          "Laser status of ptp,default laser-on";
+      }
+
+      leaf-list "ctp" {
+        type "leafref" {
+          path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+        }
+
+        description
+          "Ctp list";
+      }
+
+      leaf "interface-type" {
+        mandatory "true";
+        type "interface-type";
+        description
+          "Interface type of ptp";
+      }
+
+      leaf "loop-back" {
+        mandatory "true";
+        type "loopback-type";
+        description
+          "Loop back type of ptp,default non-loopback";
+      }
+
+      leaf-list "remote-ptp" {
+        type "leafref" {
+          path "/acc-devm:ptps/acc-devm:ptp/acc-devm:name";
+        }
+
+        config "false";
+        description
+          "The namespace of remote-ptps and local ptps should be independent and without conflicts";
+      }
+
+      container "optical-power-pac" {
+        leaf "input-power" {
+          mandatory "true";
+          type "acc-type:real";
+          config "false";
+          description
+            "Input power of ptp";
+        }
+
+        leaf "output-power" {
+          mandatory "true";
+          type "acc-type:real";
+          description
+            "Output power of ptp";
+        }
+
+        leaf "input-power-upper-threshold" {
+          mandatory "true";
+          type "acc-type:real";
+          config "false";
+          description
+            "Input power upper threshold of ptp";
+        }
+
+        leaf "input-power-lower-threshold" {
+          mandatory "true";
+          type "acc-type:real";
+          config "false";
+          description
+            "Input power lower threshold of ptp";
+        }
+
+      }
+
+    }
+
+  }
+
+  container "ftps" {
+    list "ftp" {
+      key "name";
+      uses "ftp";
+    }
+
+  }
+
+  container "ctps" {
+    list "ctp" {
+      key "name";
+      uses "ctp";
+    }
+
+  }
+
+  container "mc-ports" {
+    list "mc-port" {
+      key "name";
+      uses "mc-port";
+    }
+
+  }
+
+  container "eqs" {
+    list "eq" {
+      key "name";
+      min-elements "1";
+      leaf "name" {
+        type "string" {
+          length "1..64";
+        }
+
+      }
+
+      leaf "plug-state" {
+        mandatory "true";
+        type "boolean";
+        config "false";
+      }
+
+      leaf-list "eq-type" {
+        config "false";
+        type "eq-type";
+        min-elements "1";
+      }
+
+      leaf "xc-capability" {
+        type "boolean";
+        default "true";
+        config "false";
+        description
+          "Indicates whether the eq supports inter-eq cross.";
+      }
+
+      leaf "working-state" {
+        type "working-state";
+        description
+          "Indicates the eq is normal or backup.";
+      }
+
+      leaf "software-version" {
+        mandatory "true";
+        type "string" {
+          length "1..32";
+        }
+
+        config "false";
+      }
+
+      leaf "hardware-version" {
+        mandatory "true";
+        type "string" {
+          length "1..32";
+        }
+
+        config "false";
+      }
+
+      leaf-list "ptp" {
+        min-elements "0";
+        type "leafref" {
+          path "/acc-devm:ptps/acc-devm:ptp/acc-devm:name";
+        }
+
+        config "false";
+      }
+
+      leaf-list "ftp" {
+        min-elements "0";
+        type "leafref" {
+          path "/acc-devm:ftps/acc-devm:ftp/acc-devm:name";
+        }
+
+        config "false";
+      }
+
+    }
+
+  }
+
+  notification "peer-change-notification" {
+    leaf "ptp-name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    leaf "peer-ip-address" {
+      mandatory "true";
+      type "string" {
+        length "1..16";
+      }
+
+    }
+
+    leaf "peer-ptp-tcp-id" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+  }
+
+  notification "ftr-change-notification" {
+    leaf "ptp-name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    leaf "remote-ptp" {
+      mandatory "true";
+      type "string";
+      description
+        "当插拔PTP探测到FTR端口连接后，必须填写；如果探测到拔出，则更新为空字符串";
+    }
+
+    leaf "FTR" {
+      mandatory "true";
+      type "string";
+      description
+        "FTR的uuid，当插拔PTP探测到FTR端口连接后，必须填写；如果探测到拔出，则更新为空字符串";
+    }
+
+  }
+
+  rpc "reset" {
+    input {
+      leaf "eq-name" {
+        mandatory "true";
+        type "string" {
+          length "1..64";
+        }
+
+      }
+
+      leaf "reset-type" {
+        mandatory "true";
+        type "reset-type";
+      }
+
+    }
+
+  }
+
+  rpc "modify-user-password" {
+    input {
+      leaf "user-name" {
+        type "string";
+        description
+          "可选，默认当前用户";
+      }
+
+      leaf "old-password" {
+        mandatory "true";
+        type "string" {
+          length "8..16";
+        }
+
+      }
+
+      leaf "new-password" {
+        mandatory "true";
+        type "string" {
+          length "8..16";
+        }
+
+      }
+
+    }
+
+  }
+
+  rpc "set-managed-element-time" {
+    input {
+      leaf "new-time" {
+        mandatory "true";
+        type "yang:date-and-time";
+      }
+
+    }
+
+  }
+
+  rpc "get-managed-element-time" {
+    output {
+      leaf "date-time" {
+        mandatory "true";
+        type "yang:date-and-time";
+      }
+
+    }
+
+  }
+
+}

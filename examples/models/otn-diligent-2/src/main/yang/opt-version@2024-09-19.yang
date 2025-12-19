@@ -1,0 +1,35 @@
+module "opt-version" {
+  yang-version "1.1";
+  namespace "com:opt:s-otn:diligent:yang:version";
+  prefix "opt-ver";
+  revision "2024-09-19" {
+    description
+      "This revision change history:
+- 2024-09-19 ctc yang update V2.5.1
+";
+  }
+
+  revision "2024-08-01" {
+    description
+      "This revision change history:
+- 2024-08-01 acc-eos.yang add tpid for secondary-nni
+- 2024-08-01 acc-osu.yang create-eo-osu-connection add tpid for nni
+";
+  }
+
+  revision "2024-07-31" {
+    description
+      "This revision change history:
+- 2024-07-31 acc-eth.yang add tpid for eth-nni
+";
+  }
+
+  revision "2024-04-30" {
+    description
+      "This revision change history:
+- 2024-04-11 new versioning file for publishing
+- 2024-04-12 add serial number as licenses key
+";
+  }
+
+}

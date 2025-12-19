@@ -1,0 +1,566 @@
+module "acc-sdh" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-sdh";
+  prefix "acc-sdh";
+  import "acc-devm" {
+    prefix "acc-devm";
+  }
+
+  import "acc-connection" {
+    prefix "acc-con";
+  }
+
+  import "acc-otn" {
+    prefix "acc-otn";
+  }
+
+  import "acc-yang-types" {
+    prefix "acc-type";
+  }
+
+  import "acc-otn-types" {
+    prefix "acc-otn-types";
+  }
+
+  import "acc-protection-group" {
+    prefix "acc-pg";
+  }
+
+  revision "2020-07-08" {
+    description
+      "Final revision";
+    reference
+      "CCSA接入型OTN接口技术要求";
+  }
+
+  identity "SDH" {
+    base "acc-type:layer-protocol-name";
+  }
+
+  grouping "vcg-pac" {
+    leaf "vc-type" {
+      mandatory "true";
+      type "identityref" {
+        base "acc-otn-types:switch-type";
+      }
+
+    }
+
+    leaf "lcas" {
+      type "boolean";
+      default "false";
+    }
+
+    leaf "hold-off" {
+      type "uint32";
+      default "0";
+      description
+        "unit: ms";
+    }
+
+    leaf "wtr" {
+      type "uint32";
+      default "300";
+      description
+        "unit: s";
+    }
+
+    leaf "tsd" {
+      type "boolean";
+      default "false";
+    }
+
+    leaf "tx-number" {
+      type "uint64";
+      default "0";
+      config "false";
+      description
+        "The actual number of members sent by the LCAS group.";
+    }
+
+    leaf "rx-number" {
+      type "uint64";
+      default "0";
+      config "false";
+      description
+        "The actual number of members received by the LCAS group.";
+    }
+
+    leaf "so-handshake-state" {
+      type "boolean";
+      default "false";
+      config "false";
+      description
+        "The handshake state of the source end.";
+    }
+
+  }
+
+  grouping "sdh-ftp" {
+    leaf "sdh-type" {
+      mandatory "true";
+      type "identityref" {
+        base "acc-otn-types:client-signal-type";
+      }
+
+    }
+
+    leaf "vc-type" {
+      mandatory "true";
+      type "identityref" {
+        base "acc-otn-types:switch-type";
+      }
+
+    }
+
+    leaf "mapping-path" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    leaf "time-slot" {
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+  }
+
+  augment "/acc-devm:ptps/acc-devm:ptp" {
+    container "sdh-mapping-pac" {
+      leaf-list "supported-sdh-signal-types" {
+        type "identityref" {
+          base "acc-otn-types:client-signal-type";
+        }
+
+      }
+
+      leaf-list "switch-capability" {
+        type "identityref" {
+          base "acc-otn-types:switch-type";
+        }
+
+      }
+
+      leaf-list "supported-adaption-type" {
+        type "identityref" {
+          base "acc-otn-types:adaptation-type";
+        }
+
+      }
+
+    }
+
+  }
+
+  augment "/acc-devm:ptps/acc-devm:ptp" {
+    when "acc-devm:layer-protocol-name = 'acc-sdh:SDH'";
+    container "sdh-ptp-pac" {
+      leaf "current-sdh-signal-type" {
+        mandatory "true";
+        type "identityref" {
+          base "acc-otn-types:client-signal-type";
+        }
+
+      }
+
+      leaf-list "supported-sdh-signal-types" {
+        type "identityref" {
+          base "acc-otn-types:client-signal-type";
+        }
+
+        config "false";
+      }
+
+      leaf-list "switch-capability" {
+        min-elements "1";
+        type "identityref" {
+          base "acc-otn-types:switch-type";
+        }
+
+        config "false";
+      }
+
+      leaf "j0-actual-tx" {
+        type "string" {
+          length "1..64";
+        }
+
+      }
+
+      leaf "j0-expected-rx" {
+        type "string" {
+          length "1..64";
+        }
+
+      }
+
+      leaf "j0-actual-rx" {
+        type "string" {
+          length "1..64";
+        }
+
+        config "false";
+      }
+
+    }
+
+  }
+
+  augment "/acc-devm:ftps/acc-devm:ftp" {
+    when "acc-devm:layer-protocol-name = 'acc-sdh:SDH'";
+    container "sdh-ftp-pac" {
+      leaf "sdh-signal-type" {
+        mandatory "true";
+        type "identityref" {
+          base "acc-otn-types:client-signal-type";
+        }
+
+      }
+
+      leaf-list "switch-capability" {
+        min-elements "1";
+        type "identityref" {
+          base "acc-otn-types:switch-type";
+        }
+
+        config "false";
+      }
+
+      leaf "service-mapping-mode" {
+        type "identityref" {
+          base "acc-otn-types:adaptation-type";
+        }
+
+      }
+
+      leaf "j0-actual-tx" {
+        type "string" {
+          length "1..64";
+        }
+
+      }
+
+      leaf "j0-expected-rx" {
+        type "string" {
+          length "1..64";
+        }
+
+      }
+
+      leaf "j0-actual-rx" {
+        type "string" {
+          length "1..64";
+        }
+
+        config "false";
+      }
+
+      leaf-list "vc-ctp" {
+        when "../service-mapping-mode = 'VCn-fgOPUflex'";
+        min-elements "1";
+        type "leafref" {
+          path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+        }
+
+        description
+          "Ctp list when mapping VC-n";
+      }
+
+    }
+
+  }
+
+  augment "/acc-devm:ctps/acc-devm:ctp" {
+    when "acc-devm:layer-protocol-name = 'acc-sdh:SDH'";
+    container "vc-ctp-pac" {
+      leaf "vc-type" {
+        mandatory "true";
+        type "identityref" {
+          base "acc-otn-types:switch-type";
+        }
+
+      }
+
+      leaf "mapping-path" {
+        mandatory "true";
+        type "string" {
+          length "1..64";
+        }
+
+      }
+
+      leaf "j1-actual-tx" {
+        type "string" {
+          length "1..64";
+        }
+
+      }
+
+      leaf "j1-expected-rx" {
+        type "string" {
+          length "1..64";
+        }
+
+      }
+
+      leaf "j1-actual-rx" {
+        type "string" {
+          length "1..64";
+        }
+
+        config "false";
+      }
+
+    }
+
+  }
+
+  rpc "create-sdh-connection" {
+    input {
+      uses "acc-con:create-connection";
+      leaf "service-mapping-mode" {
+        type "identityref" {
+          base "acc-otn-types:adaptation-type";
+        }
+
+      }
+
+      leaf "uni-protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "default msp-1-plus-1";
+      }
+
+      leaf "nni-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      leaf "nni-tcm" {
+        type "uint16";
+        description
+          "when nni-protection-type = 'snc-s', needs to be issued to present the nni tcm of both work path and protection path";
+      }
+
+      leaf "nni2-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      leaf "nni2-tcm" {
+        type "uint16";
+        description
+          "when nni-protection-type = 'snc-s', needs to be issued to present the nni2 tcm of both work path and protection path";
+      }
+
+      container "sdh-uni" {
+        leaf "uni-ptp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf "vc-type" {
+          type "identityref" {
+            base "acc-otn-types:switch-type";
+          }
+
+        }
+
+        leaf-list "mapping-path" {
+          min-elements "1";
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf "time-slot" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        description
+          "only for UNI-NNI ";
+      }
+
+      container "second-sdh-uni" {
+        leaf "uni-ptp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf "vc-type" {
+          type "identityref" {
+            base "acc-otn-types:switch-type";
+          }
+
+        }
+
+        leaf-list "mapping-path" {
+          min-elements "1";
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf "time-slot" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        description
+          "only for UNI-NNI ";
+      }
+
+      container "sdh-nni" {
+        leaf "nni-ptp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf "vc-type" {
+          type "identityref" {
+            base "acc-otn-types:switch-type";
+          }
+
+        }
+
+        leaf-list "mapping-path" {
+          min-elements "1";
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf "time-slot" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        description
+          "only for sdhUNI to sdhNNI";
+      }
+
+      container "second-sdh-nni" {
+        leaf "nni-ptp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf "vc-type" {
+          type "identityref" {
+            base "acc-otn-types:switch-type";
+          }
+
+        }
+
+        leaf-list "mapping-path" {
+          min-elements "1";
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf "time-slot" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        description
+          "only for sdhUNI to sdhNNI";
+      }
+
+      container "primary-nni" {
+        uses "acc-otn:nni";
+        container "sdh-ftp" {
+          uses "sdh-ftp";
+        }
+
+        description
+          "primary nni, mandatory true";
+      }
+
+      container "secondary-nni" {
+        uses "acc-otn:nni";
+        container "sdh-ftp" {
+          uses "sdh-ftp";
+        }
+
+        description
+          "only for service with protection. Optional";
+      }
+
+      container "primary-nni2" {
+        uses "acc-otn:nni";
+        container "sdh-ftp" {
+          uses "sdh-ftp";
+        }
+
+        description
+          "only NNI2NNI mode, optional!";
+      }
+
+      container "secondary-nni2" {
+        uses "acc-otn:nni";
+        container "sdh-ftp" {
+          uses "sdh-ftp";
+        }
+
+        description
+          "only NNI2NNI mode and with protection. optional";
+      }
+
+    }
+
+    output {
+      list "connection" {
+        key "name";
+        uses "acc-con:connection";
+      }
+
+      container "create-component" {
+        leaf-list "ftp-name" {
+          min-elements "1";
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf-list "ctp-name" {
+          min-elements "1";
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+}

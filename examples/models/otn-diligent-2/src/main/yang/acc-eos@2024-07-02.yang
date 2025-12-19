@@ -1,0 +1,843 @@
+module "acc-eos" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-eos";
+  prefix "acc-eos";
+  import "acc-devm" {
+    prefix "acc-devm";
+  }
+
+  import "acc-eth" {
+    prefix "acc-eth";
+  }
+
+  import "acc-sdh" {
+    prefix "acc-sdh";
+  }
+
+  import "acc-connection" {
+    prefix "acc-con";
+  }
+
+  import "acc-otn" {
+    prefix "acc-otn";
+  }
+
+  import "acc-enum" {
+    prefix "acc-enum";
+  }
+
+  import "acc-protection-group" {
+    prefix "acc-pg";
+  }
+
+  revision "2024-07-02" {
+    description
+      "M-OTN2.0 管控与设备双向调优，减负";
+  }
+
+  revision "2021-01-31" {
+    description
+      "for M-OTN 1.0";
+  }
+
+  augment "/acc-devm:ftps/acc-devm:ftp/acc-eth:eth-ftp-pac" {
+    when "acc-eth:mapping-type = 'acc-eth:EoS'";
+    container "vcg-pac" {
+      uses "acc-sdh:vcg-pac";
+      description
+        "Virtual concatenation group";
+    }
+
+  }
+
+  grouping "vc-cascade" {
+    leaf "eth-ftp-vc-ctp" {
+      type "string";
+      description
+        "VC级联时，当前VC时隙对应的ETH FTP关联的VC CTP";
+    }
+
+    leaf "sdh-ftp-ctp" {
+      type "string";
+      description
+        "VC级联时，当前VC时隙对应的SDH FTP(主)的 VC CTP";
+    }
+
+    leaf "sdh-ftp-ctp-p" {
+      type "string";
+      description
+        "VC级联时，当前VC时隙对应的SDH FTP(备)的 VC CTP";
+    }
+
+    description
+      "无论当前业务是否VC级联，会有1..* 组vc-cascade";
+  }
+
+  rpc "create-eos-connection" {
+    input {
+      uses "acc-con:create-connection";
+      leaf "service-mapping-mode" {
+        type "acc-enum:adaptation-type";
+        description
+          "基于SDH FTP客户信号类型，STM-1/STM-4=GMP，STM-16/STM-64=CBR_BMP";
+      }
+
+      leaf "uni-protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "default lag";
+      }
+
+      leaf "nni-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      container "eth-uni" {
+        leaf "uni-ptp-name" {
+          mandatory "true";
+          type "string";
+        }
+
+        leaf "second-uni-ptp-name" {
+          type "string";
+          description
+            "可选，用于与客户设备之间建立LAG保护（非负载均衡，单端保护）";
+        }
+
+        container "client-vlan-spec" {
+          when "../../service-type = 'EVPL'";
+          uses "acc-con:vlan-spec";
+          description
+            "用于客户Vlan与运营商Vlan的匹配，根据客户需求指定vlanType，不带accessAction视为keep";
+        }
+
+        container "uni-vlan-spec" {
+          when "../../service-type = 'EVPL'";
+          uses "acc-con:vlan-spec";
+          description
+            "可针对client-vlan-spec进行vlan的交换exchange或者添加剥离 pop_push; 或者无client-vlan-spec，单纯push-pop新的vlan；或者不下发";
+        }
+
+      }
+
+      uses "nni-grouping";
+    }
+
+    output {
+      choice "err-or-ok" {
+        case "create-err" {
+          container "rpc-error" {
+            leaf "error-type" {
+              type "string";
+              default "rpc";
+            }
+
+            leaf "error-tag" {
+              type "string";
+            }
+
+            leaf "error-message" {
+              type "string";
+            }
+
+          }
+
+        }
+
+        case "create-ok" {
+          container "connection" {
+            uses "acc-con:connection";
+          }
+
+          container "create-component" {
+            leaf-list "vc-connection-name" {
+              type "string";
+              min-elements "0";
+            }
+
+            leaf-list "ftp-name" {
+              type "string" {
+                length "1..64";
+              }
+
+            }
+
+            leaf-list "ctp-name" {
+              type "string" {
+                length "1..64";
+              }
+
+            }
+
+          }
+
+          container "ports-with-role" {
+            leaf "eth-ptp-ctp" {
+              mandatory "true";
+              type "string";
+              description
+                "客户侧 PTP 的子 CTP";
+            }
+
+            leaf "eth-ftp-ctp" {
+              mandatory "true";
+              type "string";
+              description
+                "ETH FTP 的子 CTP";
+            }
+
+            leaf "eth-ftp" {
+              mandatory "true";
+              type "string";
+              description
+                "ETH FTP";
+            }
+
+            leaf "sdh-ftp" {
+              mandatory "true";
+              type "string";
+              description
+                "SDH FTP(主)";
+            }
+
+            leaf "sdh-ftp-p" {
+              type "string";
+              description
+                "SDH FTP(备)";
+            }
+
+            leaf "ul-odu-ctp" {
+              type "string";
+              description
+                "上联 ODU CTP(主)";
+            }
+
+            leaf "ul-odu-ctp-p" {
+              type "string";
+              description
+                "上联 ODU CTP(备),有保护才上报";
+            }
+
+            list "vc-cascade" {
+              min-elements "1";
+              key "eth-ftp-vc-ctp";
+              uses "vc-cascade";
+              description
+                "多个eth-ftp-ctp对应多个vc时隙";
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  grouping "nni-grouping" {
+    leaf "nni-tcm" {
+      type "uint16";
+      description
+        "when nni-protection-type = 'snc-s', needs to be issued to present the nni tcm of both work path and protection path";
+    }
+
+    container "primary-nni" {
+      uses "acc-otn:nni";
+      description
+        "ptp是ODU层协议时，nni参数中的nni-ts-detail、adaptation-type、odu-signal-type、switch-capability这几个参数必填，否则不用填";
+      container "ftp-client-vlan-spec" {
+        uses "acc-con:vlan-spec";
+        description
+          "";
+      }
+
+      container "ftp-vlan-spec" {
+        uses "acc-con:vlan-spec";
+        description
+          "EVPL必须下发，对于其他业务可选，accessAction=PUSH_POP";
+      }
+
+      leaf "tpid" {
+        type "acc-eth:tpid-difinition";
+      }
+
+    }
+
+    container "secondary-nni" {
+      uses "acc-otn:nni";
+      description
+        "ptp是ODU层协议时，nni参数中的nni-ts-detail、adaptation-type、odu-signal-type、switch-capability这几个参数必填,否则不用填";
+      container "ftp-client-vlan-spec" {
+        uses "acc-con:vlan-spec";
+        description
+          "";
+      }
+
+      container "ftp-vlan-spec" {
+        uses "acc-con:vlan-spec";
+        description
+          "EVPL必须下发，对于其他业务可选，accessAction=PUSH_POP";
+      }
+
+      leaf "tpid" {
+        type "acc-eth:tpid-difinition";
+      }
+
+    }
+
+    container "eos-pac" {
+      leaf "sdh-signal-type" {
+        mandatory "true";
+        type "acc-enum:signal-type";
+      }
+
+      leaf "vc-type" {
+        mandatory "true";
+        type "acc-enum:sdh-switch-type";
+      }
+
+      leaf-list "mapping-path" {
+        min-elements "1";
+        type "string" {
+          length "1..64";
+        }
+
+      }
+
+      leaf "sdh-signal-type-protect" {
+        type "acc-enum:signal-type";
+      }
+
+      leaf-list "mapping-path-protect" {
+        type "string" {
+          length "1..64";
+        }
+
+      }
+
+      leaf "lcas" {
+        type "boolean";
+        default "true";
+      }
+
+      leaf "hold-off" {
+        type "uint32";
+        default "0";
+        description
+          "unit: ms";
+      }
+
+      leaf "wtr" {
+        type "uint32";
+        default "300";
+        description
+          "unit: s";
+      }
+
+      leaf "tsd" {
+        type "boolean";
+        default "false";
+      }
+
+    }
+
+    container "multi-nni-pac" {
+      list "nnis" {
+        key "nni-ptp-name nni-ts-detail vcg-key";
+        uses "multi-nni-grouping";
+      }
+
+      description
+        "多路径业务时,传入此参数。此时primary-nni和secondary-nni不填";
+    }
+
+    container "multi-secondary-nni" {
+      list "secondary-nnis" {
+        key "nni-ptp-name nni-ts-detail vcg-key";
+        uses "multi-nni-grouping";
+        leaf "nni-protection-type" {
+          type "acc-pg:protection-type";
+          description
+            "指定保护类型";
+        }
+
+        container "primary-attr" {
+          leaf "nni-ptp-name" {
+            type "string" {
+              length "1..64";
+            }
+
+          }
+
+          leaf "nni-ts-detail" {
+            type "string" {
+              length "1..64";
+            }
+
+          }
+
+          leaf "vcg-key" {
+            type "string" {
+              length "1..64";
+            }
+
+            description
+              "填VC占用列表中的第一个mappingPath值";
+          }
+
+          description
+            "指定被保护的主用信息";
+        }
+
+      }
+
+      description
+        "用于多路径业务备用属性配置。可选";
+    }
+
+    container "lcas-attr" {
+      uses "lcas-attr-grouping";
+      description
+        "用于多路径业务的LCAS属性参数。当配置多路径业务时必填，否则不填。";
+    }
+
+    container "multi-svlan-attr" {
+      container "ftp-client-vlan-spec" {
+        uses "acc-con:vlan-spec";
+        description
+          "";
+      }
+
+      container "ftp-vlan-spec" {
+        uses "acc-con:vlan-spec";
+        description
+          "当需要打上或剖离SVLAN标签的EVPL业务时，必须下发，对于其他业务可选，accessAction=PUSH_POP";
+      }
+
+      leaf "tpid" {
+        type "acc-eth:tpid-difinition";
+      }
+
+      description
+        "用于多路径业务的S-VLAN属性参数。当配置多路径业务时可选";
+    }
+
+  }
+
+  grouping "multi-nni-grouping" {
+    uses "acc-otn:nni";
+    leaf "sdh-signal-type" {
+      type "acc-enum:signal-type";
+    }
+
+    leaf "vc-type" {
+      mandatory "true";
+      type "acc-enum:sdh-switch-type";
+    }
+
+    leaf "vcg-key" {
+      type "string" {
+        length "1..64";
+      }
+
+      description
+        "填VC占用列表中的第一个mappingPath值";
+    }
+
+    leaf-list "mapping-path" {
+      min-elements "1";
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    description
+      "多路径线路侧参数,ptp是ODU层协议时，nni参数中的nni-ts-detail、adaptation-type、odu-signal-type、switch-capability这几个参数必填，否侧除nni-ts-detail固定填字符串“0”外，其它参数都不用填";
+  }
+
+  grouping "lcas-attr-grouping" {
+    leaf "lcas" {
+      type "boolean";
+      default "false";
+    }
+
+    leaf "hold-off" {
+      type "uint32";
+      default "0";
+      description
+        "unit: ms";
+    }
+
+    leaf "wtr" {
+      type "uint32";
+      default "300";
+      description
+        "unit: s";
+    }
+
+    leaf "tsd" {
+      type "boolean";
+      default "false";
+    }
+
+  }
+
+  rpc "modify-vcg-connection-capacity" {
+    input {
+      leaf "eth-ftp-name" {
+        mandatory "true";
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "The name of eth ftp name.";
+      }
+
+      leaf "sdh-ftp-name" {
+        mandatory "true";
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "The name of sdh ftp name.";
+      }
+
+      leaf "sdh-protect-ftp-name" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "The name of the protect sdh ftp name.";
+      }
+
+      leaf-list "mapping-path" {
+        min-elements "1";
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "The mapping path list.";
+      }
+
+      leaf-list "mapping-path-protected" {
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "The protected mapping path list.";
+      }
+
+    }
+
+    output {
+      choice "err-or-ok" {
+        case "oper-err" {
+          container "rpc-error" {
+            leaf "error-type" {
+              type "string";
+              default "rpc";
+            }
+
+            leaf "error-tag" {
+              type "string";
+            }
+
+            leaf "error-message" {
+              type "string";
+            }
+
+          }
+
+        }
+
+        case "oper-ok" {
+          leaf-list "connection-name" {
+            type "string";
+          }
+
+          leaf-list "ctp-name" {
+            type "string" {
+              length "1..64";
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  rpc "get-eos-gfp-status" {
+    input {
+      leaf "eth-ftp-name" {
+        mandatory "true";
+        type "string";
+        description
+          "Eth Ftp 名称";
+      }
+
+    }
+
+    output {
+      leaf "fcs-status" {
+        type "boolean";
+        description
+          "FCS针对发送方向使能状态";
+      }
+
+      leaf "scrambling-code" {
+        type "acc-enum:scrambling-code";
+      }
+
+    }
+
+  }
+
+  rpc "set-eos-gfp-status" {
+    input {
+      leaf "eth-ftp-name" {
+        mandatory "true";
+        type "string";
+        description
+          "Eth Ftp 名称";
+      }
+
+      leaf "fcs-value" {
+        type "boolean";
+      }
+
+      leaf "scrambling-code" {
+        type "acc-enum:scrambling-code";
+      }
+
+    }
+
+  }
+
+  rpc "create-eth2sdh-connection" {
+    input {
+      uses "acc-con:create-connection";
+      leaf "eth-uni-protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "default lag";
+      }
+
+      leaf "sdh-uni-protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "按需指定vc sncp or msp";
+      }
+
+      container "eth-uni" {
+        leaf "uni-ptp-name" {
+          mandatory "true";
+          type "string";
+        }
+
+        leaf "second-uni-ptp-name" {
+          type "string";
+          description
+            "可选，保护口";
+        }
+
+        container "client-vlan-spec" {
+          uses "acc-con:vlan-spec";
+          description
+            "参考Eth业务章节";
+        }
+
+        container "uni-vlan-spec" {
+          uses "acc-con:vlan-spec";
+          description
+            "参考Eth业务章节";
+        }
+
+      }
+
+      container "sdh-uni" {
+        leaf "uni-ptp-name" {
+          mandatory "true";
+          type "string";
+        }
+
+        leaf "sdh-signal-type" {
+          mandatory "true";
+          type "acc-enum:signal-type";
+        }
+
+        leaf "vc-type" {
+          mandatory "true";
+          type "acc-enum:sdh-switch-type";
+        }
+
+        leaf-list "mapping-path" {
+          min-elements "1";
+          type "string";
+        }
+
+      }
+
+      container "second-sdh-uni" {
+        leaf "uni-ptp-name" {
+          type "string";
+        }
+
+        leaf "sdh-signal-type" {
+          type "acc-enum:signal-type";
+          description
+            "可与主用不一致";
+        }
+
+        leaf "vc-type" {
+          type "acc-enum:sdh-switch-type";
+          description
+            "需与主口保持一致";
+        }
+
+        leaf-list "mapping-path" {
+          type "string";
+          description
+            "可与主用不一致";
+        }
+
+        description
+          "仅有保护的时候才下发";
+      }
+
+      container "eos-pac" {
+        leaf "lcas" {
+          type "boolean";
+          default "true";
+        }
+
+        leaf "hold-off" {
+          type "uint32";
+          default "0";
+          description
+            "unit: ms";
+        }
+
+        leaf "wtr" {
+          type "uint32";
+          default "300";
+          description
+            "unit: s";
+        }
+
+        leaf "tsd" {
+          type "boolean";
+          default "false";
+        }
+
+      }
+
+    }
+
+    output {
+      choice "err-or-ok" {
+        case "create-err" {
+          container "rpc-error" {
+            leaf "error-type" {
+              type "string";
+              default "rpc";
+            }
+
+            leaf "error-tag" {
+              type "string";
+            }
+
+            leaf "error-message" {
+              type "string";
+            }
+
+          }
+
+        }
+
+        case "create-ok" {
+          container "connection" {
+            uses "acc-con:connection";
+          }
+
+          container "create-component" {
+            leaf-list "vc-connection-name" {
+              type "string";
+              min-elements "1";
+            }
+
+            leaf-list "ftp-name" {
+              type "string";
+            }
+
+            leaf-list "ctp-name" {
+              type "string";
+            }
+
+          }
+
+          container "ports-with-role" {
+            leaf "eth-ptp-ctp" {
+              mandatory "true";
+              type "string";
+              description
+                "客户侧 PTP 的子 CTP";
+            }
+
+            leaf "eth-ftp-ctp" {
+              mandatory "true";
+              type "string";
+              description
+                "ETH FTP 的子 CTP";
+            }
+
+            leaf "eth-ftp" {
+              mandatory "true";
+              type "string";
+              description
+                "ETH FTP";
+            }
+
+            list "vc-cascade" {
+              min-elements "1";
+              key "eth-ftp-vc-ctp";
+              leaf "eth-ftp-vc-ctp" {
+                mandatory "true";
+                type "string";
+              }
+
+              leaf "sdh-ptp-ctp" {
+                mandatory "true";
+                type "string";
+              }
+
+              leaf "prot-sdh-ptp-ctp" {
+                type "string";
+                description
+                  "msp场景无此端口，仅当sncp时上报";
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+}

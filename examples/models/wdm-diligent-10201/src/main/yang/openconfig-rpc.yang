@@ -1,0 +1,734 @@
+module openconfig-rpc {
+
+  yang-version "1";
+
+    // namespace
+  namespace "http://openconfig.net/yang/rpc";
+
+  prefix "oc-rpc";
+
+  // import 
+  import openconfig-types { prefix oc-types;revision-date "2020-06-30"; }
+  import openconfig-yang-types { prefix oc-yang;revision-date "2018-11-21"; }
+  import openconfig-platform { prefix oc-platform;revision-date "2020-06-30"; }
+  import openconfig-extensions { prefix oc-ext;revision-date "2018-10-17"; }
+  import openconfig-transport-types { prefix oc-opt-types;revision-date "2020-06-30"; }
+  import ietf-yang-types { prefix yang; }
+  import openconfig-performance-types { prefix oc-performance-types;revision-date "2020-06-30"; }
+  import openconfig-inet-types { prefix oc-inet;revision-date "2019-04-25"; }
+  import openconfig-platform-types { prefix oc-platform-types;revision-date "2020-06-30"; }
+
+
+  // meta
+  organization "private";
+
+  description
+    "This YANG module contains all RPCs for OLS systems.
+       This module includes all RPCs usable by NETCONF.";
+  
+  oc-ext:openconfig-version "1.7.2";
+
+  revision "2020-06-30" {     
+    description
+      "Initial release version";
+    reference "0.1.0";
+  }
+
+  // typedef statements 
+
+  typedef rpc-result {
+    type enumeration {
+      enum SUCCESS {
+	    value 0;
+        description
+        "The RPC action is success";
+      }
+      enum FAIL {
+	    value 1;
+        description
+        "The RPC action is fail";
+      }     
+    }    
+  }
+  
+  typedef file-type {
+    type enumeration {
+	  enum data {
+	    description "data";
+	  }
+	  enum upgrade {
+		description "upgrade";
+	  }
+	}
+  }
+  
+  typedef download-msg-type {
+    type enumeration {
+	  enum 0-success {
+	    description
+		  "success";
+	  }
+	  enum 100-socket-fail {
+	    description
+		  "socket-fail";
+	  }
+	  enum 110-auth-fail {
+	    description
+		  "auth-fail";
+	  }
+	  enum 120-file-not-exist {
+	    description
+		  "file-not-exist";
+	  }
+	  enum 130-timeout {
+	    description
+		  "timeout";
+	  }
+	  enum 140-validate-fail {
+	    description
+		  "validate-fail";
+	  }
+	  enum 150-file-type-mismatch {
+	    description
+		  "file-type-mismatch";
+	  }
+	  enum 999-custom {
+	    description
+		  "custom";
+	  }
+	}
+  }
+  
+  typedef upload-msg-type {
+    type enumeration {
+	  enum 0-success {
+	    description
+		  "success";
+	  }
+	  enum 100-socket-fail {
+	    description
+		  "socket-fail";
+	  }
+	  enum 110-auth-fail {
+	    description
+		  "auth-fail";
+	  }
+	  enum 130-timeout {
+	    description
+		  "timeout";
+	  }
+	  enum 150-file-type-mismatch {
+	    description
+		  "file-type-mismatch";
+	  }
+	  enum 999-custom {
+	    description
+		  "custom";
+	  }
+	}
+  }
+
+  // grouping statements 
+
+  // rpc statements
+
+  rpc reboot {
+    description 
+       "Reboot the specific component, i.e. card, transceiver";
+      input {
+        leaf component-name {
+          type leafref {
+            path "/oc-platform:components/oc-platform:component/" +
+             "oc-platform:name";
+          }
+          description
+             "target reboot components";
+        }       
+
+        leaf reboot-type {
+          type enumeration {
+            enum warm { 
+              description "warm reboot";
+            }
+            enum cold { 
+              description "cold reboot";
+            }
+          }
+          description 
+            "Reboot type";
+        }
+      }
+      output {
+        leaf reboot-result {
+          type rpc-result;
+          description 
+            "Result of the reboot operation";
+        }
+      }
+  }
+
+   
+  //rpc switch olp
+  rpc switch-olp {
+    description 
+       "Manual switch the aps to the desired port";
+      input {
+        
+        leaf name {
+          type leafref  {
+            path "/oc-platform:components/oc-platform:component/" +
+             "oc-platform:name";
+          }
+          description
+             "target aps name";
+        }  
+      
+        leaf switch-to-port {
+          type enumeration {
+            enum PRIMARY {
+              description
+                "manual switch the OLP to the primary line port";
+            }
+            enum SECONDARY {
+              description
+                "manual switch the OLP to the secondary line port";
+            }
+          }
+          description
+            "manual set the optical switch to a port";
+        }
+      }
+
+      output {
+        leaf switch-olp-result {
+          type rpc-result;
+          description 
+            "Result of the switch olp operation";
+        }
+      }
+  }
+  
+
+    // rpc set-datetime
+  rpc set-datetime {
+    description 
+       "Set equipments' datetime.";
+      input {
+        leaf datetime {
+          type yang:date-and-time;
+          description
+             "Target datetime to be set";
+        }       
+      }
+      output {
+        leaf set-datetime-result {
+          type rpc-result;
+          description 
+            "Result of the set operation";
+        }
+      }
+  }
+  
+  //rpc get oduk delay
+  rpc get-oduk-delay {
+    description 
+       "Get delay of ODUk.";
+      input {
+        leaf index {
+          type uint32;
+          description
+             "The index of logical channel(ODU)";
+        }  
+
+		leaf delay-test-times {
+          type uint32;
+          description
+             "Measurement repeated times.";
+        }  
+      }
+      output {
+        leaf get-delay-result {
+          type rpc-result;
+          description 
+            "Result of the set operation";
+        }
+		
+		container delay-data-value {
+          uses oc-opt-types:avg-min-max-instant-stats-precision2-ns;
+          description
+             "Test results of ODUk delay measurement";
+        }  	
+      }
+  }
+
+  //rpc download file
+  rpc download-file {
+    description 
+      "download file";
+	  input {
+	    leaf file-type {
+		  type file-type; 
+		  description 
+		    "file-type";
+	    }
+		leaf file-name {
+		  type string;
+		  description
+		    "file name";
+		}
+		leaf path {
+		  type string;
+		  description
+		    "[sftp]://hostname/directorypath/filename";
+		}
+		leaf username {
+		  type string;
+		  description
+		    "username";
+		}	
+	    leaf password {
+		  type string;
+		  description
+		    "password";
+		}	
+	  }
+	  output {
+	    leaf result {
+		  type rpc-result;
+          description 
+            "Result of download file";
+        }
+		leaf msg {
+		  type string;
+		  // type download-msg-type;
+		  description
+		    "fail reason";
+		}
+	  }  
+  }
+
+  //rpc upload file
+  rpc upload-file {
+    description 
+      "upload file";
+	  input {
+	    leaf path {
+		  type string;
+		  description
+		    "path";
+		}
+	    leaf file-type {
+		  type enumeration {
+		    enum data {
+			  value 0;
+			}
+			enum log {
+			  value 1;
+			}
+		  }
+	    }
+		leaf file-name {
+		  type string;
+		  description
+		    "file name";
+		}
+		leaf username {
+		  type string;
+		  description
+		    "username";
+		}	
+	    leaf password {
+		  type string;
+		  description
+		    "password";
+		}	
+	  }
+	  output {
+	    leaf result {
+		  type rpc-result;
+          description 
+            "Result of upload file";
+        }
+		leaf msg {
+		  type string;
+		  // type upload-msg-type;
+		  description
+		    "fail reason";
+		}
+		leaf md5 {
+		  type string;
+		  description
+		    "md5";
+		}
+		leaf file-name {
+		  type string;
+		  description
+		    "real file-name";
+		}
+	  }
+  }
+  
+  //rpc get-file-list
+  rpc get-file-list {
+    input {
+	  leaf file-type {
+	    type enumeration {
+		  enum data {
+		    value 0;
+		  }
+		  enum upgrade {
+		    value 1;
+		  }
+		  enum log {
+		    value 2;
+		  }
+		  enum all {
+		    value 3;
+		    description 
+			  "all file type";
+		  }
+		}
+	  }
+	}
+	output {
+      leaf result {
+		  type rpc-result;
+           description 
+            "Result of upload file";
+        }
+	  leaf msg {
+		type string;
+      }  	
+      list file-names {
+        key 'file-name';
+        leaf file-name {
+          type string;
+        }
+	  }  
+	}		  
+  }
+  
+  //rpc delete file
+  rpc delete-file {
+    description 
+      "delete file";
+	  input {
+	    leaf file-name {
+		  type string;
+		  description
+		    "file name";
+		}
+		leaf file-type {
+		  type file-type;
+		  description
+		    "file type";
+		}
+	  }
+	  output {
+	    leaf result {
+		  type rpc-result;
+          description 
+            "Result of upload file";
+        }
+		leaf msg {
+		  type string;
+		  description
+		    "fail reason";
+		}
+	  }
+  }
+
+  //rpc active file
+  rpc active-file {
+    description 
+      "active file";
+	  input {
+	    leaf file-name {
+		  type string;
+		  description
+		    "file name";
+		}
+		leaf file-type {
+		  type file-type;
+		  description
+		    "file type";
+		}
+	  }
+	  output {
+	    leaf result {
+		  type rpc-result;
+          description 
+            "Result of upload file";
+        }
+		leaf msg {
+		  type string;
+		  description
+		    "fail reason";
+		}
+	  }
+  }
+ 
+  //rpc get active status
+  rpc get-active-status {
+    description 
+      "get active status";
+	  input {
+	    leaf file-type {
+		  type file-type;
+		  description 
+		    "file type";
+	    }
+	  }
+	  output {
+	    leaf result {
+		  type enumeration {
+		    enum success {
+			  value 0;
+			}
+			enum fail {
+			  value 1;
+			}
+			enum processing {
+			  value 2;
+			}
+			enum SUCCESS {
+              value 3;
+            }
+            enum FAIL {
+              value 4;
+            }
+            enum PROCESSING {
+              value 5;
+            }
+		  }   
+          description 
+            "Result of upload file";
+        }
+		leaf msg {
+		  type string;
+		  description
+		    "fail reason";
+		}
+		leaf file-name {
+		  type string;
+		  description
+		    "file name";
+		}
+		leaf active-time {
+		  type yang:date-and-time;
+		  description
+		    "last active time";
+		}
+	  }
+  }
+
+//rpc get download status
+  rpc get-download-status {
+    description 
+      "get download status";
+	  input {
+	    leaf file-type {
+		  type file-type;
+		  description 
+		    "file type";
+	    }
+		leaf file-name {
+		  type string;
+		  description
+		    "file name";
+		}
+	  }
+	  output {
+	    leaf result {
+		  type enumeration {
+		    enum success {
+			  value 0;
+			}
+			enum fail {
+			  value 1;
+			}
+			enum processing {
+			  value 2;
+			}
+			enum SUCCESS {
+              value 3;
+            }
+            enum FAIL {
+              value 4;
+            }
+            enum PROCESSING {
+              value 5;
+            }
+		  }  
+        }
+        leaf msg {
+          type string;
+		  // type download-msg-type;
+		}
+	  }
+  }
+  
+//rpc reset counter
+  rpc reset-counter {
+    description 
+      "clear reset counter";  
+	  input {
+	    leaf pm-point {
+          type oc-performance-types:pm-point-ref;
+          description
+            "The path of the performance monitoring point";
+        }
+		leaf pm-point-type {
+          type oc-performance-types:pmp-object-type;
+          description
+            "Categories of performance monitoring objects.";
+        }
+	  }
+	  output {
+	    leaf result {
+		  type rpc-result;
+          description 
+            "Result of reset counter";
+        }
+	  }
+  }
+	
+//rpc set neighbor ip
+  rpc set-neighbor-ip {
+    description
+	  "set neighbor ip";
+	  input {
+	    leaf local-port{
+		  type string;
+		  description
+		    "local port of OSC";
+		}
+		leaf neighbor-id {
+		  type string;
+		  description
+		    "neighbor id";
+		}
+		leaf neighbor-ip-type {
+		  type enumeration {
+		    enum NM {
+			  value 0;
+			}
+			enum OSC {
+			  value 1;
+			}
+			enum LOOPBACK {
+			  value 2;
+			}
+		  }
+          description
+		    "neighbor ip type";
+		}
+		leaf neighbor-ip {
+		  type oc-inet:ipv4-address;
+		  description
+		    "neighbor ip";
+		}
+		leaf neighbor-port-name {
+		  type string;
+		  description
+		    "neighbor port name";
+		}
+		leaf neighbor-prefix-length {
+		  type uint8;
+		  description
+		    "subnet mask code length";
+		}
+		leaf neighbor-gateway {
+		  type oc-inet:ipv4-address;
+		  description
+		    "neighbor gateway";
+		}
+	  }
+	  output {
+	    leaf result {
+		  type rpc-result;
+          description
+            "Result of reset counter";
+        }
+		leaf msg {
+		  type string;
+		  description
+		    "fail reason";
+		}
+      }
+  }
+  
+//rpc get ne info
+  rpc get-ne-info {
+    description
+	  "get ne info";
+	  output {
+	    leaf ne-type {
+		  type string;
+		  description
+		    "ne type";
+		}
+		leaf vendor {
+		  type string;
+		  description
+		    "vendor";
+		}
+		leaf chassis-type {
+		  type oc-platform-types:component-chassis-type;
+		  description
+		    "chassis type";
+		}
+	    leaf ola {
+	      type boolean;
+	   	  description 
+		    "whether chassis is used as ola ";
+		}
+	    leaf result {
+		  type rpc-result;
+          description 
+            "Result of reset counter";
+        }
+	    leaf msg {
+		  type string;
+		  description
+		    "fail reason";
+		}
+      }
+  }
+
+  
+  //rpc MCU switch
+  rpc switch-mcu {
+    description 
+       "Manual switch the MCU to the standby card";
+      input {
+      
+        leaf switch-target {
+          type leafref {
+            path "/oc-platform:components/oc-platform:component/" +
+             "oc-platform:name";
+          }
+          description
+            "manual switch the MCU to target card";
+        }
+      }
+
+      output {
+        leaf result {
+          type rpc-result;
+          description 
+            "Result of the switch mcu operation";
+        }
+		leaf msg {
+		  type string;
+		  description
+		    "fail reason or success msg";
+		}
+      }
+  }
+		  
+  // notification statements
+
+}
+
+

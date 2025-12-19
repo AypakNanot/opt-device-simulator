@@ -1,0 +1,307 @@
+module "acc-connection" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-connection";
+  prefix "acc-con";
+  import "acc-devm" {
+    prefix "acc-devm";
+  }
+
+  import "acc-yang-types" {
+    prefix "acc-type";
+  }
+
+  revision "2024-07-02" {
+    description
+      "M-OTN 2.0 管控与设备双向减负调优";
+  }
+
+  revision "2021-09-24" {
+    description
+      "uniform date for motn";
+  }
+
+  typedef "vlan-type" {
+    type "enumeration" {
+      enum "c-tag" {
+        value "0";
+        description
+          "c-tag";
+      }
+
+      enum "s-tag" {
+        value "1";
+        description
+          "s-tag";
+      }
+
+      enum "un-tag" {
+        value "2";
+        description
+          "no-tag";
+      }
+
+    }
+
+    description
+      "vlan type";
+  }
+
+  typedef "access-action" {
+    type "enumeration" {
+      enum "keep" {
+        value "0";
+        description
+          "keep vlan";
+      }
+
+      enum "push_pop" {
+        value "1";
+        description
+          "当clientVlan客户vlan没带，但上行放向又要求带着vlan出去的时候";
+      }
+
+      enum "exchange" {
+        value "2";
+        description
+          "exchange vlan";
+      }
+
+      enum "pop_push" {
+        value "3";
+        description
+          "与push-pop的作用相反，当带着客户vlan，但出去的时候想剥离掉的时候，回来的时候没带，自动加上vlan回给客户侧";
+      }
+
+    }
+
+    description
+      "vlan access action";
+  }
+
+  typedef "connection-direction" {
+    type "enumeration" {
+      enum "up" {
+        value "1";
+        description
+          "UNI to NNI direction";
+      }
+
+      enum "down" {
+        value "2";
+        description
+          "NNI to UNI direction";
+      }
+
+    }
+
+  }
+
+  grouping "vlan-spec" {
+    leaf "vlan-id" {
+      when "../vlan-type != 'un-tag'";
+      type "string";
+      description
+        "目前阶段按一个业务只能一个vlanid处理，在智能光收代管的vlan配置情况下，有一次性配置id范围的需要";
+    }
+
+    leaf "vlan-priority" {
+      when "../vlan-type != 'un-tag'";
+      type "uint64" {
+        range "0..7";
+      }
+
+      default "0";
+    }
+
+    leaf "access-action" {
+      type "access-action";
+    }
+
+    leaf "vlan-type" {
+      type "vlan-type";
+    }
+
+  }
+
+  grouping "capacity" {
+    choice "cir-or-totalsize" {
+      case "for-totalsize" {
+        leaf "total-size" {
+          mandatory "true";
+          type "uint64";
+          description
+            "针对ODU,SDH业务， OSU需要根据业务场景而定是cir还是totalsize ";
+        }
+
+      }
+
+      case "for-cir" {
+        leaf "cir" {
+          mandatory "true";
+          type "uint64";
+          description
+            "针对ETH,EOS,EOOSU业务， OSU需要根据业务场景而定是cir还是totalsize";
+        }
+
+        leaf "pir" {
+          mandatory "true";
+          type "uint64";
+          description
+            "针对ETH,EOS,EOOSU业务， OSU需要根据业务场景而定是cir还是totalsize";
+        }
+
+        leaf "cbs" {
+          type "uint64";
+          description
+            "暂时废弃，不上报";
+        }
+
+        leaf "pbs" {
+          type "uint64";
+          description
+            "暂时废弃，不上报";
+        }
+
+      }
+
+    }
+
+  }
+
+  grouping "connection" {
+    leaf "name" {
+      mandatory "true";
+      type "string";
+      description
+        "connection name must be unique in one device";
+    }
+
+    leaf "label" {
+      mandatory "true";
+      type "string";
+      description
+        "业务ID标签，为方便网管上层端到端串接；需要支持管控修改，支持中文";
+    }
+
+    leaf "layer-protocol-name" {
+      mandatory "true";
+      type "identityref" {
+        base "acc-type:layer-protocol-name";
+      }
+
+    }
+
+    container "requested-capacity" {
+      uses "capacity";
+    }
+
+    container "egress-capacity" {
+      uses "capacity";
+      description
+        "It is used only for eth connection.";
+    }
+
+    leaf-list "ctp" {
+      type "leafref" {
+        path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+      }
+
+      min-elements "2";
+      description
+        "只返回与当前业务下发时layerProtocolName相同协议层的CTP";
+    }
+
+    leaf "service-type" {
+      mandatory "true";
+      type "acc-devm:service-type";
+    }
+
+    leaf-list "pg-id" {
+      type "uint16";
+      description
+        "与该connection关联的所有保护组ID。解释：创建业务同步返回的结果里，建议返回所有相关的pgId。（有争议的是eos业务，内部VC的pgId建议返回，但不强制）； 但如果是创建业务后再查询，可以不返回子层connection中的pgId，只返回外层的所有pgId";
+    }
+
+    leaf-list "a-ctp" {
+      type "leafref" {
+        path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+      }
+
+      config "false";
+      description
+        "The source CTP.Don't fill this field,if the connection is Bi-direction connection.";
+    }
+
+    leaf-list "z-ctp" {
+      type "leafref" {
+        path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+      }
+
+      config "false";
+      description
+        "The destination CTP.Don't fill this field,if the connection is Bi-direction connection.";
+    }
+
+    leaf "group-id" {
+      type "uint16";
+      config "false";
+      description
+        "The Group id.Don't fill this field,if the connection is Bi-direction connection.";
+    }
+
+  }
+
+  grouping "create-connection" {
+    leaf "label" {
+      mandatory "true";
+      type "string";
+      description
+        "创建业务时不再下发name，由设备自己生成，可以下发这个新增的可选的label标识";
+    }
+
+    leaf "service-type" {
+      mandatory "true";
+      type "acc-devm:service-type";
+    }
+
+    leaf "layer-protocol-name" {
+      mandatory "true";
+      type "identityref" {
+        base "acc-type:layer-protocol-name";
+      }
+
+    }
+
+    container "requested-capacity" {
+      uses "capacity";
+    }
+
+    container "egress-capacity" {
+      uses "capacity";
+      description
+        "It is used only for eth connection creation.";
+    }
+
+    leaf "direction" {
+      type "connection-direction";
+      description
+        "connection direction.Don't input this parameter,if the creating connection is Bi-direction connection.";
+    }
+
+    description
+      "create connection";
+  }
+
+  container "connections" {
+    list "connection" {
+      key "name";
+      uses "connection";
+      description
+        "connection list";
+    }
+
+    description
+      "connection container";
+  }
+
+}

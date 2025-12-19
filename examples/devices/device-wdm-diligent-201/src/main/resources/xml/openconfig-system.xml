@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <data xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+        <system xmlns="http://openconfig.net/yang/system">
+            <config>
+                <hostname>mss25dci-31</hostname>
+                <domain-name>www.optel.com.cn</domain-name>
+            </config>
+            <state>
+                <hostname>mss25dci-31</hostname>
+                <domain-name>www.optel.com.cn</domain-name>
+                <current-datetime>2025-11-04T16:36:24+08:00</current-datetime>
+                <boot-time>1761382812000000000</boot-time>
+            </state>
+            <clock>
+                <config>
+                    <timezone-name>+08:00</timezone-name>
+                </config>
+                <state>
+                    <timezone-name>+08:00</timezone-name>
+                </state>
+            </clock>
+            <ntp>
+                <config>
+                    <enabled>true</enabled>
+                </config>
+                <state>
+                    <enabled>true</enabled>
+                </state>
+                <servers>
+                    <server>
+                        <address>213.213.7.209</address>
+                        <config>
+                            <address>213.213.7.209</address>
+                            <port>123</port>
+                            <version>4</version>
+                        </config>
+                        <state>
+                            <address>213.213.7.209</address>
+                            <port>123</port>
+                            <version>4</version>
+                        </state>
+                    </server>
+                </servers>
+            </ntp>
+            <alarms>
+                <alarm>
+                    <id>1</id>
+                    <state>
+                        <id>1</id>
+                        <resource>OLP-1-2</resource>
+                        <time-created>1761382875000000000</time-created>
+                        <severity xmlns:oc-alarm-types="http://openconfig.net/yang/alarms/types">oc-alarm-types:CRITICAL</severity>
+                        <type-id>HARDWARE-ALARM</type-id>
+                        <alarm-abbreviate>EQPT_ABSENCE_WARNING</alarm-abbreviate>
+                    </state>
+                </alarm>
+                <alarm>
+                    <id>27</id>
+                    <state>
+                        <id>27</id>
+                        <resource>PORT-1-6-L1</resource>
+                        <time-created>1761382894000000000</time-created>
+                        <severity xmlns:oc-alarm-types="http://openconfig.net/yang/alarms/types">oc-alarm-types:CRITICAL</severity>
+                        <type-id>HARDWARE-ALARM</type-id>
+                        <alarm-abbreviate>EQPT_TRANSCEIVER_MISMATCH</alarm-abbreviate>
+                    </state>
+                </alarm>
+                <alarm>
+                    <id>26</id>
+                    <state>
+                        <id>26</id>
+                        <resource>PORT-1-6-L1</resource>
+                        <time-created>1761382894000000000</time-created>
+                        <severity xmlns:oc-alarm-types="http://openconfig.net/yang/alarms/types">oc-alarm-types:CRITICAL</severity>
+                        <type-id>HARDWARE-ALARM</type-id>
+                        <alarm-abbreviate>EQPT_TRANSCEIVER_REMOVE</alarm-abbreviate>
+                    </state>
+                </alarm>
+                <alarm>
+                    <id>2</id>
+                    <state>
+                        <id>2</id>
+                        <resource>PSU-1-22</resource>
+                        <time-created>1761382881000000000</time-created>
+                        <severity xmlns:oc-alarm-types="http://openconfig.net/yang/alarms/types">oc-alarm-types:CRITICAL</severity>
+                        <type-id>ENVIRONMENT-ALARM</type-id>
+                        <alarm-abbreviate>PWR_NO_INPUT</alarm-abbreviate>
+                    </state>
+                </alarm>
+                <alarm>
+                    <id>3</id>
+                    <state>
+                        <id>3</id>
+                        <resource>PSU-1-22</resource>
+                        <time-created>1761382881000000000</time-created>
+                        <severity xmlns:oc-alarm-types="http://openconfig.net/yang/alarms/types">oc-alarm-types:CRITICAL</severity>
+                        <type-id>ENVIRONMENT-ALARM</type-id>
+                        <alarm-abbreviate>PWR_NO_OUTPUT</alarm-abbreviate>
+                    </state>
+                </alarm>
+            </alarms>
+        </system>
+    </data>
+
+</rpc-reply>

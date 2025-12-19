@@ -1,0 +1,894 @@
+module "acc-sdh" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-sdh";
+  prefix "acc-sdh";
+  import "acc-devm" {
+    prefix "acc-devm";
+  }
+
+  import "acc-connection" {
+    prefix "acc-con";
+  }
+
+  import "acc-otn" {
+    prefix "acc-otn";
+  }
+
+  import "acc-yang-types" {
+    prefix "acc-type";
+  }
+
+  import "acc-enum" {
+    prefix "acc-enum";
+  }
+
+  import "acc-protection-group" {
+    prefix "acc-pg";
+  }
+
+  revision "2024-07-02" {
+    description
+      "M-OTN2.0 管控与设备双向调优，减负";
+  }
+
+  revision "2021-01-31" {
+    description
+      "for M-OTN 1.0";
+  }
+
+  identity "SDH" {
+    base "acc-type:layer-protocol-name";
+  }
+
+  grouping "vcg-pac" {
+    leaf "vc-type" {
+      mandatory "true";
+      type "acc-enum:sdh-switch-type";
+    }
+
+    leaf "lcas" {
+      type "boolean";
+      default "false";
+    }
+
+    leaf "hold-off" {
+      type "uint32";
+      default "0";
+      description
+        "unit: ms";
+    }
+
+    leaf "wtr" {
+      type "uint32";
+      default "300";
+      description
+        "unit: s";
+    }
+
+    leaf "tsd" {
+      type "boolean";
+      default "false";
+    }
+
+    leaf "tx-number" {
+      type "uint64";
+      default "0";
+      config "false";
+      description
+        "The actual number of members sent by the LCAS group.";
+    }
+
+    leaf "rx-number" {
+      type "uint64";
+      default "0";
+      config "false";
+      description
+        "The actual number of members received by the LCAS group.";
+    }
+
+    leaf "so-handshake-state" {
+      type "boolean";
+      default "false";
+      config "false";
+      description
+        "The handshake state of the source end.";
+    }
+
+  }
+
+  typedef "e1-phy-type" {
+    type "enumeration" {
+      enum "75o" {
+        value "1";
+        description
+          "Units: Ω 欧姆. ";
+      }
+
+      enum "120o" {
+        value "2";
+        description
+          "Units: Ω 欧姆. ";
+      }
+
+    }
+
+    description
+      "E1 interface type.";
+  }
+
+  typedef "e1-opcode" {
+    type "enumeration" {
+      enum "HDB3" {
+        value "1";
+        description
+          "HBD3";
+      }
+
+      enum "AMI" {
+        value "2";
+        description
+          "AMI";
+      }
+
+    }
+
+    description
+      "Encoding format of PDH ptp port. ";
+  }
+
+  typedef "e1-frame-type" {
+    type "enumeration" {
+      enum "unframe" {
+        value "1";
+        description
+          "unframe";
+      }
+
+      enum "PCM30" {
+        value "2";
+        description
+          "PCM30";
+      }
+
+      enum "PCM31" {
+        value "3";
+        description
+          "PCM31";
+      }
+
+      enum "PCM30C" {
+        value "4";
+        description
+          "PCM30C";
+      }
+
+      enum "PCM31C" {
+        value "5";
+        description
+          "PCM31C";
+      }
+
+    }
+
+    description
+      "E1 frame type. ";
+  }
+
+  grouping "sdh-ftp" {
+    leaf "sdh-type" {
+      type "acc-enum:signal-type";
+      description
+        "仅仅因为yang语法引用问题去掉mandatory true，但从业务角度这参数是必填的";
+    }
+
+    leaf "vc-type" {
+      type "acc-enum:sdh-switch-type";
+      description
+        "仅仅因为yang语法引用问题去掉mandatory true，但从业务角度这参数是必填的";
+    }
+
+    leaf-list "mapping-path" {
+      min-elements "0";
+      type "string";
+      description
+        "仅仅因为yang语法引用问题 min-element改为0，但从业务角度这参数是必填的";
+    }
+
+    leaf "time-slot" {
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+  }
+
+  grouping "trail-trace-value" {
+    leaf "actual-tx" {
+      type "string";
+      description
+        "实际发送值";
+    }
+
+    leaf "expected-rx" {
+      type "string";
+      description
+        "期望接收值";
+    }
+
+    leaf "actual-rx" {
+      type "string";
+      config "false";
+      description
+        "实际接收值";
+    }
+
+  }
+
+  augment "/acc-devm:ptps/acc-devm:ptp" {
+    container "sdh-mapping-pac" {
+      leaf-list "supported-sdh-signal-types" {
+        type "acc-enum:signal-type";
+        config "false";
+      }
+
+      leaf-list "switch-capability" {
+        type "acc-enum:sdh-switch-type";
+        config "false";
+      }
+
+    }
+
+  }
+
+  augment "/acc-devm:ptps/acc-devm:ptp" {
+    when "acc-devm:layer-protocol-name = 'acc-sdh:SDH'";
+    container "sdh-ptp-pac" {
+      leaf "current-sdh-signal-type" {
+        mandatory "true";
+        type "acc-enum:signal-type";
+      }
+
+      leaf-list "supported-sdh-signal-types" {
+        min-elements "1";
+        type "acc-enum:signal-type";
+        config "false";
+      }
+
+      leaf-list "switch-capability" {
+        min-elements "1";
+        type "acc-enum:sdh-switch-type";
+        config "false";
+      }
+
+      leaf "e1-phy-type" {
+        config "false";
+        type "e1-phy-type";
+        description
+          "条件可选，仅仅current-signal-type=E1 时";
+      }
+
+      leaf "e1-opcode" {
+        type "e1-opcode";
+        description
+          "条件可选，仅仅current-signal-type=E1 时";
+      }
+
+      leaf "e1-frame-type" {
+        type "e1-frame-type";
+        description
+          "条件可选，仅仅current-signal-type=E1 时";
+      }
+
+    }
+
+  }
+
+  augment "/acc-devm:ftps/acc-devm:ftp" {
+    when "acc-devm:layer-protocol-name = 'acc-sdh:SDH'";
+    container "sdh-ftp-pac" {
+      leaf "sdh-signal-type" {
+        mandatory "true";
+        type "acc-enum:signal-type";
+      }
+
+      leaf-list "switch-capability" {
+        min-elements "1";
+        type "acc-enum:sdh-switch-type";
+        config "false";
+      }
+
+      leaf "service-mapping-mode" {
+        type "acc-enum:adaptation-type";
+      }
+
+    }
+
+  }
+
+  augment "/acc-devm:ctps/acc-devm:ctp" {
+    when "acc-devm:layer-protocol-name = 'acc-sdh:SDH'";
+    container "vc-ctp-pac" {
+      leaf "vc-type" {
+        mandatory "true";
+        type "acc-enum:sdh-switch-type";
+      }
+
+      leaf "mapping-path" {
+        mandatory "true";
+        type "string" {
+          length "1..64";
+        }
+
+      }
+
+    }
+
+  }
+
+  rpc "create-sdh-connection" {
+    input {
+      uses "acc-con:create-connection";
+      leaf "service-mapping-mode" {
+        type "acc-enum:adaptation-type";
+      }
+
+      leaf "uni-protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "default msp-1-plus-1";
+      }
+
+      leaf "nni-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      leaf "nni2-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      container "sdh-uni" {
+        leaf "uni-ptp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf "vc-type" {
+          type "acc-enum:sdh-switch-type";
+        }
+
+        leaf-list "mapping-path" {
+          min-elements "1";
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf "time-slot" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        description
+          "only for UNI-NNI ";
+      }
+
+      container "second-sdh-uni" {
+        leaf "uni-ptp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf "vc-type" {
+          type "acc-enum:sdh-switch-type";
+        }
+
+        leaf-list "mapping-path" {
+          min-elements "1";
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf "time-slot" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        description
+          "only for UNI-NNI ";
+      }
+
+      container "sdh-nni" {
+        leaf "nni-ptp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf "vc-type" {
+          type "acc-enum:sdh-switch-type";
+        }
+
+        leaf-list "mapping-path" {
+          min-elements "1";
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf "time-slot" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        description
+          "only for sdhUNI to sdhNNI";
+      }
+
+      container "second-sdh-nni" {
+        leaf "nni-ptp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf "vc-type" {
+          type "acc-enum:sdh-switch-type";
+        }
+
+        leaf-list "mapping-path" {
+          min-elements "1";
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf "time-slot" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        description
+          "only for sdhUNI to sdhNNI";
+      }
+
+      container "primary-nni" {
+        uses "acc-otn:nni";
+        container "sdh-ftp" {
+          uses "sdh-ftp";
+        }
+
+        description
+          "primary nni, mandatory true";
+      }
+
+      container "secondary-nni" {
+        uses "acc-otn:nni";
+        container "sdh-ftp" {
+          uses "sdh-ftp";
+        }
+
+        description
+          "only for service with protection. Optional";
+      }
+
+      container "primary-nni2" {
+        uses "acc-otn:nni";
+        container "sdh-ftp" {
+          uses "sdh-ftp";
+        }
+
+        description
+          "only NNI2NNI mode, optional!";
+      }
+
+      container "secondary-nni2" {
+        uses "acc-otn:nni";
+        container "sdh-ftp" {
+          uses "sdh-ftp";
+        }
+
+        description
+          "only NNI2NNI mode and with protection. optional";
+      }
+
+    }
+
+    output {
+      choice "err-or-ok" {
+        case "oper-err" {
+          container "rpc-error" {
+            leaf "error-type" {
+              type "string";
+              default "rpc";
+            }
+
+            leaf "error-tag" {
+              type "string";
+            }
+
+            leaf "error-message" {
+              type "string";
+            }
+
+          }
+
+        }
+
+        case "oper-ok" {
+          list "connection" {
+            key "name";
+            uses "acc-con:connection";
+          }
+
+          container "create-component" {
+            leaf-list "ftp-name" {
+              min-elements "1";
+              type "string" {
+                length "1..64";
+              }
+
+            }
+
+            leaf-list "ctp-name" {
+              min-elements "1";
+              type "string" {
+                length "1..64";
+              }
+
+            }
+
+          }
+
+          container "ports-with-role" {
+            leaf "sdh-ptp-ctp" {
+              type "string";
+              description
+                "客户侧 PTP 的子 CTP(for UNI-NNI)";
+            }
+
+            leaf "ul-sdh-ftp" {
+              mandatory "true";
+              type "string";
+              description
+                "SDH FTP(主)";
+            }
+
+            leaf "ul-sdh-ftp-ctp" {
+              mandatory "true";
+              type "string";
+              description
+                "SDH FTP(主)的SDH CTP";
+            }
+
+            leaf "ul-sdh-ftp-p" {
+              type "string";
+              description
+                "SDH FTP(备) 有保护才上报";
+            }
+
+            leaf "ul-sdh-ftp-ctp-p" {
+              type "string";
+              description
+                "SDH FTP(备)的SDH CTP(有保护才上报)";
+            }
+
+            leaf "dl-sdh-ftp" {
+              type "string";
+              description
+                "下联 SDH FTP(主) (for NNI-NNI)";
+            }
+
+            leaf "dl-sdh-ftp-ctp" {
+              type "string";
+              description
+                "下联 SDH FTP(主)的SDH CTP (for NNI-NNI)";
+            }
+
+            leaf "dl-sdh-ftp-p" {
+              type "string";
+              description
+                "下联 SDH FTP(备)(for NNI-NNI有保护才上报)";
+            }
+
+            leaf "dl-sdh-ftp-ctp-p" {
+              type "string";
+              description
+                "下联 SDH FTP(备)的SDH CTP(for NNI-NNI有保护才上报)";
+            }
+
+            leaf "ul-odu-ctp" {
+              mandatory "true";
+              type "string";
+              description
+                "上联 ODU CTP(主)";
+            }
+
+            leaf "ul-odu-ctp-p" {
+              type "string";
+              description
+                "上联 ODU CTP(备)（有保护则上报）";
+            }
+
+            leaf "dl-odu-ctp" {
+              type "string";
+              description
+                "下联 ODU CTP(主)（only NNI-NNI）";
+            }
+
+            leaf "dl-odu-ctp-p" {
+              type "string";
+              description
+                "下联 ODU CTP(备)（only NNI-NNI有保护才上报）";
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  rpc "batch-create-sdh-connection" {
+    input {
+      uses "acc-con:create-connection";
+      leaf "service-mapping-mode" {
+        type "acc-enum:adaptation-type";
+        description
+          "上行城域方向的业务映射模式，默认CBR_BMP";
+      }
+
+      leaf "nni1-protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "若有保护，默认VC SNCP";
+      }
+
+      leaf "nni2-protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "若有保护，默认MSP 1+1";
+      }
+
+      container "primary-nni1" {
+        uses "acc-otn:nni";
+        container "sdh-ftp" {
+          uses "sdh-ftp";
+        }
+
+      }
+
+      container "secondary-nni1" {
+        uses "acc-otn:nni";
+        container "sdh-ftp" {
+          uses "sdh-ftp";
+        }
+
+        description
+          "only for service with protection. Optional";
+      }
+
+      container "primary-nni2" {
+        uses "acc-otn:nni";
+        container "sdh-ftp" {
+          uses "sdh-ftp";
+        }
+
+      }
+
+      container "secondary-nni2" {
+        uses "acc-otn:nni";
+        container "sdh-ftp" {
+          uses "sdh-ftp";
+        }
+
+      }
+
+    }
+
+    output {
+      choice "err-or-ok" {
+        case "oper-err" {
+          container "rpc-error" {
+            leaf "error-type" {
+              type "string";
+              default "rpc";
+            }
+
+            leaf "error-tag" {
+              type "string";
+            }
+
+            leaf "error-message" {
+              type "string";
+            }
+
+          }
+
+        }
+
+        case "oper-ok" {
+          container "create-component" {
+            leaf-list "connection-name" {
+              min-elements "1";
+              type "string";
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  rpc "get-vc-trail-trace" {
+    input {
+      leaf "tp-name" {
+        mandatory "true";
+        type "string";
+        description
+          "sdh ftp/ptp 名称";
+      }
+
+      leaf "mapping-path" {
+        mandatory "true";
+        type "string";
+      }
+
+      leaf "vc-type" {
+        mandatory "true";
+        type "acc-enum:sdh-switch-type";
+      }
+
+    }
+
+    output {
+      container "vc-trail-trace-values" {
+        list "vc-trail-trace-value" {
+          key "trail-trace-type";
+          leaf "trail-trace-type" {
+            type "acc-enum:trail-trace-type";
+          }
+
+          leaf "actual-tx" {
+            mandatory "true";
+            type "string";
+            description
+              "实际发送值";
+          }
+
+          leaf "expected-rx" {
+            type "string";
+            description
+              "期望接收值";
+          }
+
+          leaf "actual-rx" {
+            mandatory "true";
+            type "string";
+            description
+              "实际接收值";
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  rpc "set-vc-trail-trace" {
+    input {
+      leaf "tp-name" {
+        mandatory "true";
+        type "string";
+        description
+          "sdh ftp/ptp 名称";
+      }
+
+      leaf "mapping-path" {
+        mandatory "true";
+        type "string";
+      }
+
+      leaf "vc-type" {
+        mandatory "true";
+        type "acc-enum:sdh-switch-type";
+      }
+
+      leaf "trail-trace-type" {
+        mandatory "true";
+        type "acc-enum:trail-trace-type";
+      }
+
+      leaf "actual-tx" {
+        mandatory "true";
+        type "string";
+        description
+          "实际发送值";
+      }
+
+      leaf "expected-rx" {
+        mandatory "true";
+        type "string";
+        description
+          "期望接收值";
+      }
+
+    }
+
+  }
+
+  rpc "get-sdh-termination-point-data" {
+    input {
+      leaf "sdh-tp-name" {
+        mandatory "true";
+        type "string";
+        description
+          "sdh ftp/ptp 名称";
+      }
+
+    }
+
+    output {
+      uses "trail-trace-value";
+    }
+
+    description
+      "PTP或 FTP的J0 字节的开销";
+  }
+
+  rpc "set-sdh-termination-point-data" {
+    input {
+      leaf "tp-name" {
+        mandatory "true";
+        type "string";
+        description
+          "sdh ftp/ptp 名称";
+      }
+
+      leaf "actual-tx" {
+        mandatory "true";
+        type "string";
+        description
+          "实际发送值";
+      }
+
+      leaf "expected-rx" {
+        mandatory "true";
+        type "string";
+        description
+          "期望接收值";
+      }
+
+    }
+
+  }
+
+}

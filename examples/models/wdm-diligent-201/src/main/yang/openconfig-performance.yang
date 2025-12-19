@@ -1,0 +1,332 @@
+module openconfig-performance {
+
+    yang-version "1";
+
+    // namespace
+    namespace "http://openconfig.net/yang/performance";
+
+    prefix "oc-pm";
+
+    // import some basic types
+    import openconfig-performance-types { prefix oc-performance-types;revision-date "2020-06-30"; }
+    import openconfig-yang-types { prefix oc-yang;revision-date "2018-11-21"; }
+    import ietf-yang-types { prefix yang; }
+    // meta
+    organization "OpenConfig working group";
+
+    contact
+    "OpenConfig working group
+    www.openconfig.net";
+
+    description
+    "This module is designed to support the configuration of 
+    traditional performance data, including enabling/disabling 
+    of performance monitoring data. And TCA threshold configuration
+    of performance data supporting TCA";
+
+    revision "2020-06-30" {
+    description
+    "Initial revision";
+    reference "0.1.0";
+    }
+
+    // extension statements
+
+    // feature statements
+
+    // identity statements
+
+    // typedef statements
+
+    // grouping statements
+
+    grouping performance-tca-config {
+        description
+            "TCA configuration data for performance monitoring points";
+        
+        leaf threshold-value-high {
+            type decimal64 {
+                fraction-digits 10;
+            }
+            description
+                "Performance threshold (upper limit)";
+        }
+        
+        leaf threshold-value-low {
+            type decimal64 {
+                fraction-digits 10;
+            }
+            description
+                "Performance threshold (lower limit)";
+        }
+    }
+
+    grouping performance-tca-top {
+        description
+          "Top-level grouping for TCA data";
+        
+        container tcas {
+            description 
+               "Enclosed data for tca.";
+            list tca {
+                key "pm-parameter pm-point pm-point-type pm-granularity";
+                description
+                    "List of objects that support TCA configuration";
+
+                leaf pm-point {
+                    type oc-performance-types:pm-point-ref;
+                    description
+                        "The path of the performance monitoring point";
+                }
+                
+                leaf pm-parameter {
+                    type oc-performance-types:pm-parameter-type;
+                    description
+                        "Types of performance monitoring parameters";
+                }
+                
+                leaf pm-point-type {
+                    type oc-performance-types:pmp-object-type;
+                    description
+                        "Categories of performance monitoring objects.";
+                }
+                
+                leaf pm-granularity {
+                    type oc-performance-types:pm-granularity-type;
+                    description
+                        "granularity of performance data";
+                }
+                
+                uses performance-tca-config;
+            }
+        }
+    }
+    
+    grouping performance-pmp-config {
+        description
+            "Configuration data for performance monitoring points";
+
+        leaf pm-point-enable {
+            mandatory true;
+            type boolean;
+            description
+                "Enable (true) or disable (false) the performance monitoring point for the object";
+        }
+    }
+
+    grouping performance-pmp-top {
+        description
+            "Top-level grouping for performance point in the performance inventory";
+        
+        container pmps {
+            description 
+               "Enclosed data for pmp.";
+            list pmp {
+                key "pm-point";
+                description
+                    "List of performance point, keyed by path of performance.";
+
+                leaf pm-point {
+                    type oc-performance-types:pm-point-ref;
+                    description
+                        "The path of the performance monitoring point";
+                }
+
+                uses performance-pmp-config;
+            }
+        }
+    }
+
+    grouping performance-config {
+        description
+            "Configuration data for performance";
+    }
+
+    grouping performance-state {
+        description
+            "Operational data for performance";
+    }
+
+    grouping performance-top {
+        description
+            "Top-level grouping for performance data";
+        
+        container performance {
+            description
+                "Top-level container for performance data";
+
+            container config {
+                description
+                    "Configuration data for performance data";
+
+                uses performance-config;
+            }
+
+            container state {
+                config false;
+                description
+                    "Operational state data for performance data";
+
+                uses performance-config;
+                uses performance-state;
+            }
+
+            uses performance-pmp-top;
+            uses performance-tca-top;
+        }
+    }
+
+    // data definition statements
+
+    uses performance-top;
+
+    // augment statements
+
+    // rpc statements
+    rpc get-pm-data {
+        description 
+       "get the performance of current and history";
+        input {
+            leaf pm-type {
+                type oc-performance-types:pm-rpc-type;
+                description
+                    "performance, can get current and history";
+            }
+
+            leaf pm-point {
+                type oc-performance-types:pm-point-ref;
+                description
+                    "The path of the performance monitoring point";
+            }
+
+            leaf pm-point-type {
+                type oc-performance-types:pmp-object-type;
+                description
+                    "Categories of performance monitoring objects.";
+            }
+
+            leaf pm-granularity {
+                type oc-performance-types:pm-granularity-type;
+                description
+                    "granularity of performance data";
+            }
+
+            leaf pm-parameter {
+                type oc-performance-types:pm-parameter-type;
+                description
+                    "Types of performance monitoring parameters";
+            }
+
+            leaf value-scope {
+                type oc-performance-types:pm-value-scope;
+                description
+                    "Types of performance value scope";
+            }
+
+            leaf history-data-type {
+                type oc-performance-types:history-pm-type;
+                description
+                "history performance, can get records and time";
+            }
+
+            leaf number-of-records {
+                type uint16;
+                description
+                    "number of records ，from start time";
+            }
+
+            leaf start-mon-date-time {
+                type yang:date-and-time;
+                description
+                    "start time ";
+            }
+
+            leaf end-mon-date-time {
+                type yang:date-and-time;
+                description
+                    "end time ";
+            }
+        }
+
+        output {
+            leaf get-pm-result {
+                    mandatory true;
+                    type oc-performance-types:pm-rpc-result;
+                    description 
+                        "Result of the get performance operation";
+            }
+            leaf number-of-bin {
+                    type uint16;
+                    description
+                        "number of performance";
+            }
+            list performance {
+                key "pm-point pm-parameter monitoring-date-time";
+                    
+                leaf pm-point {
+                    type oc-performance-types:pm-point-ref;
+                    description
+                        "The path of the performance monitoring point";
+                }
+
+                leaf pm-parameter {
+                    type oc-performance-types:pm-parameter-type;
+                    description
+                        "Types of performance monitoring parameters";
+                }
+
+                leaf monitoring-date-time {
+                    type yang:date-and-time;
+                    description
+                        "time of performance";
+                }
+
+                choice pm-data-value  {
+                    case instant {
+                        leaf digital-pm-value {
+                            type decimal64 {
+                                fraction-digits 2;
+                            }
+                            description "digital-pm-value";
+                        }
+                        leaf pm-data-value {
+                            type decimal64 {
+                                fraction-digits 2;
+                            }
+                            description "II Device need change digital-pm-value to pm-data-value";
+                        }
+                    }
+                    case instant-avg-min-max {
+                        leaf max-value {
+                            type decimal64 {
+                                fraction-digits 10;
+                            }
+                            description "max-value";
+                        }
+                        leaf min-value {
+                            type decimal64 {
+                                fraction-digits 10;
+                            }
+                            description "min-value";
+                        }
+                        leaf average-value {
+                            type decimal64 {
+                                fraction-digits 10;
+                            }
+                            description "average-value";
+                        }
+                        leaf current-value {
+                            type decimal64 {
+                                fraction-digits 10;
+                            }
+                            description "current-value";
+                        }
+                    }
+                }
+                description
+                    "List of performance point, keyed by path of performance.";
+            }
+        }
+    }
+    // notification statements
+}

@@ -1,0 +1,410 @@
+module "acc-sofgotn" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-eofgotn";
+  prefix "acc-sofgotn";
+  import "ietf-inet-types" {
+    prefix "inet";
+  }
+
+  import "acc-devm" {
+    prefix "acc-devm";
+  }
+
+  import "acc-eth" {
+    prefix "acc-eth";
+  }
+
+  import "acc-connection" {
+    prefix "acc-con";
+  }
+
+  import "acc-fgotn" {
+    prefix "acc-fgotn";
+  }
+
+  import "acc-otn-types" {
+    prefix "acc-otn-types";
+  }
+
+  import "acc-protection-group" {
+    prefix "acc-pg";
+  }
+
+  import "acc-sdh" {
+    prefix "acc-sdh";
+    description
+      "2025.08 Modify";
+  }
+
+  revision "2024-09-17" {
+    description
+      "Initial revision. RPCs for Ethernet and VC-n over fgODUflex
+service creation are added";
+    reference
+      "xxx";
+  }
+
+  grouping "eth-fgodu-nni" {
+    uses "acc-fgotn:fgodu-nni";
+    container "ftp-client-vlan-spec" {
+      uses "acc-con:vlan-spec";
+      description
+        "";
+    }
+
+    container "ftp-vlan-spec" {
+      uses "acc-con:vlan-spec";
+      description
+        "EVPL必须下发，对于其他业务可选，accessAction=PUSH_POP";
+    }
+
+    leaf "nni-tpid" {
+      type "acc-eth:tpid-difinition";
+    }
+
+  }
+
+  grouping "opn-fgodu-nni" {
+    uses "eth-fgodu-nni";
+    list "address-mapping-specs" {
+      key "index";
+      leaf "index" {
+        type "uint32";
+        mandatory "true";
+        description
+          "The entry index, and it must be unique";
+      }
+
+      uses "acc-eth:address-mapping-spec";
+    }
+
+  }
+
+  grouping "opn-fgodu-nni-group" {
+    container "primary-nni" {
+      uses "opn-fgodu-nni";
+    }
+
+    container "secondary-nni" {
+      uses "opn-fgodu-nni";
+    }
+
+    container "primary-nni2" {
+      uses "opn-fgodu-nni";
+    }
+
+    container "secondary-nni2" {
+      uses "opn-fgodu-nni";
+    }
+
+  }
+
+  rpc "create-eofgodu-connection" {
+    input {
+      uses "acc-con:create-connection";
+      leaf "uni-protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "default lag";
+      }
+
+      leaf "nni-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      leaf "nni-tcm" {
+        type "uint16";
+        description
+          "when nni-protection-type = 'snc-s',
+needs to be issued to present the nni tcm of both work path
+and protection path";
+      }
+
+      container "eth-uni" {
+        leaf "uni-ptp-name" {
+          type "string";
+        }
+
+        leaf "second-uni-ptp-name" {
+          type "string";
+          description
+            "可选，用于与客户设备之间建立LAG保护（非负载均衡，单端保护）";
+        }
+
+        container "client-vlan-spec" {
+          when "../../service-type = 'EVPL'";
+          uses "acc-con:vlan-spec";
+          description
+            "只适用于EVPL，指定C-VLAN，用于客户Vlan与运营商Vlan的匹配，
+无需携带accessAction。不携带该参数时表示端口匹配";
+        }
+
+        container "uni-vlan-spec" {
+          when "../../service-type = 'EVPL'";
+          uses "acc-con:vlan-spec";
+          description
+            "用于在客户VLAN交换的情况下，指定C-VLAN的交换值，类型为C-TAG，可选.";
+        }
+
+      }
+
+      container "primary-nni" {
+        uses "eth-fgodu-nni";
+      }
+
+      container "secondary-nni" {
+        uses "eth-fgodu-nni";
+      }
+
+    }
+
+    output {
+      container "connection" {
+        uses "acc-con:connection";
+      }
+
+      container "create-component" {
+        leaf-list "fgodu-connection-name" {
+          type "string";
+          min-elements "0";
+        }
+
+        leaf-list "ftp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf-list "ctp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  rpc "create-mp2mp-eofgodu-connection" {
+    input {
+      uses "acc-con:create-connection";
+      leaf "opn-protocol-type" {
+        mandatory "true";
+        type "acc-devm:opn-protocol-type";
+        description
+          "OPN业务协议类型";
+      }
+
+      leaf "opn-service-id" {
+        mandatory "true";
+        type "uint32";
+        description
+          "OPN业务ID，需要保证全网的一致性和唯一性";
+      }
+
+      leaf "uni-protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "default lag";
+      }
+
+      leaf "nni-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      leaf "nni-tcm" {
+        type "uint16";
+        description
+          "when nni-protection-type = 'snc-s',
+needs to be issued to present the nni tcm of both work path
+and protection path";
+      }
+
+      list "eth-unis" {
+        key "uni-index";
+        leaf "uni-index" {
+          mandatory "true";
+          type "uint32";
+        }
+
+        leaf "uni-ptp-name" {
+          type "string";
+        }
+
+        leaf "second-uni-ptp-name" {
+          type "string";
+        }
+
+        container "client-vlan-spec" {
+          when "../../service-type = 'OPN'";
+          uses "acc-con:vlan-spec";
+          description
+            "适用于OPN，指定C-VLAN，用于客户Vlan与运营商Vlan的匹配，
+无需携带accessAction。不携带该参数时表示端口匹配";
+        }
+
+        leaf "client-ip-spec" {
+          type "inet:ip-address";
+          description
+            "适用于OPN，指定UNI端口的IP地址";
+        }
+
+        list "client-connect-specs" {
+          key "destination next-hop";
+          uses "acc-eth:connect-spec";
+        }
+
+      }
+
+      list "nni-list" {
+        key "nni-group-index";
+        leaf "nni-group-index" {
+          type "uint32";
+        }
+
+        uses "opn-fgodu-nni-group";
+      }
+
+    }
+
+    output {
+      container "connection" {
+        uses "acc-con:connection";
+      }
+
+      container "create-component" {
+        leaf-list "fgodu-connection-name" {
+          type "string";
+          min-elements "0";
+        }
+
+        leaf-list "ftp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf-list "ctp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  rpc "create-vcofgodu-connection" {
+    input {
+      uses "acc-con:create-connection";
+      leaf "service-mapping-mode" {
+        type "identityref" {
+          base "acc-otn-types:adaptation-type";
+        }
+
+      }
+
+      leaf "uni-protection-type" {
+        type "acc-pg:protection-type";
+        description
+          "default msp-1-plus-1";
+      }
+
+      leaf "nni-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      leaf "nni-tcm" {
+        type "uint16";
+        description
+          "when nni-protection-type = 'snc-s',
+needs to be issued to present the nni tcm of both work path
+and protection path";
+      }
+
+      container "sdh-uni" {
+        leaf "uni-ptp-name" {
+          type "string";
+        }
+
+        leaf "second-uni-ptp-name" {
+          type "string";
+          description
+            "可选，用于指定配置MSP 1+1保护）";
+        }
+
+        leaf "vc-type" {
+          type "identityref" {
+            base "acc-otn-types:switch-type";
+          }
+
+        }
+
+        leaf-list "mapping-path-list" {
+          min-elements "1";
+          type "leafref" {
+            path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+          }
+
+          description
+            "VCn包含VC 的VcCtpList映射路径列表";
+        }
+
+        container "sdh-ftp" {
+          uses "acc-sdh:sdh-ftp";
+          description
+            "2025.08 Modify";
+        }
+
+      }
+
+      container "primary-nni" {
+        uses "acc-fgotn:fgodu-nni";
+      }
+
+      container "secondary-nni" {
+        uses "acc-fgotn:fgodu-nni";
+      }
+
+    }
+
+    output {
+      container "connection" {
+        uses "acc-con:connection";
+      }
+
+      container "create-component" {
+        leaf-list "fgodu-connection-name" {
+          type "string";
+          min-elements "0";
+        }
+
+        leaf-list "ftp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+        leaf-list "ctp-name" {
+          type "string" {
+            length "1..64";
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+}

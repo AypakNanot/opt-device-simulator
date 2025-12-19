@@ -1,0 +1,294 @@
+module "acc-connection" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-connection";
+  prefix "acc-con";
+  import "acc-devm" {
+    prefix "acc-devm";
+  }
+
+  import "acc-yang-types" {
+    prefix "acc-type";
+  }
+
+  revision "2020-02-09" {
+    description
+      "move vlan-type, access-action from acc-eth";
+  }
+
+  typedef "vlan-type" {
+    type "enumeration" {
+      enum "c-tag" {
+        value "0";
+        description
+          "c-tag";
+      }
+
+      enum "s-tag" {
+        value "1";
+        description
+          "s-tag";
+      }
+
+      enum "un-tag" {
+        value "2";
+        description
+          "no-tag";
+      }
+
+    }
+
+    description
+      "vlan type";
+  }
+
+  typedef "access-action" {
+    type "enumeration" {
+      enum "keep" {
+        value "0";
+        description
+          "keep vlan";
+      }
+
+      enum "push_pop" {
+        value "1";
+        description
+          "push-pop vlan";
+      }
+
+      enum "exchange" {
+        value "2";
+        description
+          "exchange vlan";
+      }
+
+    }
+
+    description
+      "vlan access action";
+  }
+
+  typedef "connection-direction" {
+    type "enumeration" {
+      enum "up" {
+        value "1";
+        description
+          "UNI to NNI direction";
+      }
+
+      enum "down" {
+        value "2";
+        description
+          "NNI to UNI direction";
+      }
+
+    }
+
+  }
+
+  grouping "vlan-spec" {
+    leaf-list "vlan-id" {
+      when "../vlan-type != 'un-tag'";
+      type "uint64" {
+        range "1..4094";
+      }
+
+      min-elements "1";
+    }
+
+    leaf "vlan-priority" {
+      when "../vlan-type != 'un-tag'";
+      type "uint64" {
+        range "0..7";
+      }
+
+      description
+        "default 0";
+    }
+
+    leaf "access-action" {
+      type "access-action";
+    }
+
+    leaf "vlan-type" {
+      type "vlan-type";
+    }
+
+  }
+
+  grouping "capacity" {
+    choice "for-odu-or-eth" {
+      case "for-odu-or-sdh" {
+        leaf "total-size" {
+          mandatory "true";
+          type "uint64";
+          description
+            "total size, When ODU,SDH,  mandatory must to be true and others must not exists";
+        }
+
+      }
+
+      case "for-eth-or-eos" {
+        leaf "cir" {
+          mandatory "true";
+          type "uint64";
+          description
+            "Important , When ETH,EOS   mandatory must to be true and total-size must not exists";
+        }
+
+        leaf "pir" {
+          type "uint64";
+          description
+            "Important , When ETH,EOS   mandatory must to be true and total-size must not exists";
+        }
+
+        leaf "cbs" {
+          type "uint64";
+        }
+
+        leaf "pbs" {
+          type "uint64";
+        }
+
+      }
+
+    }
+
+  }
+
+  grouping "connection" {
+    leaf "name" {
+      mandatory "true";
+      type "string";
+      description
+        "connection name must be unique in one device";
+    }
+
+    leaf "label" {
+      type "string";
+      description
+        "对于单独设备无意义，仅仅为网管上层串接端到端connection方便，标识端到端全局信息";
+    }
+
+    container "state-pac" {
+      uses "acc-devm:state-pac";
+    }
+
+    leaf "layer-protocol-name" {
+      mandatory "true";
+      type "identityref" {
+        base "acc-type:layer-protocol-name";
+      }
+
+    }
+
+    container "requested-capacity" {
+      uses "capacity";
+    }
+
+    container "egress-capacity" {
+      uses "capacity";
+      description
+        "It is used only for eth connection.";
+    }
+
+    leaf-list "ctp" {
+      type "leafref" {
+        path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+      }
+
+      min-elements "2";
+    }
+
+    leaf "service-type" {
+      mandatory "true";
+      type "acc-devm:service-type";
+    }
+
+    leaf-list "pg-id" {
+      type "uint16";
+      description
+        "pg id";
+    }
+
+    leaf "a-ctp" {
+      type "leafref" {
+        path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+      }
+
+      config "false";
+      description
+        "The source CTP.Don't fill this field,if the connection is Bi-direction connection.";
+    }
+
+    leaf "z-ctp" {
+      type "leafref" {
+        path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+      }
+
+      config "false";
+      description
+        "The destination CTP.Don't fill this field,if the connection is Bi-direction connection.";
+    }
+
+    leaf "group-id" {
+      type "uint16";
+      config "false";
+      description
+        "The Group id.Don't fill this field,if the connection is Bi-direction connection.";
+    }
+
+  }
+
+  grouping "create-connection" {
+    leaf "label" {
+      type "string";
+      description
+        "创建业务时不再下发name，由设备自己生成，可以下发这个新增的可选的label标识";
+    }
+
+    leaf "service-type" {
+      mandatory "true";
+      type "acc-devm:service-type";
+    }
+
+    leaf "layer-protocol-name" {
+      mandatory "true";
+      type "identityref" {
+        base "acc-type:layer-protocol-name";
+      }
+
+    }
+
+    container "requested-capacity" {
+      uses "capacity";
+    }
+
+    container "egress-capacity" {
+      uses "capacity";
+      description
+        "It is used only for eth connection creation.";
+    }
+
+    leaf "direction" {
+      type "connection-direction";
+      description
+        "connection direction.Don't input this parameter,if the creating connection is Bi-direction connection.";
+    }
+
+    description
+      "create connection";
+  }
+
+  container "connections" {
+    list "connection" {
+      key "name";
+      uses "connection";
+      description
+        "connection list";
+    }
+
+    description
+      "connection container";
+  }
+
+}

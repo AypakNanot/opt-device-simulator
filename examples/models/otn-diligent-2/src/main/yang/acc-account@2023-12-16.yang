@@ -1,0 +1,126 @@
+module "acc-account" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-account";
+  prefix "acc-account";
+  revision "2023-12-16" {
+    description
+      "login accounts management";
+  }
+
+  typedef "user-role" {
+    type "enumeration" {
+      enum "service-operator" {
+        value "0";
+        description
+          "业务操作者";
+      }
+
+      enum "read-only" {
+        value "1";
+        description
+          "只读用户";
+      }
+
+      enum "default-role" {
+        value "2";
+        description
+          "厂商若不支持或者没有明确的上述两种类型，按设备内创建用户默认权限";
+      }
+
+    }
+
+  }
+
+  rpc "add-account" {
+    input {
+      leaf "user-name" {
+        mandatory "true";
+        type "string";
+      }
+
+      leaf "pwd" {
+        mandatory "true";
+        type "string";
+        description
+          "密码强度由上层系统下发保障，设备本身不用做判断了，只需要支持简单密码或者复杂密码的强度即可。";
+      }
+
+      leaf "role" {
+        type "user-role";
+        description
+          "根据设备实际情况配置，可选，若不支持可忽略，或按设备默认权限";
+      }
+
+      leaf "additional" {
+        type "string";
+        description
+          "信息描述，可选";
+      }
+
+      leaf "sudo-pwd" {
+        type "string";
+        description
+          "可选，删建用户等操作可能会用到root权限，因此需要提供sudo操作的密码。考虑设备内实现不一样，如不需要此密码，可忽略";
+      }
+
+    }
+
+  }
+
+  rpc "del-account" {
+    input {
+      leaf "user-name" {
+        mandatory "true";
+        type "string";
+      }
+
+      leaf "sudo-pwd" {
+        type "string";
+        description
+          "可选，删建用户等操作可能会用到root权限，因此需要提供sudo操作的密码。考虑设备内实现不一样，如不需要此密码，可忽略";
+      }
+
+    }
+
+  }
+
+  grouping "account" {
+    leaf "user-name" {
+      type "string";
+    }
+
+    leaf "role" {
+      type "user-role";
+      description
+        "业务操作或者只读用户";
+    }
+
+    leaf "account-valid-period" {
+      type "string";
+      description
+        "账号有效期，可选";
+    }
+
+    leaf "pwd-valid-period" {
+      type "string";
+      description
+        "密码有效期，可选";
+    }
+
+    leaf "additional" {
+      type "string";
+      description
+        "信息描述，可选";
+    }
+
+  }
+
+  container "accounts" {
+    list "account" {
+      key "user-name";
+      uses "account";
+    }
+
+  }
+
+}

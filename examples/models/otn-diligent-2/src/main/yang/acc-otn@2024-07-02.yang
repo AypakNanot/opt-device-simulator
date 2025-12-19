@@ -1,0 +1,672 @@
+module "acc-otn" {
+  yang-version "1.1";
+  namespace "urn:ccsa:yang:acc-otn";
+  prefix "acc-otn";
+  import "acc-enum" {
+    prefix "acc-enum";
+  }
+
+  import "acc-devm" {
+    prefix "acc-devm";
+  }
+
+  import "acc-connection" {
+    prefix "acc-con";
+  }
+
+  import "acc-yang-types" {
+    prefix "acc-type";
+  }
+
+  import "acc-protection-group" {
+    prefix "acc-pg";
+  }
+
+  organization
+    "yjy";
+  contact
+    "zgy";
+  description
+    "otn module";
+  revision "2024-07-02" {
+    description
+      "M-OTN2.0 管控与设备双向调优，减负";
+  }
+
+  revision "2021-01-31" {
+    description
+      "for M-OTN 1.0";
+  }
+
+  identity "ODU" {
+    base "acc-type:layer-protocol-name";
+  }
+
+  typedef "channel-sate" {
+    type "enumeration" {
+      enum "sf" {
+        value "0";
+        description
+          "SF";
+      }
+
+      enum "sd" {
+        value "1";
+        description
+          "SD";
+      }
+
+      enum "normal" {
+        value "2";
+        description
+          "Normal";
+      }
+
+    }
+
+    description
+      "channel sate";
+  }
+
+  typedef "odu-position" {
+    type "enumeration" {
+      enum "client-odu" {
+        value "0";
+        description
+          "The client side of odu.";
+      }
+
+      enum "line-odu" {
+        value "1";
+        description
+          "The line side of odu.";
+      }
+
+    }
+
+  }
+
+  typedef "modify-action" {
+    type "enumeration" {
+      enum "add-action" {
+        value "0";
+        description
+          "Add";
+      }
+
+      enum "delete-action" {
+        value "1";
+        description
+          "Delete";
+      }
+
+      enum "abort-action" {
+        value "2";
+        description
+          "Abort";
+      }
+
+    }
+
+  }
+
+  typedef "g-hao-status" {
+    type "enumeration" {
+      enum "idle" {
+        value "0";
+        description
+          "Idle status.";
+      }
+
+      enum "lcr-inc" {
+        value "1";
+        description
+          "LCR increasing.";
+      }
+
+      enum "bwr-inc" {
+        value "2";
+        description
+          "BWR increasing.";
+      }
+
+      enum "lcr-handshake" {
+        value "3";
+        description
+          "LCR hand shake.";
+      }
+
+      enum "bwr-dec" {
+        value "4";
+        description
+          "BWR decreasing.";
+      }
+
+      enum "lcr-dec" {
+        value "5";
+        description
+          "LCR decreasing.";
+      }
+
+    }
+
+  }
+
+  typedef "g-hao-modify-result" {
+    type "enumeration" {
+      enum "success" {
+        value "0";
+        description
+          "Success.";
+      }
+
+      enum "failure" {
+        value "1";
+        description
+          "Failure.";
+      }
+
+      enum "abort" {
+        value "2";
+        description
+          "Abort.";
+      }
+
+    }
+
+  }
+
+  typedef "oduflex-adjust" {
+    type "enumeration" {
+      enum "hit" {
+        value "0";
+        description
+          "有损";
+      }
+
+      enum "hitless" {
+        value "1";
+        description
+          "无损";
+      }
+
+    }
+
+  }
+
+  notification "oduflex-notification" {
+    leaf "oduflex-adjust-serial-no" {
+      mandatory "true";
+      type "uint64";
+      description
+        "g.hao adjust serial No.";
+    }
+
+    leaf "ctp-name" {
+      mandatory "true";
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    leaf "modify-result" {
+      mandatory "true";
+      type "g-hao-modify-result";
+    }
+
+  }
+
+  grouping "nni" {
+    leaf "nni-ptp-name" {
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    leaf "nni-ts-detail" {
+      type "string" {
+        length "1..64";
+      }
+
+    }
+
+    leaf "adaptation-type" {
+      type "acc-enum:adaptation-type";
+    }
+
+    leaf "odu-signal-type" {
+      type "acc-enum:signal-type";
+      description
+        "clientSignalType改名为oduSignalType";
+    }
+
+    leaf "switch-capability" {
+      type "acc-enum:odu-switch-type";
+      description
+        "Switch capability";
+    }
+
+    description
+      "本来nni结构里面的属性都必选，但如果加上mandatory为true，同时放在secondary-nni里又因子属性必选引起父容器也跟着必选，就与secondary-nni可空矛盾了";
+  }
+
+  augment "/acc-devm:ptps/acc-devm:ptp" {
+    when "acc-devm:layer-protocol-name = 'acc-otn:ODU'";
+    container "odu-ptp-pac" {
+      leaf "odu-capacity" {
+        mandatory "true";
+        type "uint64";
+        config "false";
+        description
+          "The ODU capacity expressed as the number of tributary slot with a bandwidth of approximately 1.25 Gbit/s.";
+      }
+
+      leaf-list "odu-signal-type" {
+        min-elements "1";
+        type "acc-enum:signal-type";
+        config "false";
+        description
+          "The client signal type.";
+      }
+
+      leaf-list "adaptation-type" {
+        min-elements "1";
+        type "acc-enum:adaptation-type";
+        config "false";
+        description
+          "The adaptation type.";
+      }
+
+      leaf-list "switch-capability" {
+        min-elements "1";
+        type "acc-enum:odu-switch-type";
+        config "false";
+        description
+          "The switch capability";
+      }
+
+      leaf "ts-detail" {
+        type "string";
+      }
+
+    }
+
+  }
+
+  augment "/acc-devm:ctps/acc-devm:ctp" {
+    when "acc-devm:layer-protocol-name = 'acc-otn:ODU'";
+    container "odu-ctp-pac" {
+      leaf "odu-signal-type" {
+        mandatory "true";
+        type "acc-enum:signal-type";
+        description
+          "Client signal type";
+      }
+
+      leaf "adaptation-type" {
+        mandatory "true";
+        type "acc-enum:adaptation-type";
+        description
+          "Adaptation type";
+      }
+
+      leaf "switch-capability" {
+        mandatory "true";
+        type "acc-enum:odu-switch-type";
+        config "false";
+        description
+          "Switch capability";
+      }
+
+      leaf "ts-detail" {
+        type "string" {
+          length "1..64";
+        }
+
+      }
+
+      leaf-list "current-number-of-tributary-slots" {
+        type "uint64";
+        config "false";
+        description
+          "Number of tributary slots.";
+      }
+
+    }
+
+  }
+
+  rpc "create-odu-connection" {
+    input {
+      uses "acc-con:create-connection";
+      leaf "nni-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      leaf "nni2-protection-type" {
+        type "acc-pg:protection-type";
+      }
+
+      container "client-side-nni" {
+        uses "nni";
+        description
+          "client side nni, only for UNI-NNI";
+      }
+
+      container "primary-nni" {
+        uses "nni";
+        description
+          "primary nni, mandatory true";
+      }
+
+      container "secondary-nni" {
+        uses "nni";
+        description
+          "only for service with protection. Optional";
+      }
+
+      container "primary-nni2" {
+        uses "nni";
+        description
+          "only NNI2NNI mode, optional!";
+      }
+
+      container "secondary-nni2" {
+        uses "nni";
+        description
+          "only NNI2NNI mode and with protection. optional";
+      }
+
+    }
+
+    output {
+      choice "err-or-ok" {
+        case "oper-err" {
+          container "rpc-error" {
+            leaf "error-type" {
+              type "string";
+              default "rpc";
+            }
+
+            leaf "error-tag" {
+              type "string";
+            }
+
+            leaf "error-message" {
+              type "string";
+            }
+
+          }
+
+        }
+
+        case "oper-ok" {
+          container "connection" {
+            uses "acc-con:connection";
+          }
+
+          container "ports-with-role" {
+            leaf "ul-odu-ctp" {
+              mandatory "true";
+              type "string";
+              description
+                "上联 主用 ODU CTP";
+            }
+
+            leaf "ul-odu-ctp-p" {
+              type "string";
+              description
+                "上联 保护口的 ODU CTP（有保护才上报）";
+            }
+
+            leaf "dl-odu-ctp" {
+              type "string";
+              description
+                "下联 主用 ODU CTP（only NNI-NNI）";
+            }
+
+            leaf "dl-odu-ctp-p" {
+              type "string";
+              description
+                "下联 保护口的 ODU CTP（only NNI-NNI，有保护才上报）";
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  rpc "modify-odu-connection-capacity" {
+    input {
+      leaf "odu-ctp-name" {
+        mandatory "true";
+        type "string" {
+          length "1..64";
+        }
+
+        description
+          "The name of ODU CTP.";
+      }
+
+      leaf "position" {
+        mandatory "true";
+        type "odu-position";
+        description
+          "The position.";
+      }
+
+      leaf "action" {
+        type "modify-action";
+        description
+          "The Action of the modification.";
+      }
+
+      leaf "adjust" {
+        type "oduflex-adjust";
+        description
+          "调整方式：有损/无损";
+      }
+
+      choice "line-or-client" {
+        case "line" {
+          leaf "ts-detail" {
+            type "string";
+          }
+
+        }
+
+        case "client" {
+          leaf "current-number-of-tributary-slots" {
+            type "uint64";
+          }
+
+        }
+
+      }
+
+      leaf "timeout" {
+        default "300";
+        type "uint64";
+        description
+          "Rpc time out count, unit: second.";
+      }
+
+    }
+
+  }
+
+  rpc "get-sm-pm-trail-trace" {
+    input {
+      leaf "tp-name" {
+        mandatory "true";
+        type "string";
+        description
+          "odu,osu ctp/ptp 名称";
+      }
+
+      leaf "trail-trace-type" {
+        mandatory "true";
+        type "acc-enum:trail-trace-type";
+        description
+          "SM or PM";
+      }
+
+    }
+
+    output {
+      leaf "actual-tx" {
+        type "string";
+        description
+          "实际发送值";
+      }
+
+      leaf "expected-rx" {
+        type "string";
+        description
+          "期望接收值";
+      }
+
+      leaf "actual-rx" {
+        type "string";
+        description
+          "实际接收值";
+      }
+
+    }
+
+  }
+
+  rpc "set-sm-pm-trail-trace" {
+    input {
+      leaf "tp-name" {
+        mandatory "true";
+        type "string";
+        description
+          "odu,osu ctp/ptp 名称";
+      }
+
+      leaf "sm-actual-tx" {
+        type "string";
+        description
+          "实际发送值";
+      }
+
+      leaf "sm-expected-rx" {
+        type "string";
+        description
+          "期望接收值";
+      }
+
+      leaf "pm-actual-tx" {
+        type "string";
+        description
+          "实际发送值";
+      }
+
+      leaf "pm-expected-rx" {
+        type "string";
+        description
+          "期望接收值";
+      }
+
+    }
+
+    description
+      "对PTP可进行SM，PM设置，对CTP进行PM设置";
+  }
+
+  rpc "get-msi-and-pt" {
+    input {
+      leaf "ptp-name" {
+        mandatory "true";
+        type "string";
+        description
+          "odu ptp 名称";
+      }
+
+    }
+
+    output {
+      leaf "pt-tx" {
+        type "string";
+      }
+
+      leaf "pt-rx" {
+        type "string";
+      }
+
+      leaf "msi-tx" {
+        type "string";
+      }
+
+      leaf "msi-rx" {
+        type "string";
+      }
+
+    }
+
+  }
+
+  rpc "set-odu-msi" {
+    input {
+      leaf "ptp-name" {
+        mandatory "true";
+        type "string";
+        description
+          "odu ptp 名称";
+      }
+
+      leaf "msi" {
+        type "string";
+      }
+
+    }
+
+  }
+
+  rpc "get-fec-status" {
+    input {
+      leaf "ptp-name" {
+        mandatory "true";
+        type "string";
+      }
+
+    }
+
+    output {
+      leaf "fec-status" {
+        mandatory "true";
+        type "boolean";
+        description
+          "FEC使能状态";
+      }
+
+    }
+
+  }
+
+  rpc "set-fec-status" {
+    input {
+      leaf "ptp-name" {
+        mandatory "true";
+        type "string";
+      }
+
+      leaf "fec-status" {
+        type "boolean";
+        description
+          "FEC使能状态";
+      }
+
+    }
+
+  }
+
+}
