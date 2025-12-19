@@ -39,7 +39,7 @@ public class GetHistoryPerformanceMonitoringDataDto {
             @XmlElement(name = "analog-pm-value")
             private AnalogPmValue analogPmValue;
 
-            @XmlElement(name = "analog-pm-value")
+            @XmlElement(name = "digital-pm-value")
             private String digitalPmValue;
 
             public int getBinNo() {
