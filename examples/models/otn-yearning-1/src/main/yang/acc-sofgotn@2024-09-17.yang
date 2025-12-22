@@ -350,18 +350,33 @@ and protection path";
 
         leaf-list "mapping-path-list" {
           min-elements "1";
-          type "leafref" {
-            path "/acc-devm:ctps/acc-devm:ctp/acc-devm:name";
+          type "string" {
+            length "1..64";
           }
 
           description
-            "VCn包含VC 的VcCtpList映射路径列表";
+            "2025.11.13 Modify";
         }
 
         container "sdh-ftp" {
-          uses "acc-sdh:sdh-ftp";
+          leaf "vc-type" {
+            mandatory "true";
+            type "identityref" {
+              base "acc-otn-types:switch-type";
+            }
+
+          }
+
+          leaf-list "mapping-path-list" {
+            min-elements "1";
+            type "string" {
+              length "1..64";
+            }
+
+          }
+
           description
-            "2025.08 Modify";
+            "2025.11.13 Modify";
         }
 
       }
@@ -382,6 +397,11 @@ and protection path";
       }
 
       container "create-component" {
+        leaf-list "vc-connection-name" {
+          type "string";
+          min-elements "0";
+        }
+
         leaf-list "fgodu-connection-name" {
           type "string";
           min-elements "0";

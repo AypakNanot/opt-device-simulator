@@ -24,7 +24,7 @@ public class FileUtil {
 
     public static boolean isPackage() {
         String property = System.getProperty("user.dir");
-        return !Arrays.asList(property.split("[/\\\\]")).contains("lighty-netconf-simulator-22.x");
+        return !Arrays.asList(property.split("[/\\\\]")).contains("opt-device-simulator");
     }
 
     public static InputStream getFile(String filename) throws IOException {

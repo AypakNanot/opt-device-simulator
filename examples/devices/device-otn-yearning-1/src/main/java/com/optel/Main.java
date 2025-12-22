@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
-    private static final String JAR_NAME = "otn-yearning-1-22.0.0-SNAPSHOT.jar";
+    private static final String JAR_NAME = "otn-yearning-1-22.2.0-SNAPSHOT.jar";
     private ShutdownHook shutdownHook;
 
     public static void main(String[] args) {

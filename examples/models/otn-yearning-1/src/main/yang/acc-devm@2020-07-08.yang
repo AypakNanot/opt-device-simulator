@@ -657,6 +657,13 @@ module "acc-devm" {
         "2025.5.20 add for NBI,device serial No for province corp.If uuid is serial No,Just repeate here";
     }
 
+    leaf "pce-server-address" {
+      mandatory "true";
+      type "inet:ipv4-address";
+      description
+        "2025.11.13 add PCE server address";
+    }
+
     leaf-list "eq" {
       type "leafref" {
         path "/acc-devm:eqs/acc-devm:eq/acc-devm:name";

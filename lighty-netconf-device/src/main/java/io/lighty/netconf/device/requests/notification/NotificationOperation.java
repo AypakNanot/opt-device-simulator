@@ -139,7 +139,10 @@ public class NotificationOperation implements SessionAwareNetconfOperation {
         this.isSubscription = message.getDocumentElement().getElementsByTagName("create-subscription").getLength() == 1;
         if (this.isSubscription) {
             final Node stream = message.getDocumentElement().getElementsByTagName("stream").item(0);
-            if (stream == null) {
+            if (stream == null || stream
+                    .getChildNodes()
+                    .item(0)
+                    .getTextContent().split(":").length < 2) {
                 this.streamName = null;
             } else {
                 this.streamName = stream

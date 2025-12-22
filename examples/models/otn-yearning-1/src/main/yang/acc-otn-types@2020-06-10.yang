@@ -153,7 +153,7 @@ It could be used for any type of ODUflex(GFP).";
     base "client-signal-type";
     description
       "Client signal type of 10GE-LAN. Identity name cannot start with numbers,
-so put  in front.";
+so put LAN in front.";
     reference
       "ITU-T G.709";
   }

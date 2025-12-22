@@ -137,8 +137,6 @@ module "acc-fgotn" {
     uses "acc-otn:nni";
     leaf "number-of-tributary-slots" {
       type "uint64";
-      description
-        "2025.10 Modify";
     }
 
     leaf "ts-detail" {
@@ -146,8 +144,6 @@ module "acc-fgotn" {
         length "1..952";
       }
 
-      description
-        "2025.08 Modify";
     }
 
     leaf "fgodu-ctp" {
@@ -159,8 +155,6 @@ module "acc-fgotn" {
 
     leaf "tpid" {
       type "uint64";
-      description
-        "channel id 2025.08 Modify";
     }
 
   }
@@ -216,8 +210,6 @@ module "acc-fgotn" {
           length "1..952";
         }
 
-        description
-          "2025.08 Modify";
       }
 
     }
@@ -261,8 +253,6 @@ module "acc-fgotn" {
           length "1..952";
         }
 
-        description
-          "2025.08 Modify";
       }
 
       leaf-list "current-number-of-tributary-slots" {

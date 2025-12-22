@@ -3641,26 +3641,35 @@ module "opt-otn-extension" {
 
   }
 
-  rpc get-vcfgotn-vc-connection {
+  rpc "get-vcfgotn-vc-connection" {
     input {
-      leaf-list fgotn-conn-name {
-        type string;
-        description "fgotn连接名";
+      leaf-list "fgotn-conn-name" {
+        type "string";
+        description
+          "fgotn连接名";
       }
+
     }
+
     output {
-      list relation {
+      list "relation" {
         key "fgotn-conn-name";
-        leaf fgotn-conn-name {
-          type string;
-          description "fgotn连接名";
+        leaf "fgotn-conn-name" {
+          type "string";
+          description
+            "fgotn连接名";
         }
-        leaf-list vc-conn-name {
-          type string;
-          description "fgotn连接关联的vc连接名";
+
+        leaf-list "vc-conn-name" {
+          type "string";
+          description
+            "fgotn连接关联的vc连接名";
         }
+
       }
+
     }
+
   }
 
 }
