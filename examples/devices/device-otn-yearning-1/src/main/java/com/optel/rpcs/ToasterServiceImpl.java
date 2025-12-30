@@ -6,6 +6,9 @@
  * and is available at https://www.eclipse.org/legal/epl-v10.html
  */
 package com.optel.rpcs;
+
+import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.NumberUtil;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Maps;
 
@@ -24,8 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ToasterServiceImpl implements AutoCloseable {
 
@@ -33,6 +38,7 @@ public class ToasterServiceImpl implements AutoCloseable {
 
     private final ExecutorService executor;
     private NotificationPublishService notificationPublishService;
+    private AtomicInteger count = new AtomicInteger(1);
 
     public ToasterServiceImpl() {
         executor = Executors.newFixedThreadPool(1);
@@ -80,16 +86,25 @@ public class ToasterServiceImpl implements AutoCloseable {
     public ListenableFuture<RpcResult<ModifyFgoduflexConnectionCapacityOutput>> modifyFgoduflexConnectionCapacity(ModifyFgoduflexConnectionCapacityInput input) {
         SettableFuture<RpcResult<ModifyFgoduflexConnectionCapacityOutput>> result = SettableFuture.create();
         executor.submit(() -> {
-            FgoduflexNotificationBuilder notificationBuilder = new FgoduflexNotificationBuilder();
-            notificationBuilder.setCtpName(input.getFgoduflexCtpName());
-            notificationBuilder.setFgoduflexAdjustmentSerialNo(Uint64.ONE);
-            notificationBuilder.setModifyResult(BwAdjustmentResult.Success);
-            notificationBuilder.setTsDetails(input.getTsDetail());
-            notificationPublishService.publish(notificationBuilder.build(), FgoduflexNotification.QNAME);
             var builder = new ModifyFgoduflexConnectionCapacityOutputBuilder();
             RpcResult<ModifyFgoduflexConnectionCapacityOutput> rpcResult = RpcResultBuilder.success(builder.build()).build();
             result.set(rpcResult);
             return rpcResult;
+        });
+        CompletableFuture.runAsync(() -> {
+            ThreadUtil.sleep(3000L);
+            int andIncrement = count.getAndIncrement();
+            FgoduflexNotificationBuilder builder = new FgoduflexNotificationBuilder();
+            if (NumberUtil.isOdd(andIncrement)) {
+                builder.setModifyResult(BwAdjustmentResult.Success);
+            } else {
+                builder.setModifyResult(BwAdjustmentResult.Failure);
+                builder.setFailReason("xxx");
+            }
+            builder.setCtpName(input.getFgoduflexCtpName());
+            builder.setFgoduflexAdjustmentSerialNo(Uint64.ONE);
+            builder.setTsDetails(input.getTsDetail());
+            notificationPublishService.publish(builder.build(), FgoduflexNotification.QNAME);
         });
         return result;
     }

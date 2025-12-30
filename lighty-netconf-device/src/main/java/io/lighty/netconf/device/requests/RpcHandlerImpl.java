@@ -63,7 +63,7 @@ public class RpcHandlerImpl implements RpcHandler {
                         return Optional.empty();
                     }
                 }
-            } else if ("edit".equals(rpcElement.getName())) {
+            } else if ("edit".equals(rpcElement.getName()) || "edit-config".equals(rpcElement.getName())) {
                 YangUtil.handle(formattedRequest, moduleName);
                 return Optional.empty();
             }

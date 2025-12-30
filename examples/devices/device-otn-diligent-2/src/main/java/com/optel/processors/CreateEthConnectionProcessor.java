@@ -11,30 +11,30 @@ package com.optel.processors;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.optel.rpcs.ToasterServiceImpl;
 import io.lighty.netconf.device.processors.ToasterServiceAbstractProcessor;
-import org.opendaylight.yang.gen.v1.urn.ccsa.yang.acc.performance.rev210131.GetAllPmState;
-import org.opendaylight.yang.gen.v1.urn.ccsa.yang.acc.performance.rev210131.GetAllPmStateInput;
-import org.opendaylight.yang.gen.v1.urn.ccsa.yang.acc.performance.rev210131.GetAllPmStateOutput;
+import org.opendaylight.yang.gen.v1.urn.ccsa.yang.acc.eth.rev240702.CreateEthConnection;
+import org.opendaylight.yang.gen.v1.urn.ccsa.yang.acc.eth.rev240702.CreateEthConnectionInput;
+import org.opendaylight.yang.gen.v1.urn.ccsa.yang.acc.eth.rev240702.CreateEthConnectionOutput;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 
-public class GetAllPmStateProcessor extends ToasterServiceAbstractProcessor<GetAllPmStateInput, GetAllPmStateOutput>
-        implements GetAllPmState {
+public class CreateEthConnectionProcessor extends ToasterServiceAbstractProcessor<CreateEthConnectionInput, CreateEthConnectionOutput>
+        implements CreateEthConnection {
 
     private final ToasterServiceImpl toasterService;
 
-    public GetAllPmStateProcessor(ToasterServiceImpl toasterService) {
+    public CreateEthConnectionProcessor(ToasterServiceImpl toasterService) {
         this.toasterService = toasterService;
     }
 
     @Override
     public QName getIdentifier() {
-        QName qname = GetAllPmState.QNAME;
+        QName qname = CreateEthConnection.QNAME;
         return QName.create(qname.getNamespace(), qname.getLocalName());
     }
 
     @Override
-    public ListenableFuture<RpcResult<GetAllPmStateOutput>> invoke(GetAllPmStateInput input) {
-        return toasterService.getAllPmState(input);
+    public ListenableFuture<RpcResult<CreateEthConnectionOutput>> invoke(CreateEthConnectionInput input) {
+        return toasterService.createEthConnection(input);
     }
 
 }
