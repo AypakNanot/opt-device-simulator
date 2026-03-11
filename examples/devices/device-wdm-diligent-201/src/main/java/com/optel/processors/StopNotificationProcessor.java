@@ -10,9 +10,9 @@ package com.optel.processors;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.optel.rpcs.ToasterServiceImpl;
 import io.lighty.netconf.device.processors.ToasterServiceAbstractProcessor;
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.rpc.rev200630.StopNotification;
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.rpc.rev200630.StopNotificationInput;
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.rpc.rev200630.StopNotificationOutput;
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.notification.rpc.rev200630.StopNotification;
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.notification.rpc.rev200630.StopNotificationInput;
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.notification.rpc.rev200630.StopNotificationOutput;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 

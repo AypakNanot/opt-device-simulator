@@ -1,0 +1,54 @@
+module openconfig-notification-rpc {
+
+    yang-version "1";
+
+    // namespace
+    namespace "http://openconfig.net/yang/notification/rpc";
+
+    prefix "oc-notification-rpc";
+
+    // meta
+    organization "private";
+
+    description
+        "This YANG module contains notification RPCs for OLS systems.";
+
+    revision "2020-06-30" {
+        description
+            "Initial release version";
+        reference "0.1.0";
+    }
+
+    // notification statements
+    rpc "start-notification" {
+        input {
+            leaf "period" {
+                type "string";
+            }
+            leaf "count" {
+                type "string";
+            }
+            leaf "times" {
+                type "string";
+            }
+            list "alarm-parameter" {
+                key "alarm-code object-name";
+                leaf "alarm-code" {
+                    type "string";
+                }
+                leaf "object-name" {
+                    type "string" {
+                        length "1..64";
+                    }
+                }
+            }
+            leaf-list "alarm-code" {
+                type "string";
+            }
+        }
+    }
+
+    rpc "stop-notification" {
+    }
+
+}

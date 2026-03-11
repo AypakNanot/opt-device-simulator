@@ -33,9 +33,9 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.performance.rev2006
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.performance.rev200630.get.pm.data.output.performance.pm.data.value.InstantAvgMinMaxBuilder;
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.performance.rev200630.get.pm.data.output.performance.pm.data.value.InstantBuilder;
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.performance.types.rev200630.*;
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.rpc.rev200630.*;
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.rpc.rev200630.start.notification.input.AlarmParameter;
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.rpc.rev200630.start.notification.input.AlarmParameterKey;
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.notification.rpc.rev200630.*;
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.notification.rpc.rev200630.start.notification.input.AlarmParameter;
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.notification.rpc.rev200630.start.notification.input.AlarmParameterKey;
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.system.rev200630.AlarmsNotification;
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.system.rev200630.AlarmsNotificationBuilder;
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.system.rev200630.alarms.notification.DeleteBuilder;

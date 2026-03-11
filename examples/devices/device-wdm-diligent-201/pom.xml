@@ -50,6 +50,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.optel</groupId>
+            <artifactId>openconfig-notification-rpc-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>io.lighty.netconf.device</groupId>
             <artifactId>lighty-netconf-device</artifactId>
         </dependency>

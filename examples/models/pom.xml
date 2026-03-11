@@ -15,6 +15,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>common</module>
         <module>wdm-diligent-201</module>
         <module>otn-yearning-1</module>
         <module>otn-diligent-2</module>
