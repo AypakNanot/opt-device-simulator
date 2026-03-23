@@ -55,20 +55,15 @@ public class ToasterServiceImpl implements AutoCloseable {
     }
 
     public ListenableFuture<RpcResult<FgoduflexTwoWayDmOutput>> fgoduflexTwoWayDm(FgoduflexTwoWayDmInput input) {
-        SettableFuture<RpcResult<FgoduflexTwoWayDmOutput>> result = SettableFuture.create();
-        executor.submit(() -> {
+        return submit(() -> {
             var builder = new FgoduflexTwoWayDmOutputBuilder();
             builder.setFgoduflexDelay(Uint64.ONE);
-            RpcResult<FgoduflexTwoWayDmOutput> rpcResult = RpcResultBuilder.success(builder.build()).build();
-            result.set(rpcResult);
-            return rpcResult;
+            return RpcResultBuilder.success(builder.build()).build();
         });
-        return result;
     }
 
     public ListenableFuture<RpcResult<SendFgoduflexNotificationOutput>> sendFgoduflexNotification(SendFgoduflexNotificationInput input) {
-        SettableFuture<RpcResult<SendFgoduflexNotificationOutput>> result = SettableFuture.create();
-        executor.submit(() -> {
+        return submit(() -> {
             FgoduflexNotificationBuilder builder = new FgoduflexNotificationBuilder();
             builder.setCtpName(input.getCtpName());
             builder.setFailReason(input.getFailReason());
@@ -76,20 +71,15 @@ public class ToasterServiceImpl implements AutoCloseable {
             builder.setModifyResult(input.getModifyResult());
             builder.setTsDetails(input.getTsDetails());
             notificationPublishService.publish(builder.build(), FgoduflexNotification.QNAME);
-            RpcResult<SendFgoduflexNotificationOutput> rpcResult = RpcResultBuilder.success(new SendFgoduflexNotificationOutputBuilder().build()).build();
-            result.set(rpcResult);
-            return rpcResult;
+            return RpcResultBuilder.success(new SendFgoduflexNotificationOutputBuilder().build()).build();
         });
-        return result;
     }
 
     public ListenableFuture<RpcResult<ModifyFgoduflexConnectionCapacityOutput>> modifyFgoduflexConnectionCapacity(ModifyFgoduflexConnectionCapacityInput input) {
         SettableFuture<RpcResult<ModifyFgoduflexConnectionCapacityOutput>> result = SettableFuture.create();
         executor.submit(() -> {
             var builder = new ModifyFgoduflexConnectionCapacityOutputBuilder();
-            RpcResult<ModifyFgoduflexConnectionCapacityOutput> rpcResult = RpcResultBuilder.success(builder.build()).build();
-            result.set(rpcResult);
-            return rpcResult;
+            result.set(RpcResultBuilder.success(builder.build()).build());
         });
         CompletableFuture.runAsync(() -> {
             ThreadUtil.sleep(3000L);
@@ -110,8 +100,7 @@ public class ToasterServiceImpl implements AutoCloseable {
     }
 
     public ListenableFuture<RpcResult<GetVcfgotnVcConnectionOutput>> getVcfgotnVcConnection(GetVcfgotnVcConnectionInput input) {
-        SettableFuture<RpcResult<GetVcfgotnVcConnectionOutput>> result = SettableFuture.create();
-        executor.submit(() -> {
+        return submit(() -> {
             var builder = new GetVcfgotnVcConnectionOutputBuilder();
             Map<RelationKey, Relation> map = new HashMap<>();
             Set<String> fgotnConnName = input.getFgotnConnName();
@@ -123,9 +112,19 @@ public class ToasterServiceImpl implements AutoCloseable {
                 map.put(relationKey, relationBuilder.build());
             });
             builder.setRelation(map);
-            RpcResult<GetVcfgotnVcConnectionOutput> rpcResult = RpcResultBuilder.success(builder.build()).build();
-            result.set(rpcResult);
-            return rpcResult;
+            return RpcResultBuilder.success(builder.build()).build();
+        });
+    }
+
+    private <T> ListenableFuture<RpcResult<T>> submit(java.util.concurrent.Callable<RpcResult<T>> task) {
+        SettableFuture<RpcResult<T>> result = SettableFuture.create();
+        executor.submit(() -> {
+            try {
+                result.set(task.call());
+            } catch (Exception e) {
+                LOG.error("Error executing task", e);
+                result.setException(e);
+            }
         });
         return result;
     }

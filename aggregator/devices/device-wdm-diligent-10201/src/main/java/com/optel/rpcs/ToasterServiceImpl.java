@@ -25,9 +25,7 @@ public class ToasterServiceImpl implements AutoCloseable {
     private final ScheduledExecutorService scheduler;
     private NotificationPublishService notificationPublishService;
     private final AtomicLong count = new AtomicLong();
-    private final AtomicLong id = new AtomicLong(1);
     private ScheduledFuture<?> future;
-
 
     public ToasterServiceImpl() {
         executor = Executors.newFixedThreadPool(1);

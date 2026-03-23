@@ -59,20 +59,15 @@ public class ToasterServiceImpl implements AutoCloseable {
     }
 
     public ListenableFuture<RpcResult<GetAllPmStateOutput>> getAllPmState(GetAllPmStateInput input) {
-        SettableFuture<RpcResult<GetAllPmStateOutput>> result = SettableFuture.create();
-        executor.submit(() -> {
+        return submit(() -> {
             GetAllPmStateOutputBuilder builder = new GetAllPmStateOutputBuilder();
-            RpcResult<GetAllPmStateOutput> rpcResult = RpcResultBuilder.success(builder.build()).build();
-            result.set(rpcResult);
-            return rpcResult;
+            return RpcResultBuilder.success(builder.build()).build();
         });
-        return result;
     }
 
 
     public ListenableFuture<RpcResult<CreateEthConnectionOutput>> createEthConnection(CreateEthConnectionInput input) {
-        SettableFuture<RpcResult<CreateEthConnectionOutput>> result = SettableFuture.create();
-        executor.submit(() -> {
+        return submit(() -> {
             CreateEthConnectionOutputBuilder builder = new CreateEthConnectionOutputBuilder();
             OperOkBuilder operOkBuilder = new OperOkBuilder();
             ConnectionBuilder connectionBuilder = new ConnectionBuilder();
@@ -101,9 +96,19 @@ public class ToasterServiceImpl implements AutoCloseable {
             portsWithRoleBuilder.setUlOduCtp("PTP=/shelf=1/slot=2/port=101/CTP=1");
             operOkBuilder.setPortsWithRole(portsWithRoleBuilder.build());
             builder.setErrOrOk(operOkBuilder.build());
-            RpcResult<CreateEthConnectionOutput> rpcResult = RpcResultBuilder.success(builder.build()).build();
-            result.set(rpcResult);
-            return rpcResult;
+            return RpcResultBuilder.success(builder.build()).build();
+        });
+    }
+
+    private <T> ListenableFuture<RpcResult<T>> submit(java.util.concurrent.Callable<RpcResult<T>> task) {
+        SettableFuture<RpcResult<T>> result = SettableFuture.create();
+        executor.submit(() -> {
+            try {
+                result.set(task.call());
+            } catch (Exception e) {
+                LOG.error("Error executing task", e);
+                result.setException(e);
+            }
         });
         return result;
     }
