@@ -149,7 +149,7 @@ public class ToasterServiceImpl implements AutoCloseable {
                 result.set(rpcResult);
                 return rpcResult;
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.error("Failed to get current performance monitoring data", e);
             }
             return null;
         });
@@ -207,7 +207,7 @@ public class ToasterServiceImpl implements AutoCloseable {
                 result.set(rpcResult);
                 return rpcResult;
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.error("Failed to get history performance monitoring data", e);
             }
             return null;
         });
@@ -288,7 +288,7 @@ public class ToasterServiceImpl implements AutoCloseable {
                 result.set(rpcResult);
                 return rpcResult;
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.error("Failed to get history alarms", e);
             }
             return null;
         });

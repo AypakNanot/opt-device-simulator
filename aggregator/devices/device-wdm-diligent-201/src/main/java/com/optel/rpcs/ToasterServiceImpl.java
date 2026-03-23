@@ -224,7 +224,7 @@ public class ToasterServiceImpl implements AutoCloseable {
                 RpcResult<GetPmDataOutput> rpcResult = RpcResultBuilder.success(outputBuilder.build()).build();
                 result.set(rpcResult);
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.error("Failed to get PM data", e);
             }
         });
         return result;

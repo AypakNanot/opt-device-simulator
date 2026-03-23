@@ -51,6 +51,7 @@ public final class YangUtil {
     private static final Map<String, Map<String, Set<String>>> keyMap = new HashMap<>();
     private static final Pattern pattern = Pattern.compile("name=([a-zA-Z0-9_-]+), value=0");
     private static final Pattern numPattern = Pattern.compile("(u?int(8|16|32|64))\\s*");
+    private static final Pattern XML_SELF_CLOSING_TAG_PATTERN = Pattern.compile("<([a-zA-Z0-9-]+)([^>]*)\\s*/>");
 
     public static void init(Map<String, String> yangContent) {
         if (CollUtil.isEmpty(yangContent)) {
@@ -631,18 +632,16 @@ public final class YangUtil {
     public static String xmlToString(Document doc) throws Exception {
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        String result = "";
+        String result;
         try (StringWriter writer = new StringWriter()) {
             transformer.transform(new DOMSource(doc), new StreamResult(writer));
             result = writer.toString();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Failed to convert XML Document to String", e);
+            throw e;
         }
-        String regex = "<([a-zA-Z0-9-]+)([^>]*)\\s*/>";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(result);
-        result = matcher.replaceAll("<$1$2></$1>").replaceAll("(?m)^[ \t]*\r?\n", "");
-        return result;
+        Matcher matcher = XML_SELF_CLOSING_TAG_PATTERN.matcher(result);
+        return matcher.replaceAll("<$1$2></$1>").replaceAll("(?m)^[ \t]*\r?\n", "");
     }
 
     private static Map<String, String> parseYangImports(String input) {

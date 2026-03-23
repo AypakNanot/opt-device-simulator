@@ -5,6 +5,8 @@ import cn.hutool.core.text.CharSequenceUtil;
 import io.lighty.core.common.models.ModuleId;
 import io.lighty.core.common.models.YangModuleUtils;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -15,12 +17,19 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class FileUtil {
+    private static final Logger LOG = LoggerFactory.getLogger(FileUtil.class);
     public static String DIR = "xml";
     public static String SUFFIX = ".xml";
+
+    // Pre-compiled regex patterns for YANG parsing
+    private static final Pattern NAMESPACE_PATTERN = Pattern.compile("namespace\\s+\"([^\"]+)\"");
+    private static final Pattern MODULE_NAME_PATTERN = Pattern.compile("module\\s+\"?([a-zA-Z0-9\\-]+)\"?\\s*\\{");
+    private static final Pattern REVISION_PATTERN = Pattern.compile("revision\\s+\"([^\"]+)\"");
 
     public static boolean isPackage() {
         String property = System.getProperty("user.dir");
@@ -49,14 +58,11 @@ public class FileUtil {
 
     public static String getJarFilePath(Class<?> clazz) {
         try {
-            // 获取当前类的 ClassLoader
             URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
-
-            // 将 URL 转换为 URI，然后获取路径
             File jarFile = new File(url.toURI());
             return jarFile.getParentFile().getAbsolutePath();
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            LOG.error("Failed to get JAR file path for class: {}", clazz.getName(), e);
             return null;
         }
     }
@@ -66,69 +72,37 @@ public class FileUtil {
         List<String> result = new ArrayList<>();
         try (ZipFile zipFile = new ZipFile(jarFilePath)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
-            boolean foundYangFile = false;
 
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 String fileName = entry.getName();
 
-                // 检查文件是否以 .yang 结尾
                 if (fileName.endsWith(".yang")) {
-                    foundYangFile = true;
-
-                    // 读取并输出 YANG 文件内容
                     try (InputStream inputStream = zipFile.getInputStream(entry);
                          BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-                        StringBuilder fileContent = new StringBuilder();
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            fileContent.append(line).append("\n");
-                        }
-                        result.add(fileContent.toString());
+                        result.add(reader.lines().collect(Collectors.joining("\n")));
                     }
                 }
             }
-
-            if (!foundYangFile) {
-                System.out.println("No YANG files found in the JAR.");
-            }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Failed to read YANG files from JAR: {}", jarFilePath, e);
         }
         return result;
     }
 
-    // 提取 namespace
     private static String extractNamespace(String content) {
-        String regex = "namespace\\s+\"([^\"]+)\"";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(content);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return null;
+        Matcher matcher = NAMESPACE_PATTERN.matcher(content);
+        return matcher.find() ? matcher.group(1) : null;
     }
 
-    // 提取 name
     private static String extractName(String content) {
-        String regex = "module\\s+\"?([a-zA-Z0-9\\-]+)\"?\\s*\\{";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(content);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return null;
+        Matcher matcher = MODULE_NAME_PATTERN.matcher(content);
+        return matcher.find() ? matcher.group(1) : null;
     }
 
-    // 提取 revision
     private static String extractRevision(String content) {
-        String regex = "revision\\s+\"([^\"]+)\"";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(content);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return null;
+        Matcher matcher = REVISION_PATTERN.matcher(content);
+        return matcher.find() ? matcher.group(1) : null;
     }
 
     public static Set<YangModuleInfo> getModels(Class<?> clazz, String jarName) {
