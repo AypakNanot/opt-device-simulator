@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# 获取当前目录名
+# Get current directory name
 CURRENT_DIR_NAME=${PWD##*/}
 
-# 构建 jar 文件名
+# Build jar file name
 JAR_FILE="$CURRENT_DIR_NAME.jar"
 
-# 查找运行该 jar 的进程
+# Find process running this jar
 PIDS=$(ps aux | grep "$JAR_FILE" | grep -v grep | awk '{print $2}')
 
 if [ -z "$PIDS" ]; then

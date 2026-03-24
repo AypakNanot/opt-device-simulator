@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# 获取当前目录名
+# Get current directory name
 CURRENT_DIR_NAME=${PWD##*/}
 
-# 构建 jar 文件名
+# Build jar file name
 JAR_NAME="$CURRENT_DIR_NAME.jar"
 
-# 默认参数
+# Default parameters
 PORT=$(echo $CURRENT_DIR_NAME | sed 's/device-//')
 DEVICE=1
 THREAD=1
 
-# 解析命令行参数
+# Parse command line arguments
 while getopts "d:t:" opt; do
   case $opt in
     d)
@@ -26,10 +26,10 @@ while getopts "d:t:" opt; do
   esac
 done
 
-# 复制原 jar 为临时名称
+# Copy original jar as temporary name
 cp device.jar $JAR_NAME
 
-# 后台运行
+# Run in background
 nohup java -jar $JAR_NAME -p $PORT -d $DEVICE -t $THREAD > device-$PORT.log 2>&1 &
 
 echo "Started device on port $PORT with device number $DEVICE"
