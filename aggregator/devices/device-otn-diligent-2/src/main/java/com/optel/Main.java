@@ -25,7 +25,8 @@ import java.util.Set;
  */
 public class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
-    private static final String JAR_NAME = "otn-diligent-2-22.2.0-SNAPSHOT.jar";
+    private static final String JAR_NAME = "otn-diligent-2.jar";
+    private static final int DEFAULT_PORT = 17830;
     private ShutdownHook shutdownHook;
 
     public static void main(String[] args) {
@@ -40,7 +41,7 @@ public class Main {
     @SuppressFBWarnings({"SLF4J_SIGN_ONLY_FORMAT", "OBL_UNSATISFIED_OBLIGATION"})
     public void start(String[] args, boolean registerShutdownHook) {
         ArgumentParser argumentParser = new ArgumentParser();
-        Namespace parseArguments = argumentParser.parseArguments(args);
+        Namespace parseArguments = argumentParser.parseArguments(args, DEFAULT_PORT);
 
         //parameters are stored as string list
         int port = ArgumentParser.get(parseArguments, "port");

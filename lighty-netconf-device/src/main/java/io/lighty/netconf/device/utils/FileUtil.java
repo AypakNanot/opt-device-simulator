@@ -111,9 +111,41 @@ public class FileUtil {
             return Collections.emptySet();
         }
         // 依赖 JAR 文件的路径
+        Path libPath = Paths.get(projectJarFilePath, "lib");
+
+        // Try to find the specific JAR file first
         Path jarPath = Paths.get(projectJarFilePath, "lib", jarName);
-        // 加载并列出所有 YANG 文件
+
+        // If the specific JAR doesn't exist, try to find it by prefix matching
+        if (!Files.exists(jarPath)) {
+            try {
+                // Extract the base name without version (e.g., "otn-diligent-2" from "otn-diligent-2-22.2.0-SNAPSHOT.jar")
+                String baseName = jarName.replace(".jar", "");
+
+                // Find matching JAR files in lib directory
+                try (var stream = Files.list(libPath)) {
+                    List<String> allYangContent = stream
+                        .filter(path -> path.toString().endsWith(".jar"))
+                        .filter(path -> path.getFileName().toString().startsWith(baseName + "-")
+                                     || path.getFileName().toString().equals(jarName))
+                        .findFirst()
+                        .map(matchingJar -> loadAllYangFilesFromJar(matchingJar.toString()))
+                        .orElse(Collections.emptyList());
+
+                    return buildModelsFromYangContent(allYangContent);
+                }
+            } catch (IOException e) {
+                LOG.error("Failed to search for JAR file in lib directory: {}", projectJarFilePath, e);
+                return Collections.emptySet();
+            }
+        }
+
+        // Load from the specific JAR file
         List<String> yangContent = loadAllYangFilesFromJar(jarPath.toString());
+        return buildModelsFromYangContent(yangContent);
+    }
+
+    private static Set<YangModuleInfo> buildModelsFromYangContent(List<String> yangContent) {
         Set<ModuleId> result = new HashSet<>();
         yangContent.forEach(item -> Optional.ofNullable(extractNamespace(item)).ifPresent(ele -> result.add(ModuleId.from(ele, extractName(item), extractRevision(item)))));
         return YangModuleUtils.getModelsFromClasspath(result);
@@ -125,8 +157,39 @@ public class FileUtil {
             return Collections.emptyMap();
         }
         // 依赖 JAR 文件的路径
+        Path libPath = Paths.get(projectJarFilePath, "lib");
+
+        // Try to find the specific JAR file first
         Path jarPath = Paths.get(projectJarFilePath, "lib", jarName);
-        // 加载并列出所有 YANG 文件
+
+        // If the specific JAR doesn't exist, try to find it by prefix matching
+        if (!Files.exists(jarPath)) {
+            try {
+                // Extract the base name without version (e.g., "otn-diligent-2" from "otn-diligent-2-22.2.0-SNAPSHOT.jar")
+                String baseName = jarName.replace(".jar", "");
+
+                // Find matching JAR files in lib directory
+                try (var stream = Files.list(libPath)) {
+                    return stream
+                        .filter(path -> path.toString().endsWith(".jar"))
+                        .filter(path -> path.getFileName().toString().startsWith(baseName + "-")
+                                     || path.getFileName().toString().equals(jarName))
+                        .findFirst()
+                        .map(matchingJar -> {
+                            List<String> yangContent = loadAllYangFilesFromJar(matchingJar.toString());
+                            Map<String, String> result = new HashMap<>();
+                            yangContent.forEach(item -> result.put(extractName(item), item));
+                            return result;
+                        })
+                        .orElse(Collections.emptyMap());
+                }
+            } catch (IOException e) {
+                LOG.error("Failed to search for JAR file in lib directory: {}", projectJarFilePath, e);
+                return Collections.emptyMap();
+            }
+        }
+
+        // Load from the specific JAR file
         List<String> yangContent = loadAllYangFilesFromJar(jarPath.toString());
         Map<String, String> result = new HashMap<>();
         yangContent.forEach(item -> result.put(extractName(item), item));

@@ -19,7 +19,7 @@ import java.util.List;
 public class ArgumentParser {
 
     private static final Logger LOG = LoggerFactory.getLogger(ArgumentParser.class);
-    public static final int DEFAULT_PORT = 830;
+    public static final int DEFAULT_PORT = 17830;
     public static final int DEFAULT_DEVICE_COUNT = 1;
     public static final int DEFAULT_POOL_SIZE = 1;
 
@@ -27,13 +27,17 @@ public class ArgumentParser {
     private boolean saveDatastore;
 
     public Namespace parseArguments(String[] args) {
+        return parseArguments(args, DEFAULT_PORT);
+    }
+
+    public Namespace parseArguments(String[] args, int defaultPort) {
         net.sourceforge.argparse4j.inf.ArgumentParser argumentParser =
                 ArgumentParsers.newFor("Lighty-netconf-simulator").build();
 
         argumentParser.addArgument("-p", "--port")
                 .nargs(1)
-                .setDefault(DEFAULT_PORT)
-                .help("Sets port. If no value is set, default value is used (830).")
+                .setDefault(defaultPort)
+                .help("Sets port. If no value is set, default value is used (" + defaultPort + ").")
                 .dest("port");
         argumentParser.addArgument("-i", "--init-datastore")
                 .nargs(1)
