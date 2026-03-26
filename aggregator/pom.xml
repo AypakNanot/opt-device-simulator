@@ -20,6 +20,7 @@
         <module>parents</module>
         <module>models</module>
         <module>devices</module>
+        <module>device-launcher</module>
     </modules>
 
 </project>

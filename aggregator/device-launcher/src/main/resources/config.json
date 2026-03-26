@@ -1,0 +1,63 @@
+{
+  "global": {
+    "defaultThreadPoolSize": 10,
+    "defaultDeviceCount": 1
+  },
+  "devices": [
+    {
+      "type": "otn-diligent-2",
+      "basePort": 15000,
+      "instances": [
+        {
+          "basePort": 15000,
+          "count": 100,
+          "threadPoolSize": 10
+        }
+      ]
+    },
+    {
+      "type": "otn-yearning-1",
+      "basePort": 20000,
+      "instances": [
+        {
+          "basePort": 20000,
+          "count": 50,
+          "threadPoolSize": 10
+        }
+      ]
+    },
+    {
+      "type": "wdm-diligent-201",
+      "basePort": 25000,
+      "instances": [
+        {
+          "basePort": 25000,
+          "count": 100,
+          "threadPoolSize": 10
+        }
+      ]
+    },
+    {
+      "type": "wdm-diligent-10201",
+      "basePort": 30000,
+      "instances": [
+        {
+          "basePort": 30000,
+          "count": 50,
+          "threadPoolSize": 10
+        }
+      ]
+    },
+    {
+      "type": "wdm-yearning-10202",
+      "basePort": 35000,
+      "instances": [
+        {
+          "basePort": 35000,
+          "count": 100,
+          "threadPoolSize": 10
+        }
+      ]
+    }
+  ]
+}
