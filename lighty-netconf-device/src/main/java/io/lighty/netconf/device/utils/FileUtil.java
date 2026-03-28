@@ -113,36 +113,102 @@ public class FileUtil {
         // 依赖 JAR 文件的路径
         Path libPath = Paths.get(projectJarFilePath, "lib");
 
-        // Try to find the specific JAR file first
-        Path jarPath = Paths.get(projectJarFilePath, "lib", jarName);
+        // Try to find models from lib directory first (for backward compatibility)
+        if (Files.exists(libPath)) {
+            // Try to find the specific JAR file first
+            Path jarPath = Paths.get(projectJarFilePath, "lib", jarName);
 
-        // If the specific JAR doesn't exist, try to find it by prefix matching
-        if (!Files.exists(jarPath)) {
-            try {
-                // Extract the base name without version (e.g., "otn-diligent-2" from "otn-diligent-2-22.2.0-SNAPSHOT.jar")
-                String baseName = jarName.replace(".jar", "");
+            // If the specific JAR doesn't exist, try to find it by prefix matching
+            if (!Files.exists(jarPath)) {
+                try {
+                    // Extract the base name without version (e.g., "otn-diligent-2" from "otn-diligent-2-22.2.0-SNAPSHOT.jar")
+                    String baseName = jarName.replace(".jar", "");
 
-                // Find matching JAR files in lib directory
-                try (var stream = Files.list(libPath)) {
-                    List<String> allYangContent = stream
-                        .filter(path -> path.toString().endsWith(".jar"))
-                        .filter(path -> path.getFileName().toString().startsWith(baseName + "-")
-                                     || path.getFileName().toString().equals(jarName))
-                        .findFirst()
-                        .map(matchingJar -> loadAllYangFilesFromJar(matchingJar.toString()))
-                        .orElse(Collections.emptyList());
+                    // Find matching JAR files in lib directory
+                    try (var stream = Files.list(libPath)) {
+                        List<String> allYangContent = stream
+                            .filter(path -> path.toString().endsWith(".jar"))
+                            .filter(path -> path.getFileName().toString().startsWith(baseName + "-")
+                                         || path.getFileName().toString().equals(jarName))
+                            .findFirst()
+                            .map(matchingJar -> loadAllYangFilesFromJar(matchingJar.toString()))
+                            .orElse(Collections.emptyList());
 
-                    return buildModelsFromYangContent(allYangContent);
+                        return buildModelsFromYangContent(allYangContent);
+                    }
+                } catch (IOException e) {
+                    LOG.error("Failed to search for JAR file in lib directory: {}", projectJarFilePath, e);
+                    // Fall through to classpath-based loading
                 }
-            } catch (IOException e) {
-                LOG.error("Failed to search for JAR file in lib directory: {}", projectJarFilePath, e);
-                return Collections.emptySet();
+            } else {
+                // Load from the specific JAR file
+                List<String> yangContent = loadAllYangFilesFromJar(jarPath.toString());
+                return buildModelsFromYangContent(yangContent);
             }
         }
 
-        // Load from the specific JAR file
-        List<String> yangContent = loadAllYangFilesFromJar(jarPath.toString());
-        return buildModelsFromYangContent(yangContent);
+        // Fallback: Load models from classpath (all JARs in classpath)
+        LOG.info("Loading YANG models from classpath for {}", jarName);
+        return getModelsFromClasspath(clazz, jarName);
+    }
+
+    /**
+     * Load YANG models from classpath JARs.
+     * Scans all JAR files in the classpath for YANG model files.
+     * Only loads from device model JARs (otn-*.jar, wdm-*.jar) to avoid duplicates.
+     */
+    private static Set<YangModuleInfo> getModelsFromClasspath(Class<?> clazz, String jarName) {
+        try {
+            Set<ModuleId> result = new HashSet<>();
+
+            // Get all JARs from classpath
+            String classpath = System.getProperty("java.class.path");
+            if (classpath == null || classpath.isEmpty()) {
+                return Collections.emptySet();
+            }
+
+            String[] jarPaths = classpath.split(File.pathSeparator);
+
+            // Extract base device type from jarName (e.g., "otn-diligent-2" from "otn-diligent-2.jar")
+            String baseDeviceType = jarName.replace(".jar", "");
+
+            // First pass: load from the specific device model JAR for this device type
+            for (String jarPath : jarPaths) {
+                if (!jarPath.endsWith(".jar")) {
+                    continue;
+                }
+
+                Path path = Paths.get(jarPath);
+                String fileName = path.getFileName().toString();
+
+                // Only load from the matching device model JAR
+                if (fileName.startsWith(baseDeviceType + "-")) {
+                    // Load YANG content from this JAR
+                    try {
+                        List<String> yangContent = loadAllYangFilesFromJar(jarPath);
+                        for (String content : yangContent) {
+                            Optional.ofNullable(extractNamespace(content))
+                                .ifPresent(ns -> result.add(ModuleId.from(ns, extractName(content), extractRevision(content))));
+                        }
+                        // Found and loaded the device model JAR, break
+                        break;
+                    } catch (Exception e) {
+                        LOG.error("Failed to load YANG models from JAR: {}", jarPath, e);
+                    }
+                }
+            }
+
+            if (result.isEmpty()) {
+                LOG.warn("No YANG models found in classpath for {}", jarName);
+                return Collections.emptySet();
+            }
+
+            LOG.info("Loaded {} YANG modules from classpath for {}", result.size(), jarName);
+            return YangModuleUtils.getModelsFromClasspath(result);
+        } catch (Exception e) {
+            LOG.error("Failed to load YANG models from classpath", e);
+            return Collections.emptySet();
+        }
     }
 
     private static Set<YangModuleInfo> buildModelsFromYangContent(List<String> yangContent) {

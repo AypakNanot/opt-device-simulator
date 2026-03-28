@@ -65,6 +65,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
+                    <!-- Copy device-bin.zip distributions -->
                     <execution>
                         <id>copy-device-distributions</id>
                         <phase>package</phase>
@@ -121,8 +122,9 @@
                             </artifactItems>
                         </configuration>
                     </execution>
+                    <!-- Unpack only device.jar from each distribution -->
                     <execution>
-                        <id>unpack-device-distributions</id>
+                        <id>extract-device-jars</id>
                         <phase>package</phase>
                         <goals>
                             <goal>unpack</goal>
@@ -135,6 +137,7 @@
                                     <version>${project.version}</version>
                                     <classifier>bin</classifier>
                                     <type>zip</type>
+                                    <includes>device/device.jar</includes>
                                     <outputDirectory>${project.build.directory}/devices/device-otn-diligent-2</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
@@ -143,6 +146,7 @@
                                     <version>${project.version}</version>
                                     <classifier>bin</classifier>
                                     <type>zip</type>
+                                    <includes>device/device.jar</includes>
                                     <outputDirectory>${project.build.directory}/devices/device-otn-yearning-1</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
@@ -151,6 +155,7 @@
                                     <version>${project.version}</version>
                                     <classifier>bin</classifier>
                                     <type>zip</type>
+                                    <includes>device/device.jar</includes>
                                     <outputDirectory>${project.build.directory}/devices/device-wdm-diligent-201</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
@@ -159,6 +164,7 @@
                                     <version>${project.version}</version>
                                     <classifier>bin</classifier>
                                     <type>zip</type>
+                                    <includes>device/device.jar</includes>
                                     <outputDirectory>${project.build.directory}/devices/device-wdm-diligent-10201</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
@@ -167,22 +173,65 @@
                                     <version>${project.version}</version>
                                     <classifier>bin</classifier>
                                     <type>zip</type>
+                                    <includes>device/device.jar</includes>
                                     <outputDirectory>${project.build.directory}/devices/device-wdm-yearning-10202</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>
+                    <!-- Copy shared dependencies to common lib folder -->
                     <execution>
-                        <id>copy-runtime-dependencies</id>
+                        <id>copy-shared-dependencies</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
                             <includeScope>runtime</includeScope>
-                            <excludeGroupIds>com.optel</excludeGroupIds>
                             <outputDirectory>${project.build.directory}/lib</outputDirectory>
                             <stripVersion>false</stripVersion>
+                        </configuration>
+                    </execution>
+                    <!-- Copy device-specific model JARs to lib folder -->
+                    <execution>
+                        <id>copy-device-model-jars</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.optel</groupId>
+                                    <artifactId>otn-diligent-2</artifactId>
+                                    <version>${project.version}</version>
+                                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.optel</groupId>
+                                    <artifactId>otn-yearning-1</artifactId>
+                                    <version>${project.version}</version>
+                                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.optel</groupId>
+                                    <artifactId>wdm-diligent-201</artifactId>
+                                    <version>${project.version}</version>
+                                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.optel</groupId>
+                                    <artifactId>wdm-diligent-10201</artifactId>
+                                    <version>${project.version}</version>
+                                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.optel</groupId>
+                                    <artifactId>wdm-yearning-10202</artifactId>
+                                    <version>${project.version}</version>
+                                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
                         </configuration>
                     </execution>
                 </executions>
@@ -212,6 +261,13 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Core library dependency - provides base framework for all devices -->
+        <dependency>
+            <groupId>io.lighty.netconf.device</groupId>
+            <artifactId>lighty-netconf-device</artifactId>
             <scope>compile</scope>
         </dependency>
 

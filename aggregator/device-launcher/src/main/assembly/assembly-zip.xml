@@ -7,6 +7,7 @@
         <format>zip</format>
     </formats>
     <fileSets>
+        <!-- Main launcher JAR -->
         <fileSet>
             <directory>${project.build.directory}</directory>
             <outputDirectory>/</outputDirectory>
@@ -14,13 +15,7 @@
                 <include>device-launcher.jar</include>
             </includes>
         </fileSet>
-        <fileSet>
-            <directory>${project.build.directory}/devices</directory>
-            <outputDirectory>devices/</outputDirectory>
-            <includes>
-                <include>**/device/**</include>
-            </includes>
-        </fileSet>
+        <!-- Shared libraries (common dependencies for all devices) -->
         <fileSet>
             <directory>${project.build.directory}/lib</directory>
             <outputDirectory>lib/</outputDirectory>
@@ -28,6 +23,15 @@
                 <include>*.jar</include>
             </includes>
         </fileSet>
+        <!-- Device JARs (only the device-specific code) -->
+        <fileSet>
+            <directory>${project.build.directory}/devices</directory>
+            <outputDirectory>devices/</outputDirectory>
+            <includes>
+                <include>**/device.jar</include>
+            </includes>
+        </fileSet>
+        <!-- Configuration and scripts -->
         <fileSet>
             <directory>${project.basedir}/src/main/resources</directory>
             <outputDirectory>/</outputDirectory>

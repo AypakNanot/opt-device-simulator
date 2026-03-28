@@ -36,6 +36,15 @@ public class DeviceLauncher {
         "wdm-yearning-10202", "device-wdm-yearning-10202"
     );
 
+    // Device type to model package mapping (for YANG model JARs)
+    private static final Map<String, String> DEVICE_MODEL_MAPPING = Map.of(
+        "otn-diligent-2", "otn-diligent-2",
+        "otn-yearning-1", "otn-yearning-1",
+        "wdm-diligent-201", "wdm-diligent-201",
+        "wdm-diligent-10201", "wdm-diligent-10201",
+        "wdm-yearning-10202", "wdm-yearning-10202"
+    );
+
     private final List<Process> processes = new CopyOnWriteArrayList<>();
     private final Map<String, List<Process>> processesByType = new ConcurrentHashMap<>();
     private volatile boolean running = true;
@@ -281,21 +290,32 @@ public class DeviceLauncher {
 
     /**
      * Start a single device instance as a separate JVM process.
+     * Uses lib directory for common dependencies and device-specific JAR.
      */
     private void startDeviceProcess(String type, DeviceInstanceConfig instance) {
         String deviceDirName = DEVICE_JAR_MAPPING.get(type);
-        String jarPath = findDeviceJar(deviceDirName);
+        String deviceJarPath = findDeviceJar(deviceDirName);
 
-        if (jarPath == null) {
+        if (deviceJarPath == null) {
             LOG.error("Device JAR not found for type: {}. Skipping instance.", type);
             return;
         }
 
-        // Build command: java -jar device-xxx.jar -p <basePort> -d <count> -t <threadPoolSize>
+        // Build classpath: lib/* + specific model JAR + device.jar
+        String classpath = buildDeviceClasspath(deviceJarPath, type);
+
+        // Get model package name for YANG models
+        String modelPackage = DEVICE_MODEL_MAPPING.get(type);
+        if (modelPackage == null) {
+            modelPackage = deviceDirName;
+        }
+
+        // Build command: java -cp <classpath> com.optel.Main -p <basePort> -d <count> -t <threadPoolSize>
         List<String> command = new ArrayList<>();
         command.add("java");
-        command.add("-jar");
-        command.add(jarPath);
+        command.add("-cp");
+        command.add(classpath);
+        command.add("com.optel.Main");
         command.add("-p");
         command.add(String.valueOf(instance.getBasePort()));
         command.add("-d");
@@ -326,28 +346,41 @@ public class DeviceLauncher {
     }
 
     /**
+     * Build classpath for device process using lib directory and device JAR.
+     * Uses lib/* wildcard for all JARs including device model JARs.
+     * YANG model loading is handled by FileUtil.getModels() which selects
+     * the appropriate models based on the device type.
+     */
+    private String buildDeviceClasspath(String deviceJarPath, String deviceType) {
+        StringBuilder classpath = new StringBuilder();
+
+        // Add lib directory wildcard (all JARs including device model JARs)
+        classpath.append("lib").append(File.separator).append("*");
+
+        // Add device JAR
+        classpath.append(File.pathSeparatorChar);
+        classpath.append(deviceJarPath);
+
+        return classpath.toString();
+    }
+
+    /**
      * Find the device JAR file in the devices directory.
-     * Looks for device folders containing device.jar and lib/ directory.
+     * Device JARs are extracted to devices/{type}/device/device.jar
      */
     private String findDeviceJar(String deviceDirName) {
         // Try relative to current directory (devices subfolder)
         Path devicesDir = Paths.get("devices");
         if (Files.exists(devicesDir)) {
-            // Look for device folder - try both with and without nested 'device' folder
+            // Look for device folder with nested device/device.jar structure
             Path deviceDir = devicesDir.resolve(deviceDirName);
             if (Files.exists(deviceDir)) {
-                // Try nested device folder first (unpacked from device-bin.zip)
                 Path nestedDeviceDir = deviceDir.resolve("device");
                 if (Files.exists(nestedDeviceDir)) {
                     Path deviceJar = nestedDeviceDir.resolve("device.jar");
                     if (Files.exists(deviceJar)) {
                         return deviceJar.toAbsolutePath().toString();
                     }
-                }
-                // Try direct device.jar
-                Path directJar = deviceDir.resolve("device.jar");
-                if (Files.exists(directJar)) {
-                    return directJar.toAbsolutePath().toString();
                 }
             }
         }
